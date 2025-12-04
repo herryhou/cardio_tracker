@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cardio_tracker/models/blood_pressure_reading.dart';
+import 'package:googleapis_auth/auth.dart' as auth;
 
 class GoogleSheetsService {
   static const _scopes = [SheetsApi.spreadsheetsScope];
@@ -25,7 +26,27 @@ class GoogleSheetsService {
     }
 
     final headers = await googleUser.authHeaders;
-    return http.Client();
+    final accessToken = headers['Authorization']?.replaceFirst('Bearer ', '');
+
+    if (accessToken == null) {
+      throw Exception('Failed to get access token');
+    }
+
+    // Create an authenticated client using the access token
+    final credentials = auth.AccessCredentials(
+      auth.AccessToken(
+        'Bearer',
+        accessToken,
+        DateTime.now().add(const Duration(hours: 1)), // Token expires in 1 hour
+      ),
+      null, // No refresh token for Google Sign-In
+      _scopes,
+    );
+
+    return auth.authenticatedClient(
+      http.Client(),
+      credentials,
+    );
   }
 
   /// Sign in with Google
