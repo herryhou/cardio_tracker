@@ -73,8 +73,20 @@ class BloodPressureProvider extends ChangeNotifier {
     _clearError();
 
     try {
-      await databaseService.insertReading(reading);
-      _readings.add(reading);
+      // Insert reading and get generated ID
+      final String generatedId = await databaseService.insertReading(reading);
+
+      // Create new reading with generated ID
+      final newReading = BloodPressureReading(
+        id: generatedId,
+        systolic: reading.systolic,
+        diastolic: reading.diastolic,
+        heartRate: reading.heartRate,
+        timestamp: reading.timestamp,
+        notes: reading.notes,
+      );
+
+      _readings.insert(0, newReading); // Insert at beginning
       _readings.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       notifyListeners();
     } catch (e) {

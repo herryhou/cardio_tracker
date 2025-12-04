@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/add_reading_screen.dart';
 import 'screens/distribution_screen.dart';
-import 'screens/history_screen.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -16,9 +15,7 @@ class _AppState extends State<App> {
 
   final List<Widget> _screens = [
     const DashboardScreen(),
-    const AddReadingScreen(),
     const DistributionScreen(),
-    const HistoryScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -43,16 +40,8 @@ class _AppState extends State<App> {
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Add',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.pie_chart),
             label: 'Distribution',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'History',
           ),
         ],
       ),

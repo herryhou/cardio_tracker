@@ -6,6 +6,7 @@ import 'providers/settings_provider.dart';
 import 'services/database_service.dart';
 import 'services/google_sheets_service.dart';
 import 'app.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const CardioTrackerApp());
@@ -37,13 +38,10 @@ class CardioTrackerApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Cardio Tracker',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.red,
-            brightness: Brightness.light,
-          ),
-          useMaterial3: true,
-        ),
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
+        debugShowCheckedModeBanner: false,
         home: const App(),
       ),
     );

@@ -101,14 +101,19 @@ class DatabaseService {
   }
 
   // Blood Pressure Reading CRUD operations
-  Future<void> insertReading(BloodPressureReading reading) async {
+  Future<String> insertReading(BloodPressureReading reading) async {
     final db = await database;
     final now = DateTime.now().millisecondsSinceEpoch;
+
+    // Generate unique ID if not provided
+    final String id = reading.id.isEmpty ?
+        DateTime.now().millisecondsSinceEpoch.toString() :
+        reading.id;
 
     await db.insert(
       'blood_pressure_readings',
       {
-        'id': reading.id,
+        'id': id,
         'systolic': reading.systolic,
         'diastolic': reading.diastolic,
         'heart_rate': reading.heartRate,
@@ -119,6 +124,8 @@ class DatabaseService {
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+
+    return id;
   }
 
   Future<BloodPressureReading?> getReading(String id) async {
