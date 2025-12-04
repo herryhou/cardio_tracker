@@ -48,6 +48,11 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^3.0.0
 
+  # Testing database
+  sqflite_common_ffi: ^2.3.0
+  sqlite3: ^2.4.7
+  path_provider: ^2.1.1
+
 flutter:
   uses-material-design: true
 
