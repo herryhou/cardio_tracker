@@ -231,21 +231,21 @@ class _DistributionScreenState extends State<DistributionScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Systolic vs Diastolic Distribution',
+              'Blood Pressure Distribution with Medical Zones',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Tap on points to see details',
+              'Zone indicators below chart show blood pressure categories',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
             const SizedBox(height: 16),
             SizedBox(
-              height: 300,
+              height: 400,
               child: ScatterChart(
                 ScatterChartData(
                   scatterSpots: readings.map<ScatterSpot>((reading) {
@@ -257,24 +257,38 @@ class _DistributionScreenState extends State<DistributionScreen> {
                       radius: 6,
                     );
                   }).cast<ScatterSpot>().toList(),
-                  minX: 80,
+                  minX: 70,
                   maxX: 200,
-                  minY: 50,
-                  maxY: 130,
+                  minY: 40,
+                  maxY: 140,
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: true,
                     horizontalInterval: 10,
                     verticalInterval: 20,
                     getDrawingHorizontalLine: (value) {
+                      // Highlight important boundaries
+                      if (value == 80 || value == 90 || value == 120) {
+                        return FlLine(
+                          color: _getBoundaryLineColor(value),
+                          strokeWidth: 2,
+                        );
+                      }
                       return FlLine(
-                        color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                        color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
                         strokeWidth: 1,
                       );
                     },
                     getDrawingVerticalLine: (value) {
+                      // Highlight important boundaries
+                      if (value == 120 || value == 130 || value == 140 || value == 180) {
+                        return FlLine(
+                          color: _getBoundaryLineColor(value),
+                          strokeWidth: 2,
+                        );
+                      }
                       return FlLine(
-                        color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                        color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
                         strokeWidth: 1,
                       );
                     },
@@ -285,11 +299,28 @@ class _DistributionScreenState extends State<DistributionScreen> {
                       sideTitles: SideTitles(
                         showTitles: true,
                         interval: 10,
+                        reservedSize: 32,
                         getTitlesWidget: (value, meta) {
+                          Color? textColor;
+                          FontWeight? fontWeight;
+
+                          // Highlight important values
+                          if (value == 80) {
+                            textColor = Colors.orange;
+                            fontWeight = FontWeight.bold;
+                          } else if (value == 90) {
+                            textColor = Colors.red;
+                            fontWeight = FontWeight.bold;
+                          } else if (value == 120) {
+                            textColor = Colors.purple;
+                            fontWeight = FontWeight.bold;
+                          }
+
                           return Text(
                             value.toInt().toString(),
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              color: textColor ?? Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              fontWeight: fontWeight ?? FontWeight.normal,
                             ),
                           );
                         },
@@ -300,10 +331,29 @@ class _DistributionScreenState extends State<DistributionScreen> {
                         showTitles: true,
                         interval: 20,
                         getTitlesWidget: (value, meta) {
+                          Color? textColor;
+                          FontWeight? fontWeight;
+
+                          // Highlight important values
+                          if (value == 120) {
+                            textColor = Colors.orange;
+                            fontWeight = FontWeight.bold;
+                          } else if (value == 130) {
+                            textColor = Colors.deepOrange;
+                            fontWeight = FontWeight.bold;
+                          } else if (value == 140) {
+                            textColor = Colors.red;
+                            fontWeight = FontWeight.bold;
+                          } else if (value == 180) {
+                            textColor = Colors.purple;
+                            fontWeight = FontWeight.bold;
+                          }
+
                           return Text(
                             value.toInt().toString(),
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              color: textColor ?? Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              fontWeight: fontWeight ?? FontWeight.normal,
                             ),
                           );
                         },
@@ -321,7 +371,7 @@ class _DistributionScreenState extends State<DistributionScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -339,6 +389,9 @@ class _DistributionScreenState extends State<DistributionScreen> {
                 ),
               ],
             ),
+            const SizedBox(height: 12),
+            // Add zone indicators below the chart
+            _buildZoneIndicators(),
           ],
         ),
       ),
@@ -554,5 +607,170 @@ class _DistributionScreenState extends State<DistributionScreen> {
       case BloodPressureCategory.crisis:
         return Colors.purple;
     }
+  }
+
+  /// Get boundary line color based on value
+  Color _getBoundaryLineColor(double value) {
+    switch (value.toInt()) {
+      case 80: // Diastolic boundary
+        return Colors.orange.withOpacity(0.4);
+      case 90: // Diastolic boundary
+        return Colors.red.withOpacity(0.4);
+      case 120: // Both systolic and diastolic boundary
+        return Colors.purple.withOpacity(0.4);
+      case 130: // Systolic boundary
+        return Colors.deepOrange.withOpacity(0.4);
+      case 140: // Systolic boundary
+        return Colors.red.withOpacity(0.4);
+      case 180: // Crisis threshold
+        return Colors.purple.withOpacity(0.4);
+      default:
+        return Colors.grey.withOpacity(0.4);
+    }
+  }
+
+  /// Build zone indicators showing blood pressure categories
+  Widget _buildZoneIndicators() {
+    return Container(
+      height: 60,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Normal zone
+          Expanded(
+            flex: 5,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(7),
+                  bottomLeft: Radius.circular(7),
+                ),
+                border: Border.all(
+                  color: Colors.green.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  'Normal\n<120/<80',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.green.shade700,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Elevated zone
+          Expanded(
+            flex: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.1),
+                border: Border.all(
+                  color: Colors.orange.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  'Elevated\n121-129\n<80',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.orange.shade700,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Stage 1 zone
+          Expanded(
+            flex: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.deepOrange.withOpacity(0.1),
+                border: Border.all(
+                  color: Colors.deepOrange.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  'Stage 1\n130-139/\n80-89',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.deepOrange.shade700,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Stage 2 zone
+          Expanded(
+            flex: 2,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.1),
+                border: Border.all(
+                  color: Colors.red.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  'Stage 2\n≥140/≥90',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red.shade700,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Crisis zone
+          Expanded(
+            flex: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.purple.withOpacity(0.1),
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(7),
+                  bottomRight: Radius.circular(7),
+                ),
+                border: Border.all(
+                  color: Colors.purple.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  'Crisis\n≥180/≥120',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.purple.shade700,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
