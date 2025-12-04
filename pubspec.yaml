@@ -1,0 +1,56 @@
+name: cardio_tracker
+description: A Flutter app for tracking cardiovascular metrics with Google Sheets integration
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  provider: ^6.1.1
+
+  # Database
+  sqflite: ^2.3.0
+
+  # File handling
+  path_provider: ^2.1.1
+  file_picker: ^6.1.1
+
+  # Date formatting
+  intl: ^0.19.0
+
+  # Charts
+  fl_chart: ^0.65.0
+
+  # Google integration
+  google_sign_in: ^6.1.5
+  googleapis: ^12.0.0
+  googleapis_auth: ^1.4.1
+
+  # CSV handling
+  csv: ^6.0.0
+
+  # File sharing
+  share_plus: ^7.2.1
+
+  # Secure storage
+  flutter_secure_storage: ^9.0.0
+
+  # UI and utilities
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  # Add assets if needed
+  # assets:
+  #   - assets/images/
