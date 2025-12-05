@@ -28,6 +28,7 @@ class DualChartContainer extends StatefulWidget {
 
 class _DualChartContainerState extends State<DualChartContainer> {
   ExtendedTimeRange _currentTimeRange = ExtendedTimeRange.month;
+  final GlobalKey<TimeSeriesChartState> _timeSeriesChartKey = GlobalKey();
 
   @override
   void initState() {
@@ -39,6 +40,8 @@ class _DualChartContainerState extends State<DualChartContainer> {
     setState(() {
       _currentTimeRange = timeRange;
     });
+    // Update time series chart
+    _timeSeriesChartKey.currentState?.updateTimeRange(timeRange, startDate, endDate);
     widget.onTimeRangeChanged?.call(timeRange, startDate, endDate);
   }
 
@@ -68,15 +71,15 @@ class _DualChartContainerState extends State<DualChartContainer> {
             final timeRangeHeight = isMobile ? 50.0 : 60.0;
             final spacing = isMobile ? 8.0 : 16.0;
 
-            // Calculate scatter plot height (30% of available space on mobile, 40% on tablet)
+            // Calculate scatter plot height (60% of available space on mobile, 80% on tablet) - doubled
             final scatterHeight = isMobile
-                ? (availableHeight - headerHeight - timeRangeHeight - spacing * 2) * 0.3
+                ? (availableHeight - headerHeight - timeRangeHeight - spacing * 2) * 0.6
                 : isLargeTablet
-                    ? 400.0
-                    : (availableHeight - headerHeight - timeRangeHeight - spacing * 2) * 0.4;
+                    ? 800.0  // Doubled from 400
+                    : (availableHeight - headerHeight - timeRangeHeight - spacing * 2) * 0.8;
 
-            // Cap minimum heights for usability
-            final finalScatterHeight = scatterHeight.clamp(isMobile ? 180.0 : 280.0, isMobile ? 280.0 : 450.0);
+            // Cap minimum heights for usability - doubled
+            final finalScatterHeight = scatterHeight.clamp(isMobile ? 360.0 : 560.0, isMobile ? 560.0 : 900.0);
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,7 +186,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
 
                 // Time Series Chart
                 Container(
-                  height: finalScatterHeight * 1.5, // 1.5x the scatter plot height
+                  height: finalScatterHeight * 0.8, // 0.8x the scatter plot height
                   child: Card(
                     elevation: chartProvider.hasSelection ? 6 : 2,
                     shadowColor: chartProvider.hasSelection
@@ -215,6 +218,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
                             : null,
                       ),
                       child: TimeSeriesChart(
+                        key: _timeSeriesChartKey,
                         readings: widget.readings,
                         selectedReading: chartProvider.selectedReading,
                         onReadingSelected: chartProvider.selectReading,
@@ -222,6 +226,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
                         startDate: widget.startDate,
                         endDate: widget.endDate,
                         onTimeRangeChanged: _handleTimeRangeChanged,
+                        showTimeRangeSelector: false,
                       ),
                     ),
                   ),

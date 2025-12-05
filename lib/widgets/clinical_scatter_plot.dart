@@ -22,16 +22,18 @@ class ClinicalZone {
 }
 
 /// AHA Clinical Zones following medical guidelines
-/// X-axis: Systolic (80-200 mmHg), Y-axis: Diastolic (40-120 mmHg)
+/// X-axis: Systolic (80-200 mmHg), Y-axis: Diastolic (30-160 mmHg)
 class ClinicalZones {
   static const List<ClinicalZone> zones = [
     // Note: The plan had some zone definitions that need correction
     // Using medically accurate AHA/ACC guidelines
+    // IMPORTANT: Rect bounds are in data coordinates, not canvas coordinates!
+    // X = systolic (80-200), Y = diastolic (30-160)
 
     // Low: <90 systolic OR <60 diastolic
     ClinicalZone(
       name: 'Low',
-      bounds: Rect.fromLTWH(80, 40, 10, 20), // 80-90 systolic, 40-60 diastolic
+      bounds: Rect.fromLTWH(80, 30, 10, 30), // 80-90 systolic, 30-60 diastolic
       color: Color(0xFF2196F3), // Blue
       description: 'Low: <90/<60',
       category: BloodPressureCategory.low,
@@ -64,10 +66,10 @@ class ClinicalZones {
       category: BloodPressureCategory.stage1,
     ),
 
-    // Stage 2: >=140 systolic OR >=90 diastolic (extends to 200/120)
+    // Stage 2: >=140 systolic OR >=90 diastolic (extends to 200/160)
     ClinicalZone(
       name: 'Stage 2',
-      bounds: Rect.fromLTWH(140, 90, 60, 30), // 140-200 systolic, 90-120 diastolic
+      bounds: Rect.fromLTWH(140, 90, 60, 70), // 140-200 systolic, 90-160 diastolic
       color: Color(0xFFF44336), // Red
       description: 'Stage 2: ≥140/≥90',
       category: BloodPressureCategory.stage2,
@@ -107,38 +109,46 @@ class ClinicalScatterPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Set up drawing area with padding
     const padding = 40.0;
+    const bottomPadding = 60.0; // Extra space for X-axis labels
     final drawArea = Rect.fromLTWH(
       padding,
       padding,
       size.width - 2 * padding,
-      size.height - 2 * padding
+      size.height - padding - bottomPadding
     );
 
-    // Apply transformations
+    // Draw background zones (without transformations)
+    _drawClinicalZones(canvas, drawArea);
+
+    // Draw grid lines (without transformations)
+    _drawGridLines(canvas, drawArea);
+
+    // Draw axes and labels (without transformations)
+    _drawAxes(canvas, drawArea);
+
+    // Apply transformations for data points only
+    canvas.save();
     if (zoomLevel != null && zoomLevel! > 1.0) {
+      // Scale around the center of the draw area
+      final center = drawArea.center;
+      canvas.translate(center.dx, center.dy);
       canvas.scale(zoomLevel!, zoomLevel!);
+      canvas.translate(-center.dx, -center.dy);
     }
 
     if (panOffset != null) {
       canvas.translate(panOffset!.dx, panOffset!.dy);
     }
 
-    // Draw background zones
-    _drawClinicalZones(canvas, drawArea);
-
-    // Draw grid lines
-    _drawGridLines(canvas, drawArea);
-
-    // Draw axes
-    _drawAxes(canvas, drawArea);
-
-    // Draw data points
+    // Draw data points (with transformations)
     _drawDataPoints(canvas, drawArea);
 
-    // Draw selection highlight
+    // Draw selection highlight (with transformations)
     if (selectedReading != null) {
       _drawSelectionHighlight(canvas, drawArea, selectedReading!);
     }
+
+    canvas.restore();
   }
 
   void _drawClinicalZones(Canvas canvas, Rect drawArea) {
@@ -228,10 +238,10 @@ class ClinicalScatterPainter extends CustomPainter {
     }
 
     // Y-axis labels (diastolic)
-    for (int i = 0; i <= 4; i++) {
-      final value = 40 + (i * 20);
+    for (int i = 0; i <= 6; i++) {
+      final value = 30 + (i * 20);
       final x = drawArea.left - 10;
-      final y = drawArea.bottom - (i * drawArea.height / 4);
+      final y = drawArea.bottom - (i * drawArea.height / 6);
 
       _drawText(canvas, value.toString(), Offset(x, y), textStyle, align: TextAlign.right);
     }
@@ -370,9 +380,9 @@ class ClinicalScatterPainter extends CustomPainter {
   }
 
   Offset _scalePointToDrawingArea(Offset dataPoint, Rect drawArea) {
-    // Scale data point (systolic: 80-200, diastolic: 40-120) to drawing area
+    // Scale data point (systolic: 80-200, diastolic: 30-160) to drawing area
     final x = drawArea.left + ((dataPoint.dx - 80) / (200 - 80)) * drawArea.width;
-    final y = drawArea.bottom - ((dataPoint.dy - 40) / (120 - 40)) * drawArea.height;
+    final y = drawArea.bottom - ((dataPoint.dy - 30) / (160 - 30)) * drawArea.height;
     return Offset(x, y);
   }
 
@@ -387,11 +397,12 @@ class ClinicalScatterPainter extends CustomPainter {
   }
 
   Rect _scaleRectToDrawingArea(Rect dataRect, Rect drawArea) {
-    // Scale data rectangle (systolic: 80-200, diastolic: 40-120) to drawing area
+    // Scale data rectangle (systolic: 80-200, diastolic: 30-160) to drawing area
+    // Further increased Y-axis range to give much more height to diastolic values
     final left = drawArea.left + ((dataRect.left - 80) / (200 - 80)) * drawArea.width;
-    final top = drawArea.bottom - ((dataRect.top - 40) / (120 - 40)) * drawArea.height;
+    final top = drawArea.bottom - ((dataRect.top - 30) / (160 - 30)) * drawArea.height;
     final right = drawArea.left + ((dataRect.right - 80) / (200 - 80)) * drawArea.width;
-    final bottom = drawArea.bottom - ((dataRect.bottom - 40) / (120 - 40)) * drawArea.height;
+    final bottom = drawArea.bottom - ((dataRect.bottom - 30) / (160 - 30)) * drawArea.height;
     return Rect.fromLTRB(left, top, right, bottom);
   }
 
@@ -679,9 +690,9 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
   }
 
   Offset _scalePointToDrawingAreaForHitTesting(Offset dataPoint, Rect drawArea) {
-    // Scale data point (systolic: 80-200, diastolic: 40-120) to drawing area
+    // Scale data point (systolic: 80-200, diastolic: 30-160) to drawing area
     final x = drawArea.left + ((dataPoint.dx - 80) / (200 - 80)) * drawArea.width;
-    final y = drawArea.bottom - ((dataPoint.dy - 40) / (120 - 40)) * drawArea.height;
+    final y = drawArea.bottom - ((dataPoint.dy - 30) / (160 - 30)) * drawArea.height;
     return Offset(x, y);
   }
 
@@ -889,21 +900,28 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
   }
 
   Widget _buildAccessibleZoneLegend(BuildContext context) {
-    return Semantics(
-      label: 'Clinical zone legend',
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: ClinicalZones.zones.map((zone) =>
-          Semantics(
-            label: '${zone.name} zone: ${zone.description}',
-            child: _buildZoneLegendItem(
-              color: zone.color,
-              name: zone.name,
-              description: zone.description,
-            ),
-          )
-        ).toList(),
+    return SizedBox(
+      height: 30,
+      child: Semantics(
+        label: 'Clinical zone legend',
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: ClinicalZones.zones.map((zone) =>
+              Semantics(
+                label: '${zone.name} zone: ${zone.description}',
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: _buildZoneLegendItem(
+                    color: zone.color,
+                    name: zone.name,
+                    description: zone.description,
+                  ),
+                ),
+              )
+            ).toList(),
+          ),
+        ),
       ),
     );
   }
@@ -941,11 +959,11 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildAccessibleHeader(context),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 Expanded(
                   child: _buildAccessibleChart(context),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 _buildAccessibleZoneLegend(context),
               ],
             ),
@@ -956,16 +974,20 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
   }
 
   Widget _buildZoneLegend(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: ClinicalZones.zones.map((zone) =>
-        _buildZoneLegendItem(
-          color: zone.color,
-          name: zone.name,
-          description: zone.description,
-        )
-      ).toList(),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: ClinicalZones.zones.map((zone) =>
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: _buildZoneLegendItem(
+              color: zone.color,
+              name: zone.name,
+              description: zone.description,
+            ),
+          )
+        ).toList(),
+      ),
     );
   }
 
@@ -974,33 +996,20 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 16,
-          height: 16,
+          width: 12,
+          height: 12,
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
           ),
         ),
-        const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              name,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-              ),
-            ),
-            Text(
-              description,
-              style: TextStyle(
-                fontSize: 11,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
+        const SizedBox(width: 6),
+        Text(
+          name,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+          ),
         ),
       ],
     );

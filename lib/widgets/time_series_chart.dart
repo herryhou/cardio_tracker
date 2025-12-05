@@ -554,6 +554,7 @@ class TimeSeriesChart extends StatefulWidget {
     this.startDate,
     this.endDate,
     this.onTimeRangeChanged,
+    this.showTimeRangeSelector = true,
   });
 
   final List<BloodPressureReading> readings;
@@ -563,17 +564,19 @@ class TimeSeriesChart extends StatefulWidget {
   final DateTime? startDate;
   final DateTime? endDate;
   final Function(ExtendedTimeRange, DateTime?, DateTime?)? onTimeRangeChanged;
+  final bool showTimeRangeSelector;
 
   @override
-  State<TimeSeriesChart> createState() => _TimeSeriesChartState();
+  TimeSeriesChartState createState() => TimeSeriesChartState();
 }
 
-class _TimeSeriesChartState extends State<TimeSeriesChart> {
+class TimeSeriesChartState extends State<TimeSeriesChart> with WidgetsBindingObserver {
   ExtendedTimeRange _currentTimeRange = ExtendedTimeRange.month;
   DateTime? _startDate;
   DateTime? _endDate;
   List<TimeSeriesData> _timeSeriesData = [];
   TooltipBehavior? _tooltipBehavior;
+  final GlobalKey _chartKey = GlobalKey();
 
   @override
   void initState() {
@@ -600,20 +603,26 @@ class _TimeSeriesChartState extends State<TimeSeriesChart> {
     super.didUpdateWidget(oldWidget);
 
     if (widget.readings != oldWidget.readings ||
-        _currentTimeRange != _currentTimeRange ||
-        _startDate != _startDate ||
-        _endDate != _endDate) {
+        widget.initialTimeRange != oldWidget.initialTimeRange ||
+        widget.startDate != oldWidget.startDate ||
+        widget.endDate != oldWidget.endDate) {
+      setState(() {
+        _currentTimeRange = widget.initialTimeRange;
+        _startDate = widget.startDate;
+        _endDate = widget.endDate;
+      });
       _updateTimeSeriesData();
     }
   }
 
   void _updateTimeSeriesData() {
     setState(() {
+      // Use all readings - don't filter by date range unless explicitly provided
       _timeSeriesData = TimeSeriesData.filterAndAggregate(
         widget.readings,
         _currentTimeRange,
-        _startDate,
-        _endDate,
+        null, // No start date filter
+        null, // No end date filter
       );
     });
   }
@@ -699,6 +708,18 @@ class _TimeSeriesChartState extends State<TimeSeriesChart> {
     }
   }
 
+  // Public method to update time range from parent
+  void updateTimeRange(ExtendedTimeRange timeRange, DateTime? startDate, DateTime? endDate) {
+    if (_currentTimeRange != timeRange || _startDate != startDate || _endDate != endDate) {
+      setState(() {
+        _currentTimeRange = timeRange;
+        _startDate = startDate;
+        _endDate = endDate;
+      });
+      _updateTimeSeriesData();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_timeSeriesData.isEmpty) {
@@ -725,9 +746,13 @@ class _TimeSeriesChartState extends State<TimeSeriesChart> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildAccessibleHeader(context),
-            const SizedBox(height: 16),
-            _buildAccessibleTimeRangeSelector(),
-            const SizedBox(height: 16),
+            if (widget.showTimeRangeSelector) ...[
+              const SizedBox(height: 16),
+              _buildAccessibleTimeRangeSelector(),
+              const SizedBox(height: 16),
+            ] else ...[
+              const SizedBox(height: 32),
+            ],
             Expanded(
               child: _buildAccessibleChart(context),
             ),
