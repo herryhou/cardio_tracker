@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'screens/dashboard_screen.dart';
-import 'screens/add_reading_screen.dart';
 import 'screens/distribution_screen.dart';
 
 class App extends StatefulWidget {
