@@ -432,47 +432,81 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         const SizedBox(height: 16),
 
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          mainAxisSpacing: 12, // Reduced from 16
-          crossAxisSpacing: 12, // Reduced from 16
-          childAspectRatio: 2.2, // Ultra-increased for Android overflow fix
-          children: [
-            _buildMetricCard(
-              context,
-              'Systolic',
-              provider.averageSystolic.round().toString(),
-              'mmHg',
-              const Color(0xFFEF4444),
-              Icons.arrow_upward,
-            ),
-            _buildMetricCard(
-              context,
-              'Diastolic',
-              provider.averageDiastolic.round().toString(),
-              'mmHg',
-              const Color(0xFF3B82F6),
-              Icons.arrow_downward,
-            ),
-            _buildMetricCard(
-              context,
-              'Pulse',
-              provider.averageHeartRate.round().toString(),
-              'bpm',
-              const Color(0xFFEF4444),
-              Icons.favorite,
-            ),
-            _buildMetricCard(
-              context,
-              'Test Date',
-              _formatTestDate(provider.latestReading?.timestamp),
-              null,
-              const Color(0xFF10B981),
-              Icons.calendar_today,
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            // Calculate available width per card (accounting for spacing)
+            final totalSpacing = 12; // Space between columns
+            final cardWidth = (constraints.maxWidth - totalSpacing) / 2;
+
+            // Use a safe minimum height that fits within Android constraints
+            final cardHeight = 70.0; // Well under the 75.8px limit
+
+            return Column(
+              children: [
+                // First row
+                Row(
+                  children: [
+                    SizedBox(
+                      width: cardWidth,
+                      height: cardHeight,
+                      child: _buildMetricCard(
+                        context,
+                        'Systolic',
+                        provider.averageSystolic.round().toString(),
+                        'mmHg',
+                        const Color(0xFFEF4444),
+                        Icons.arrow_upward,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: cardWidth,
+                      height: cardHeight,
+                      child: _buildMetricCard(
+                        context,
+                        'Diastolic',
+                        provider.averageDiastolic.round().toString(),
+                        'mmHg',
+                        const Color(0xFF3B82F6),
+                        Icons.arrow_downward,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // Second row
+                Row(
+                  children: [
+                    SizedBox(
+                      width: cardWidth,
+                      height: cardHeight,
+                      child: _buildMetricCard(
+                        context,
+                        'Pulse',
+                        provider.averageHeartRate.round().toString(),
+                        'bpm',
+                        const Color(0xFFEF4444),
+                        Icons.favorite,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: cardWidth,
+                      height: cardHeight,
+                      child: _buildMetricCard(
+                        context,
+                        'Test Date',
+                        _formatTestDate(provider.latestReading?.timestamp),
+                        null,
+                        const Color(0xFF10B981),
+                        Icons.calendar_today,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
         ),
       ],
     );
@@ -487,7 +521,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     IconData icon,
   ) {
     return Container(
-      padding: const EdgeInsets.all(8), // Ultra-reduced padding
+      width: double.infinity, // Fill the allocated width
+      height: double.infinity, // Fill the allocated height
+      padding: const EdgeInsets.all(6), // Minimal padding
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -501,72 +537,74 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
-          // Compact header with icon and more options
+          // Compact header row
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(4), // Minimal icon padding
+                padding: const EdgeInsets.all(3), // Minimal icon padding
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Icon(
                   icon,
-                  size: 14, // Ultra-small icon
+                  size: 12, // Very small icon
                   color: color,
                 ),
               ),
               const Spacer(),
               Icon(
                 Icons.more_horiz,
-                size: 12, // Tiny more icon
+                size: 10, // Tiny more icon
                 color: const Color(0xFF9CA3AF),
               ),
             ],
           ),
-          const SizedBox(height: 4), // Minimal spacing
+          const SizedBox(height: 2), // Minimal spacing
 
-          // Value and unit in same row to save space
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 16, // Much smaller font
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
-              if (unit != null) ...[
-                const SizedBox(width: 2),
-                Text(
-                  unit,
-                  style: const TextStyle(
-                    fontSize: 9, // Very small unit text
-                    color: Color(0xFF6B7280),
-                    fontWeight: FontWeight.w500,
+          // Value and unit row with flexible space
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 14, // Smaller font to fit
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
+                if (unit != null) ...[
+                  const SizedBox(width: 2),
+                  Text(
+                    unit,
+                    style: const TextStyle(
+                      fontSize: 8, // Very small unit text
+                      color: Color(0xFF6B7280),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
-          const SizedBox(height: 2), // Tiny spacing
+
+          // Title at bottom
           Text(
             title,
             style: const TextStyle(
-              fontSize: 9, // Very small title text
+              fontSize: 8, // Very small title text
               color: Color(0xFF6B7280),
               fontWeight: FontWeight.w500,
             ),
             overflow: TextOverflow.ellipsis,
-            maxLines: 1, // Only 1 line to save space
+            maxLines: 1,
           ),
         ],
       ),
