@@ -11,11 +11,13 @@ class AppTheme {
   static const Color _crisisColor = Color(0xFF9C27B0);     // Purple
   static const Color _lowColor = Color(0xFF2196F3);        // Blue
 
-  // Modern Neutral Palette
-  static const Color _primarySeed = Color(0xFF1976D2);     // Medical Blue
+  // Modern Neutral Palette - Production Medical Colors
+  static const Color _primarySeed = Color(0xFF2563EB);     // Medical Blue (more vibrant)
   static const Color _backgroundLight = Color(0xFFF8FAFC); // Very light gray
   static const Color _surfaceLight = Color(0xFFFFFFFF);    // Pure white
   static const Color _errorLight = Color(0xFFE53935);      // Material Red
+  static const Color _cardBackground = Color(0xFFFFFFFF);  // Pure white cards
+  static const Color _dividerColor = Color(0xFFE5E7EB);    // Light dividers
 
   static const Color _backgroundDark = Color(0xFF0F172A);  // Dark slate
   static const Color _surfaceDark = Color(0xFF1E293B);     // Dark surface

@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/blood_pressure_provider.dart';
 import '../models/blood_pressure_reading.dart';
-import '../models/user_settings.dart';
 import '../widgets/medical_metric_card.dart';
 import '../widgets/reading_summary_card.dart';
-import '../widgets/trend_indicator.dart';
 import '../theme/app_theme.dart';
 import '../services/csv_export_service.dart';
 import '../screens/add_reading_screen.dart';
+import '../widgets/app_icon.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -31,57 +30,60 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Blood Pressure'),
+        title: const AppLogo(showText: true, size: 36),
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: false,
         actions: [
+          IconButton(
+            icon: Icon(
+              AppIcons.search,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            ),
+            onPressed: () {
+              // TODO: Implement search functionality
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Search coming soon!')),
+              );
+            },
+          ),
           PopupMenuButton<String>(
             icon: Icon(
-              Icons.more_vert,
+              AppIcons.more,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
             ),
             onSelected: (value) {
               _handleMenuAction(context, value);
             },
             itemBuilder: (context) => [
-              const PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: 'export_csv',
                 child: Row(
                   children: [
-                    Icon(Icons.file_download_outlined),
-                    SizedBox(width: 8),
-                    Text('Export CSV'),
+                    Icon(AppIcons.export, size: 18),
+                    const SizedBox(width: 12),
+                    const Text('Export All Data'),
                   ],
                 ),
               ),
-              const PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: 'export_summary',
                 child: Row(
                   children: [
-                    Icon(Icons.summarize_outlined),
-                    SizedBox(width: 8),
-                    Text('Export Summary'),
+                    Icon(AppIcons.analytics, size: 18),
+                    const SizedBox(width: 12),
+                    const Text('Export Summary'),
                   ],
                 ),
               ),
-              const PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: 'export_month',
                 child: Row(
                   children: [
-                    Icon(Icons.date_range_outlined),
-                    SizedBox(width: 8),
-                    Text('Export This Month'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem<String>(
-                value: 'settings',
-                child: Row(
-                  children: [
-                    Icon(Icons.settings_outlined),
-                    SizedBox(width: 8),
-                    Text('Settings'),
+                    Icon(Icons.today, size: 18),
+                    const SizedBox(width: 12),
+                    const Text('Export This Month'),
                   ],
                 ),
               ),
@@ -127,11 +129,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           _showAddReadingModal(context);
         },
-        child: const Icon(Icons.add),
+        icon: const Icon(AppIcons.add),
+        label: const Text('Add Reading'),
         elevation: 4,
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
