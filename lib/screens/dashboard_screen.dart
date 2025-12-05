@@ -438,7 +438,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           crossAxisCount: 2,
           mainAxisSpacing: 12, // Reduced from 16
           crossAxisSpacing: 12, // Reduced from 16
-          childAspectRatio: 1.8, // Further increased from 1.6 for better Android compatibility
+          childAspectRatio: 2.2, // Ultra-increased for Android overflow fix
           children: [
             _buildMetricCard(
               context,
@@ -487,7 +487,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     IconData icon,
   ) {
     return Container(
-      padding: const EdgeInsets.all(12), // Reduced from 16
+      padding: const EdgeInsets.all(8), // Ultra-reduced padding
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -501,62 +501,72 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min, // Added to prevent overflow
+        mainAxisSize: MainAxisSize.min,
         children: [
+          // Compact header with icon and more options
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(6), // Reduced from 8
+                padding: const EdgeInsets.all(4), // Minimal icon padding
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(
                   icon,
-                  size: 16, // Reduced from 20
+                  size: 14, // Ultra-small icon
                   color: color,
                 ),
               ),
               const Spacer(),
               Icon(
                 Icons.more_horiz,
-                size: 14, // Reduced from 16
+                size: 12, // Tiny more icon
                 color: const Color(0xFF9CA3AF),
               ),
             ],
           ),
-          const SizedBox(height: 8), // Reduced from 12
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18, // Further reduced from 20
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-          ),
-          if (unit != null) ...[
-            const SizedBox(height: 1), // Reduced from 2
-            Text(
-              unit,
-              style: const TextStyle(
-                fontSize: 11, // Reduced from 12
-                color: Color(0xFF6B7280),
-                fontWeight: FontWeight.w500,
+          const SizedBox(height: 4), // Minimal spacing
+
+          // Value and unit in same row to save space
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 16, // Much smaller font
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
-            ),
-          ],
-          const SizedBox(height: 4), // Reduced from 8
+              if (unit != null) ...[
+                const SizedBox(width: 2),
+                Text(
+                  unit,
+                  style: const TextStyle(
+                    fontSize: 9, // Very small unit text
+                    color: Color(0xFF6B7280),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 2), // Tiny spacing
           Text(
             title,
             style: const TextStyle(
-              fontSize: 11, // Reduced from 12
+              fontSize: 9, // Very small title text
               color: Color(0xFF6B7280),
               fontWeight: FontWeight.w500,
             ),
             overflow: TextOverflow.ellipsis,
-            maxLines: 2, // Allow 2 lines for better text wrapping
+            maxLines: 1, // Only 1 line to save space
           ),
         ],
       ),
