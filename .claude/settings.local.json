@@ -16,7 +16,10 @@
       "Bash(flutter:*)",
       "Skill(brainstorming)",
       "Skill(writing-plans)",
-      "Bash(git merge:*)"
+      "Bash(git merge:*)",
+      "Bash(git branch:*)",
+      "Skill(executing-plans)",
+      "Bash(nc:*)"
     ],
     "deny": [],
     "ask": []

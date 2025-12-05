@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/blood_pressure_provider.dart';
+import '../providers/dual_chart_provider.dart';
 import '../models/blood_pressure_reading.dart';
 import '../theme/app_theme.dart';
-import '../widgets/app_icon.dart';
+import '../widgets/dual_chart_container.dart';
 
-class HistoryScreen extends StatelessWidget {
+class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
+
+  @override
+  State<HistoryScreen> createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends State<HistoryScreen> {
+  bool _showCharts = true; // Default to chart view
 
   @override
   Widget build(BuildContext context) {
@@ -17,32 +25,71 @@ class HistoryScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: Theme.of(context).colorScheme.primary,
+        actions: [
+          // Toggle button for chart/list view
+          IconButton(
+            icon: Icon(_showCharts ? Icons.list : Icons.analytics),
+            onPressed: () {
+              setState(() {
+                _showCharts = !_showCharts;
+              });
+            },
+            tooltip: _showCharts ? 'Show List View' : 'Show Chart View',
+          ),
+        ],
       ),
-      body: Consumer<BloodPressureProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => DualChartProvider()),
+        ],
+        child: Consumer<BloodPressureProvider>(
+          builder: (context, provider, child) {
+            if (provider.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (provider.error != null) {
-            return _buildErrorState(context, provider.error!);
-          }
+            if (provider.error != null) {
+              return _buildErrorState(context, provider.error!);
+            }
 
-          if (provider.readings.isEmpty) {
-            return _buildEmptyState(context);
-          }
+            if (provider.readings.isEmpty) {
+              return _buildEmptyState(context);
+            }
 
-          return RefreshIndicator(
-            onRefresh: () => provider.loadReadings(),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: provider.readings.length,
-              itemBuilder: (context, index) {
-                final reading = provider.readings[index];
-                return _buildReadingCard(context, reading);
-              },
-            ),
-          );
+            return _showCharts
+                ? _buildChartView(provider)
+                : _buildListView(provider);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChartView(BloodPressureProvider provider) {
+    return RefreshIndicator(
+      onRefresh: () => provider.loadReadings(),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: DualChartContainer(
+          readings: provider.readings,
+          onTimeRangeChanged: (timeRange, startDate, endDate) {
+            // Optional: Handle time range changes
+            // Could filter provider.readings based on selected range
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListView(BloodPressureProvider provider) {
+    return RefreshIndicator(
+      onRefresh: () => provider.loadReadings(),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: provider.readings.length,
+        itemBuilder: (context, index) {
+          final reading = provider.readings[index];
+          return _buildReadingCard(context, reading);
         },
       ),
     );
@@ -58,7 +105,7 @@ class HistoryScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -189,7 +236,7 @@ class HistoryScreen extends StatelessWidget {
             ),
 
             // Category and Notes
-            if (reading.notes.isNotEmpty) ...[
+            if (reading.notes?.isNotEmpty == true) ...[
               const SizedBox(height: 12),
               Container(
                 width: double.infinity,
@@ -206,7 +253,7 @@ class HistoryScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: categoryColor.withOpacity(0.1),
+                            color: categoryColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -220,10 +267,10 @@ class HistoryScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if (reading.notes.isNotEmpty) ...[
+                    if (reading.notes?.isNotEmpty == true) ...[
                       const SizedBox(height: 8),
                       Text(
-                        reading.notes,
+                        reading.notes!,
                         style: const TextStyle(
                           fontSize: 14,
                           color: Color(0xFF6B7280),
@@ -238,7 +285,7 @@ class HistoryScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: categoryColor.withOpacity(0.1),
+                  color: categoryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
