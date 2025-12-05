@@ -238,7 +238,7 @@ class _DistributionScreenState extends State<DistributionScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Zone indicators below chart show blood pressure categories',
+              'Background colors indicate blood pressure categories',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
               ),
@@ -246,129 +246,136 @@ class _DistributionScreenState extends State<DistributionScreen> {
             const SizedBox(height: 16),
             SizedBox(
               height: 400,
-              child: ScatterChart(
-                ScatterChartData(
-                  scatterSpots: readings.map<ScatterSpot>((reading) {
-                    final category = reading.category;
-                    return ScatterSpot(
-                      reading.systolic.toDouble(),
-                      reading.diastolic.toDouble(),
-                      color: _getCategoryColor(category),
-                      radius: 6,
-                    );
-                  }).cast<ScatterSpot>().toList(),
-                  minX: 70,
-                  maxX: 200,
-                  minY: 40,
-                  maxY: 140,
-                  gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: true,
-                    horizontalInterval: 10,
-                    verticalInterval: 20,
-                    getDrawingHorizontalLine: (value) {
-                      // Highlight important boundaries
-                      if (value == 80 || value == 90 || value == 120) {
-                        return FlLine(
-                          color: _getBoundaryLineColor(value),
-                          strokeWidth: 2,
+              child: Stack(
+                children: [
+                  // Background zones
+                  _buildBackgroundZones(),
+                  // Scatter chart on top
+                  ScatterChart(
+                    ScatterChartData(
+                      scatterSpots: readings.map<ScatterSpot>((reading) {
+                        final category = reading.category;
+                        return ScatterSpot(
+                          reading.systolic.toDouble(),
+                          reading.diastolic.toDouble(),
+                          color: _getCategoryColor(category),
+                          radius: 6,
                         );
-                      }
-                      return FlLine(
-                        color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-                        strokeWidth: 1,
-                      );
-                    },
-                    getDrawingVerticalLine: (value) {
-                      // Highlight important boundaries
-                      if (value == 120 || value == 130 || value == 140 || value == 180) {
-                        return FlLine(
-                          color: _getBoundaryLineColor(value),
-                          strokeWidth: 2,
-                        );
-                      }
-                      return FlLine(
-                        color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-                        strokeWidth: 1,
-                      );
-                    },
-                  ),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        interval: 10,
-                        reservedSize: 32,
-                        getTitlesWidget: (value, meta) {
-                          Color? textColor;
-                          FontWeight? fontWeight;
-
-                          // Highlight important values
-                          if (value == 80) {
-                            textColor = Colors.orange;
-                            fontWeight = FontWeight.bold;
-                          } else if (value == 90) {
-                            textColor = Colors.red;
-                            fontWeight = FontWeight.bold;
-                          } else if (value == 120) {
-                            textColor = Colors.purple;
-                            fontWeight = FontWeight.bold;
+                      }).cast<ScatterSpot>().toList(),
+                      minX: 70,
+                      maxX: 200,
+                      minY: 40,
+                      maxY: 140,
+                      gridData: FlGridData(
+                        show: true,
+                        drawVerticalLine: true,
+                        horizontalInterval: 10,
+                        verticalInterval: 20,
+                        getDrawingHorizontalLine: (value) {
+                          // Highlight important boundaries
+                          if (value == 80 || value == 90 || value == 120) {
+                            return FlLine(
+                              color: _getBoundaryLineColor(value),
+                              strokeWidth: 2,
+                            );
                           }
-
-                          return Text(
-                            value.toInt().toString(),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: textColor ?? Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                              fontWeight: fontWeight ?? FontWeight.normal,
-                            ),
+                          return FlLine(
+                            color: Colors.white.withOpacity(0.3),
+                            strokeWidth: 1,
+                          );
+                        },
+                        getDrawingVerticalLine: (value) {
+                          // Highlight important boundaries
+                          if (value == 120 || value == 130 || value == 140 || value == 180) {
+                            return FlLine(
+                              color: _getBoundaryLineColor(value),
+                              strokeWidth: 2,
+                            );
+                          }
+                          return FlLine(
+                            color: Colors.white.withOpacity(0.3),
+                            strokeWidth: 1,
                           );
                         },
                       ),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        interval: 20,
-                        getTitlesWidget: (value, meta) {
-                          Color? textColor;
-                          FontWeight? fontWeight;
+                      titlesData: FlTitlesData(
+                        show: true,
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            interval: 10,
+                            reservedSize: 32,
+                            getTitlesWidget: (value, meta) {
+                              Color? textColor;
+                              FontWeight? fontWeight;
 
-                          // Highlight important values
-                          if (value == 120) {
-                            textColor = Colors.orange;
-                            fontWeight = FontWeight.bold;
-                          } else if (value == 130) {
-                            textColor = Colors.deepOrange;
-                            fontWeight = FontWeight.bold;
-                          } else if (value == 140) {
-                            textColor = Colors.red;
-                            fontWeight = FontWeight.bold;
-                          } else if (value == 180) {
-                            textColor = Colors.purple;
-                            fontWeight = FontWeight.bold;
-                          }
+                              // Highlight important values
+                              if (value == 80) {
+                                textColor = Colors.orange;
+                                fontWeight = FontWeight.bold;
+                              } else if (value == 90) {
+                                textColor = Colors.red;
+                                fontWeight = FontWeight.bold;
+                              } else if (value == 120) {
+                                textColor = Colors.purple;
+                                fontWeight = FontWeight.bold;
+                              }
 
-                          return Text(
-                            value.toInt().toString(),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: textColor ?? Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                              fontWeight: fontWeight ?? FontWeight.normal,
-                            ),
-                          );
-                        },
+                              return Text(
+                                value.toInt().toString(),
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: textColor ?? Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                  fontWeight: fontWeight ?? FontWeight.normal,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            interval: 20,
+                            getTitlesWidget: (value, meta) {
+                              Color? textColor;
+                              FontWeight? fontWeight;
+
+                              // Highlight important values
+                              if (value == 120) {
+                                textColor = Colors.orange;
+                                fontWeight = FontWeight.bold;
+                              } else if (value == 130) {
+                                textColor = Colors.deepOrange;
+                                fontWeight = FontWeight.bold;
+                              } else if (value == 140) {
+                                textColor = Colors.red;
+                                fontWeight = FontWeight.bold;
+                              } else if (value == 180) {
+                                textColor = Colors.purple;
+                                fontWeight = FontWeight.bold;
+                              }
+
+                              return Text(
+                                value.toInt().toString(),
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: textColor ?? Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                  fontWeight: fontWeight ?? FontWeight.normal,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      ),
+                      borderData: FlBorderData(
+                        show: true,
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                        ),
                       ),
                     ),
-                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   ),
-                  borderData: FlBorderData(
-                    show: true,
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-                    ),
-                  ),
-                ),
+                ],
               ),
             ),
             const SizedBox(height: 12),
@@ -627,6 +634,116 @@ class _DistributionScreenState extends State<DistributionScreen> {
       default:
         return Colors.grey.withOpacity(0.4);
     }
+  }
+
+  /// Build background zones for the scatter chart
+  Widget _buildBackgroundZones() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final chartWidth = constraints.maxWidth;
+        final chartHeight = constraints.maxHeight;
+
+        // Chart coordinate system mapping
+        const minX = 70.0;
+        const maxX = 200.0;
+        const minY = 40.0;
+        const maxY = 140.0;
+
+        return Stack(
+          children: [
+            // Crisis zone (top-right corner)
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              180, maxX, 120, maxY,
+              Colors.purple.withOpacity(0.1),
+            ),
+            // Stage 2 zone
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              140, maxX, 90, maxY,
+              Colors.red.withOpacity(0.1),
+            ),
+            // Stage 1 zone
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              130, 180, 80, 120,
+              Colors.deepOrange.withOpacity(0.1),
+            ),
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              120, 140, 80, 120,
+              Colors.deepOrange.withOpacity(0.1),
+            ),
+            // Elevated zone
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              120, 130, minY, 80,
+              Colors.orange.withOpacity(0.1),
+            ),
+            // Normal zone
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              minX, 120, minY, 80,
+              Colors.green.withOpacity(0.1),
+            ),
+            // Low zone (bottom-left corner)
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              minX, maxX, minY, 50,
+              Colors.blue.withOpacity(0.1),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Build a single zone rectangle
+  Widget _buildZoneRect(
+    double chartWidth,
+    double chartHeight,
+    double minX, double maxX, double minY, double maxY,
+    double zoneMinX, double zoneMaxX, double zoneMinY, double zoneMaxY,
+    Color color,
+  ) {
+    // Calculate pixel positions
+    final left = ((zoneMinX - minX) / (maxX - minX)) * chartWidth;
+    final right = ((zoneMaxX - minX) / (maxX - minX)) * chartWidth;
+    final top = ((maxY - zoneMaxY) / (maxY - minY)) * chartHeight;
+    final bottom = ((maxY - zoneMinY) / (maxY - minY)) * chartHeight;
+
+    final width = right - left;
+    final height = bottom - top;
+
+    return Positioned(
+      left: left,
+      top: top,
+      width: width,
+      height: height,
+      child: Container(
+        decoration: BoxDecoration(
+          color: color,
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 0.5,
+          ),
+        ),
+      ),
+    );
   }
 
   /// Build zone indicators showing blood pressure categories
