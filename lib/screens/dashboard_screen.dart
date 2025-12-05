@@ -440,7 +440,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           crossAxisCount: 2,
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
-          childAspectRatio: 1.4,
+          childAspectRatio: 1.6, // Increased from 1.4 to give more vertical space
           children: [
             _buildMetricCard(
               context,
@@ -526,17 +526,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
-          const Spacer(),
+          const SizedBox(height: 12),
           Text(
             value,
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 20, // Reduced from 24
               fontWeight: FontWeight.bold,
               color: color,
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
           if (unit != null) ...[
-            const SizedBox(width: 4),
+            const SizedBox(height: 2),
             Text(
               unit,
               style: const TextStyle(
@@ -554,6 +556,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               color: Color(0xFF6B7280),
               fontWeight: FontWeight.w500,
             ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ],
       ),
