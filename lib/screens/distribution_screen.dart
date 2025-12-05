@@ -651,46 +651,15 @@ class _DistributionScreenState extends State<DistributionScreen> {
 
         return Stack(
           children: [
-            // Crisis zone (top-right corner)
+            // Low zone (very low blood pressure)
             _buildZoneRect(
               chartWidth,
               chartHeight,
               minX, maxX, minY, maxY,
-              180, maxX, 120, maxY,
-              Colors.purple.withOpacity(0.1),
+              minX, 100, minY, 60,
+              Colors.blue.withOpacity(0.1),
             ),
-            // Stage 2 zone
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              140, maxX, 90, maxY,
-              Colors.red.withOpacity(0.1),
-            ),
-            // Stage 1 zone
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              130, 180, 80, 120,
-              Colors.deepOrange.withOpacity(0.1),
-            ),
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              120, 140, 80, 120,
-              Colors.deepOrange.withOpacity(0.1),
-            ),
-            // Elevated zone
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              120, 130, minY, 80,
-              Colors.orange.withOpacity(0.1),
-            ),
-            // Normal zone
+            // Normal zone: <120 systolic AND <80 diastolic
             _buildZoneRect(
               chartWidth,
               chartHeight,
@@ -698,13 +667,60 @@ class _DistributionScreenState extends State<DistributionScreen> {
               minX, 120, minY, 80,
               Colors.green.withOpacity(0.1),
             ),
-            // Low zone (bottom-left corner)
+            // Elevated zone: 120-129 systolic AND <80 diastolic
             _buildZoneRect(
               chartWidth,
               chartHeight,
               minX, maxX, minY, maxY,
-              minX, maxX, minY, 50,
-              Colors.blue.withOpacity(0.1),
+              120, 130, minY, 80,
+              Colors.orange.withOpacity(0.1),
+            ),
+            // Stage 1 zone: 130-139 systolic OR 80-89 diastolic
+            // This forms an L-shape region
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              130, 140, minY, 80,
+              Colors.deepOrange.withOpacity(0.1),
+            ),
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              minX, 140, 80, 90,
+              Colors.deepOrange.withOpacity(0.1),
+            ),
+            // Stage 2 zone: ≥140 systolic OR ≥90 diastolic
+            // This forms a larger L-shape region
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              140, 180, minY, 90,
+              Colors.red.withOpacity(0.1),
+            ),
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              minX, 180, 90, 120,
+              Colors.red.withOpacity(0.1),
+            ),
+            // Crisis zone: ≥180 systolic OR ≥120 diastolic
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              180, maxX, minY, 120,
+              Colors.purple.withOpacity(0.1),
+            ),
+            _buildZoneRect(
+              chartWidth,
+              chartHeight,
+              minX, maxX, minY, maxY,
+              minX, maxX, 120, maxY,
+              Colors.purple.withOpacity(0.1),
             ),
           ],
         );
