@@ -40,14 +40,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
         actions: [
           IconButton(
             icon: Icon(
-              AppIcons.search,
+              Icons.file_download_outlined,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
             ),
-            onPressed: () {
-              // TODO: Implement search functionality
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Search coming soon!')),
-              );
+            onPressed: () async {
+              try {
+                final provider = context.read<BloodPressureProvider>();
+                await CsvExportService.exportToCsv(provider.readings);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('CSV exported successfully')),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to export CSV: $e')),
+                );
+              }
             },
           ),
           PopupMenuButton<String>(
