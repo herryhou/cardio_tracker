@@ -1,12 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Modify this file to customize your launch splash screen -->
+<!-- Professional medical splash screen for Cardio Tracker -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@android:color/white" />
+    <!-- Clean medical background gradient -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#F8FAFC"
+                android:centerColor="#FFFFFF"
+                android:endColor="#F1F5F9"
+                android:angle="135"
+                android:type="linear" />
+        </shape>
+    </item>
 
-    <!-- You can insert your own image assets here -->
-    <!-- <item>
-        <bitmap
-            android:gravity="center"
-            android:src="@mipmap/launch_image" />
-    </item> -->
+    <!-- Central medical icon with shadow -->
+    <item android:gravity="center" android:top="-8dp">
+        <shape android:shape="oval">
+            <solid android:color="#E8EEF7" />
+            <size android:width="90dp" android:height="20dp" />
+        </shape>
+    </item>
+
+    <!-- Professional medical icon -->
+    <item android:gravity="center" android:width="96dp" android:height="96dp">
+        <vector
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="96dp"
+            android:height="96dp"
+            android:viewportWidth="108"
+            android:viewportHeight="108">
+
+            <!-- Main heart shape -->
+            <path
+                android:fillColor="#2563EB"
+                android:pathData="M54,72 L47,65 C35,54 30,48 30,40 C30,34 34,30 40,30 C44,30 48,33 54,39 C60,33 64,30 68,30 C74,30 78,34 78,40 C78,48 73,54 61,65 Z"/>
+
+            <!-- Medical cross in heart -->
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M50,38 L58,38 L58,44 L64,44 L64,50 L58,50 L58,56 L50,56 L50,50 L44,50 L44,44 L50,44 Z"/>
+
+            <!-- Heart rate pulse line -->
+            <path
+                android:strokeColor="#1976D2"
+                android:strokeWidth="3"
+                android:strokeLineCap="round"
+                android:fillColor="transparent"
+                android:pathData="M25,85 L35,85 L40,75 L45,95 L50,65 L55,85 L85,85"/>
+        </vector>
+    </item>
+
+    <!-- App name "Cardio Tracker" -->
+    <item android:gravity="center" android:top="70dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+
+    <!-- Decorative medical indicators -->
+    <item android:gravity="center" android:left="-40dp" android:top="-20dp">
+        <shape android:shape="oval">
+            <solid android:color="#64B5F6" />
+            <size android:width="6dp" android:height="6dp" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:right="-40dp" android:top="-20dp">
+        <shape android:shape="oval">
+            <solid android:color="#64B5F6" />
+            <size android:width="6dp" android:height="6dp" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:left="-45dp" android:bottom="-15dp">
+        <shape android:shape="oval">
+            <solid android:color="#42A5F5" />
+            <size android:width="4dp" android:height="4dp" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:right="-45dp" android:bottom="-15dp">
+        <shape android:shape="oval">
+            <solid android:color="#42A5F5" />
+            <size android:width="4dp" android:height="4dp" />
+        </shape>
+    </item>
+
+    <!-- Professional tagline -->
+    <item android:gravity="bottom|center" android:bottom="60dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
 </layer-list>

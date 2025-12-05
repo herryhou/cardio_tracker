@@ -64,14 +64,14 @@ class AppTheme {
 
       // Card Theme
       cardTheme: CardThemeData(
-        elevation: 0,
-        shadowColor: Colors.black.withOpacity(0.05),
+        elevation: 2,
+        shadowColor: Colors.black.withOpacity(0.08),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
         color: _surfaceLight,
         surfaceTintColor: Colors.transparent,
-        margin: EdgeInsets.zero,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       ),
 
       // Elevated Button Theme
@@ -261,14 +261,14 @@ class AppTheme {
 
       // Card Theme
       cardTheme: CardThemeData(
-        elevation: 0,
-        shadowColor: Colors.black.withOpacity(0.3),
+        elevation: 2,
+        shadowColor: Colors.black.withOpacity(0.4),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
         color: _surfaceDark,
         surfaceTintColor: Colors.transparent,
-        margin: EdgeInsets.zero,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       ),
 
       // Elevated Button Theme

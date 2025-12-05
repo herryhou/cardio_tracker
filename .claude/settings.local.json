@@ -11,7 +11,11 @@
       "Bash(git init:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(flutter packages pub run build_runner build:*)"
+      "Bash(flutter packages pub run build_runner build:*)",
+      "Bash(flutter run:*)",
+      "Bash(flutter:*)",
+      "Skill(brainstorming)",
+      "Skill(writing-plans)"
     ],
     "deny": [],
     "ask": []

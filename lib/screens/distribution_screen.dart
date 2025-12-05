@@ -267,65 +267,24 @@ class _DistributionScreenState extends State<DistributionScreen> {
                       minY: 40,
                       maxY: 140,
                       gridData: FlGridData(
-                        show: true,
-                        drawVerticalLine: true,
-                        horizontalInterval: 10,
-                        verticalInterval: 20,
-                        getDrawingHorizontalLine: (value) {
-                          // Highlight important boundaries
-                          if (value == 80 || value == 90 || value == 120) {
-                            return FlLine(
-                              color: _getBoundaryLineColor(value),
-                              strokeWidth: 2,
-                            );
-                          }
-                          return FlLine(
-                            color: Colors.white.withOpacity(0.3),
-                            strokeWidth: 1,
-                          );
-                        },
-                        getDrawingVerticalLine: (value) {
-                          // Highlight important boundaries
-                          if (value == 120 || value == 130 || value == 140 || value == 180) {
-                            return FlLine(
-                              color: _getBoundaryLineColor(value),
-                              strokeWidth: 2,
-                            );
-                          }
-                          return FlLine(
-                            color: Colors.white.withOpacity(0.3),
-                            strokeWidth: 1,
-                          );
-                        },
+                        show: false,
+                        drawVerticalLine: false,
+                        drawHorizontalLine: false,
                       ),
                       titlesData: FlTitlesData(
                         show: true,
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            interval: 10,
-                            reservedSize: 32,
+                            interval: 20,
+                            reservedSize: 28,
                             getTitlesWidget: (value, meta) {
-                              Color? textColor;
-                              FontWeight? fontWeight;
-
-                              // Highlight important values
-                              if (value == 80) {
-                                textColor = Colors.orange;
-                                fontWeight = FontWeight.bold;
-                              } else if (value == 90) {
-                                textColor = Colors.red;
-                                fontWeight = FontWeight.bold;
-                              } else if (value == 120) {
-                                textColor = Colors.purple;
-                                fontWeight = FontWeight.bold;
-                              }
-
                               return Text(
                                 value.toInt().toString(),
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: textColor ?? Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                                  fontWeight: fontWeight ?? FontWeight.normal,
+                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               );
                             },
@@ -334,31 +293,14 @@ class _DistributionScreenState extends State<DistributionScreen> {
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            interval: 20,
+                            interval: 40,
                             getTitlesWidget: (value, meta) {
-                              Color? textColor;
-                              FontWeight? fontWeight;
-
-                              // Highlight important values
-                              if (value == 120) {
-                                textColor = Colors.orange;
-                                fontWeight = FontWeight.bold;
-                              } else if (value == 130) {
-                                textColor = Colors.deepOrange;
-                                fontWeight = FontWeight.bold;
-                              } else if (value == 140) {
-                                textColor = Colors.red;
-                                fontWeight = FontWeight.bold;
-                              } else if (value == 180) {
-                                textColor = Colors.purple;
-                                fontWeight = FontWeight.bold;
-                              }
-
                               return Text(
                                 value.toInt().toString(),
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: textColor ?? Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                                  fontWeight: fontWeight ?? FontWeight.normal,
+                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               );
                             },
