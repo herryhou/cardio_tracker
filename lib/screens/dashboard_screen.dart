@@ -8,6 +8,7 @@ import '../theme/app_theme.dart';
 import '../services/csv_export_service.dart';
 import '../screens/add_reading_screen.dart';
 import '../widgets/app_icon.dart';
+import 'dart:math' as math;
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -29,6 +30,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
         title: const AppLogo(showText: true, size: 36),
         elevation: 0,
@@ -105,24 +107,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
             onRefresh: () => provider.loadReadings(),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.zero,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Latest Reading Section
-                  _buildLatestReadingSection(context, provider.latestReading),
-                  const SizedBox(height: 24),
+                  // Gradient Header Section
+                  _buildGradientHeader(context, provider.latestReading),
 
-                  // Overview Metrics Section
-                  if (provider.readings.isNotEmpty) ...[
-                    _buildOverviewMetrics(context, provider),
-                    const SizedBox(height: 24),
+                  // Main Content
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFF5F7FA),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Metrics Grid
+                          if (provider.readings.isNotEmpty) ...[
+                            _buildMetricsGrid(context, provider),
+                            const SizedBox(height: 24),
 
-                    // Recent Readings Section
-                    _buildRecentReadingsSection(context, provider.recentReadings),
-                  ] else ...[
-                    _buildEmptyMetricsSection(context),
-                  ],
+                            // Historical Chart Section
+                            _buildHistoricalChart(context, provider),
+                            const SizedBox(height: 24),
+
+                            // Recent Readings Section
+                            _buildRecentReadingsSection(context, provider.recentReadings),
+                          ] else ...[
+                            _buildEmptyState(context),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -136,9 +155,479 @@ class _DashboardScreenState extends State<DashboardScreen> {
         icon: const Icon(AppIcons.add),
         label: const Text('Add Reading'),
         elevation: 4,
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: const Color(0xFF8B5CF6),
         foregroundColor: Colors.white,
       ),
+    );
+  }
+
+  // New gradient header method
+  Widget _buildGradientHeader(BuildContext context, BloodPressureReading? latestReading) {
+    final hour = DateTime.now().hour;
+    String greeting = 'Good morning';
+    if (hour >= 12 && hour < 17) {
+      greeting = 'Good afternoon';
+    } else if (hour >= 17) {
+      greeting = 'Good evening';
+    }
+
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF8B5CF6),
+            Color(0xFF7C3AED),
+            Color(0xFF6D28D9),
+          ],
+        ),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Greeting Section
+              Row(
+                children: [
+                  const Icon(
+                    Icons.wb_sunny_outlined,
+                    color: Colors.white70,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    greeting,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Main Blood Pressure Card
+              if (latestReading != null) ...[
+                _buildMainBPCard(context, latestReading),
+              ] else ...[
+                _buildEmptyMainCard(context),
+              ],
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainBPCard(BuildContext context, BloodPressureReading reading) {
+    final categoryColor = _getCategoryColor(context, reading.category);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Blood Pressure Values
+          Row(
+            children: [
+              // Systolic
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      reading.systolic.toString(),
+                      style: TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                        color: categoryColor,
+                        height: 1.0,
+                      ),
+                    ),
+                    const Text(
+                      'SYSTOLIC',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF6B7280),
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 20),
+              // Diastolic
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      reading.diastolic.toString(),
+                      style: TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                        color: categoryColor,
+                        height: 1.0,
+                      ),
+                    ),
+                    const Text(
+                      'DIASTOLIC',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF6B7280),
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // Pulse and Status Row
+          Row(
+            children: [
+              // Pulse
+              Row(
+                children: [
+                  const Icon(
+                    Icons.favorite,
+                    color: Color(0xFFEF4444),
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        reading.heartRate.toString(),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1F2937),
+                        ),
+                      ),
+                      const Text(
+                        'PULSE',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF6B7280),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              const Spacer(),
+
+              // Status Badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: categoryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  _getCategoryText(reading.category).toUpperCase(),
+                  style: TextStyle(
+                    color: categoryColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyMainCard(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.favorite_border,
+            size: 64,
+            color: Color(0xFFD1D5DB),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'No readings yet',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF6B7280),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Add your first blood pressure reading',
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFF9CA3AF),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetricsGrid(BuildContext context, BloodPressureProvider provider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Overview',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1F2937),
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 1.4,
+          children: [
+            _buildMetricCard(
+              context,
+              'Systolic',
+              provider.averageSystolic.round().toString(),
+              'mmHg',
+              const Color(0xFFEF4444),
+              Icons.arrow_upward,
+            ),
+            _buildMetricCard(
+              context,
+              'Diastolic',
+              provider.averageDiastolic.round().toString(),
+              'mmHg',
+              const Color(0xFF3B82F6),
+              Icons.arrow_downward,
+            ),
+            _buildMetricCard(
+              context,
+              'Pulse',
+              provider.averageHeartRate.round().toString(),
+              'bpm',
+              const Color(0xFFEF4444),
+              Icons.favorite,
+            ),
+            _buildMetricCard(
+              context,
+              'Test Date',
+              _formatTestDate(provider.latestReading?.timestamp),
+              null,
+              const Color(0xFF10B981),
+              Icons.calendar_today,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMetricCard(
+    BuildContext context,
+    String title,
+    String value,
+    String? unit,
+    Color color,
+    IconData icon,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color: color,
+                ),
+              ),
+              const Spacer(),
+              Icon(
+                Icons.more_horiz,
+                size: 16,
+                color: const Color(0xFF9CA3AF),
+              ),
+            ],
+          ),
+          const Spacer(),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          if (unit != null) ...[
+            const SizedBox(width: 4),
+            Text(
+              unit,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Color(0xFF6B7280),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Color(0xFF6B7280),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoricalChart(BuildContext context, BloodPressureProvider provider) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text(
+                'Historical',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1F2937),
+                ),
+              ),
+              const Spacer(),
+              TextButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Detailed chart coming soon')),
+                  );
+                },
+                child: const Text(
+                  'See all',
+                  style: TextStyle(
+                    color: Color(0xFF8B5CF6),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // Simple chart visualization (placeholder for actual chart)
+          Container(
+            height: 200,
+            child: _buildSimpleChart(context, provider.readings),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSimpleChart(BuildContext context, List<BloodPressureReading> readings) {
+    if (readings.isEmpty) {
+      return const Center(
+        child: Text(
+          'No data to display',
+          style: TextStyle(
+            color: Color(0xFF9CA3AF),
+            fontSize: 14,
+          ),
+        ),
+      );
+    }
+
+    // Get last 7 readings for the chart
+    final recentReadings = readings.take(7).toList().reversed.toList();
+
+    return CustomPaint(
+      size: const Size(double.infinity, 200),
+      painter: _BPChartPainter(recentReadings),
     );
   }
 
@@ -186,6 +675,67 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(40),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.analytics_outlined,
+            size: 64,
+            color: Color(0xFFD1D5DB),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'No data yet',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF6B7280),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Add some readings to see your metrics and history',
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFF9CA3AF),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatTestDate(DateTime? timestamp) {
+    if (timestamp == null) return 'N/A';
+
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inDays == 0) {
+      return 'Today';
+    } else if (difference.inDays == 1) {
+      return 'Yesterday';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else {
+      return '${timestamp.day}/${timestamp.month}';
+    }
   }
 
   Widget _buildLatestReadingSection(BuildContext context, BloodPressureReading? latestReading) {
@@ -1018,6 +1568,159 @@ class ReadingDetailsSheet extends StatelessWidget {
 
     return '$day/$month/$year at $hour:$minute';
   }
+}
+
+/// Custom painter for blood pressure chart
+class _BPChartPainter extends CustomPainter {
+  final List<BloodPressureReading> readings;
+
+  _BPChartPainter(this.readings);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (readings.isEmpty) return;
+
+    final padding = const EdgeInsets.all(20);
+    final chartWidth = size.width - padding.left - padding.right;
+    final chartHeight = size.height - padding.top - padding.bottom;
+
+    // Find min and max values for scaling
+    int maxSystolic = 140;
+    int minSystolic = 100;
+    int maxDiastolic = 90;
+    int minDiastolic = 60;
+
+    for (final reading in readings) {
+      maxSystolic = math.max(maxSystolic, reading.systolic);
+      minSystolic = math.min(minSystolic, reading.systolic);
+      maxDiastolic = math.max(maxDiastolic, reading.diastolic);
+      minDiastolic = math.min(minDiastolic, reading.diastolic);
+    }
+
+    // Add some padding to the ranges
+    final systolicRange = maxSystolic - minSystolic + 20;
+    final diastolicRange = maxDiastolic - minDiastolic + 20;
+
+    // Draw grid lines
+    final gridPaint = Paint()
+      ..color = const Color(0xFFE5E7EB)
+      ..strokeWidth = 1;
+
+    final textPaint = Paint()
+      ..color = const Color(0xFF6B7280)
+      ..strokeWidth = 1;
+
+    // Horizontal grid lines
+    for (int i = 0; i <= 4; i++) {
+      final y = padding.top + (chartHeight / 4) * i;
+      canvas.drawLine(
+        Offset(padding.left, y),
+        Offset(size.width - padding.right, y),
+        gridPaint,
+      );
+    }
+
+    // Draw systolic line
+    if (readings.isNotEmpty) {
+      final systolicPaint = Paint()
+        ..color = const Color(0xFFEF4444)
+        ..strokeWidth = 3
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round;
+
+      final systolicPath = Path();
+
+      for (int i = 0; i < readings.length; i++) {
+        final x = padding.left + (chartWidth / (readings.length - 1)) * i;
+        final y = padding.top + chartHeight -
+                  ((readings[i].systolic - minSystolic + 10) / systolicRange) * chartHeight;
+
+        if (i == 0) {
+          systolicPath.moveTo(x, y);
+        } else {
+          systolicPath.lineTo(x, y);
+        }
+      }
+
+      canvas.drawPath(systolicPath, systolicPaint);
+
+      // Draw diastolic line
+      final diastolicPaint = Paint()
+        ..color = const Color(0xFF3B82F6)
+        ..strokeWidth = 3
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round;
+
+      final diastolicPath = Path();
+
+      for (int i = 0; i < readings.length; i++) {
+        final x = padding.left + (chartWidth / (readings.length - 1)) * i;
+        final y = padding.top + chartHeight -
+                  ((readings[i].diastolic - minDiastolic + 10) / diastolicRange) * chartHeight;
+
+        if (i == 0) {
+          diastolicPath.moveTo(x, y);
+        } else {
+          diastolicPath.lineTo(x, y);
+        }
+      }
+
+      canvas.drawPath(diastolicPath, diastolicPaint);
+
+      // Draw data points
+      for (int i = 0; i < readings.length; i++) {
+        final x = padding.left + (chartWidth / (readings.length - 1)) * i;
+
+        // Systolic point
+        final systolicY = padding.top + chartHeight -
+                         ((readings[i].systolic - minSystolic + 10) / systolicRange) * chartHeight;
+        canvas.drawCircle(Offset(x, systolicY), 4, systolicPaint);
+
+        // Diastolic point
+        final diastolicY = padding.top + chartHeight -
+                          ((readings[i].diastolic - minDiastolic + 10) / diastolicRange) * chartHeight;
+        canvas.drawCircle(Offset(x, diastolicY), 4, diastolicPaint);
+      }
+    }
+
+    // Draw legend
+    final legendY = padding.top;
+
+    // Systolic legend
+    final systolicLegendPaint = Paint()
+      ..color = const Color(0xFFEF4444)
+      ..strokeWidth = 3;
+
+    canvas.drawCircle(Offset(size.width - 120, legendY), 4, systolicLegendPaint);
+    _drawText(canvas, 'Systolic', size.width - 100, legendY - 6, const Color(0xFF6B7280));
+
+    // Diastolic legend
+    final diastolicLegendPaint = Paint()
+      ..color = const Color(0xFF3B82F6)
+      ..strokeWidth = 3;
+
+    canvas.drawCircle(Offset(size.width - 120, legendY + 20), 4, diastolicLegendPaint);
+    _drawText(canvas, 'Diastolic', size.width - 100, legendY + 14, const Color(0xFF6B7280));
+  }
+
+  void _drawText(Canvas canvas, String text, double x, double y, Color color) {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    textPainter.paint(canvas, Offset(x, y));
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
 /// Modal bottom sheet for adding new blood pressure readings

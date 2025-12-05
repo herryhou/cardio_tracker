@@ -15,7 +15,9 @@
       "Bash(flutter run:*)",
       "Bash(flutter:*)",
       "Skill(brainstorming)",
-      "Skill(writing-plans)"
+      "Skill(writing-plans)",
+      "Skill(using-superpowers)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
