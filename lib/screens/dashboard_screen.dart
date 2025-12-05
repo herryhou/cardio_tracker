@@ -436,9 +436,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          childAspectRatio: 1.6, // Increased from 1.4 to give more vertical space
+          mainAxisSpacing: 12, // Reduced from 16
+          crossAxisSpacing: 12, // Reduced from 16
+          childAspectRatio: 1.8, // Further increased from 1.6 for better Android compatibility
           children: [
             _buildMetricCard(
               context,
@@ -487,7 +487,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     IconData icon,
   ) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12), // Reduced from 16
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -501,34 +501,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min, // Added to prevent overflow
         children: [
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(6), // Reduced from 8
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   icon,
-                  size: 20,
+                  size: 16, // Reduced from 20
                   color: color,
                 ),
               ),
               const Spacer(),
               Icon(
                 Icons.more_horiz,
-                size: 16,
+                size: 14, // Reduced from 16
                 color: const Color(0xFF9CA3AF),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8), // Reduced from 12
           Text(
             value,
             style: TextStyle(
-              fontSize: 20, // Reduced from 24
+              fontSize: 18, // Further reduced from 20
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -536,26 +537,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
             maxLines: 1,
           ),
           if (unit != null) ...[
-            const SizedBox(height: 2),
+            const SizedBox(height: 1), // Reduced from 2
             Text(
               unit,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 11, // Reduced from 12
                 color: Color(0xFF6B7280),
                 fontWeight: FontWeight.w500,
               ),
             ),
           ],
-          const SizedBox(height: 8),
+          const SizedBox(height: 4), // Reduced from 8
           Text(
             title,
             style: const TextStyle(
-              fontSize: 12,
+              fontSize: 11, // Reduced from 12
               color: Color(0xFF6B7280),
               fontWeight: FontWeight.w500,
             ),
             overflow: TextOverflow.ellipsis,
-            maxLines: 1,
+            maxLines: 2, // Allow 2 lines for better text wrapping
           ),
         ],
       ),
