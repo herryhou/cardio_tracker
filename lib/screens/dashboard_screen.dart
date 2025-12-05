@@ -580,32 +580,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Text(
-                'Historical',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1F2937),
-                ),
-              ),
-              const Spacer(),
-              TextButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Detailed chart coming soon')),
-                  );
-                },
-                child: const Text(
-                  'See all',
-                  style: TextStyle(
-                    color: Color(0xFF8B5CF6),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
+          const Text(
+            'Historical',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF1F2937),
+            ),
           ),
           const SizedBox(height: 20),
 
@@ -748,55 +729,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  Widget _buildRecentReadingsSection(BuildContext context, List<BloodPressureReading> recentReadings) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              'Recent Readings',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Spacer(),
-            TextButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('History view coming soon')),
-                );
-              },
-              child: Text(
-                'See All',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-
-        if (recentReadings.isEmpty)
-          _buildEmptyRecentState(context)
-        else
-          Column(
-            children: recentReadings.take(5).map((reading) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: CompactReadingCard(
-                  reading: reading,
-                  onTap: () => _showReadingDetails(context, reading),
-                ),
-              );
-            }).toList(),
-          ),
-      ],
-    );
-  }
-
+  
   Widget _buildSimpleRecentReadingsList(BuildContext context, List<BloodPressureReading> recentReadings) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -945,43 +878,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildEmptyRecentState(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Row(
-          children: [
-            Icon(
-              Icons.history,
-              size: 24,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'No recent readings',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    'Your reading history will appear here',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
+  
   void _handleMenuAction(BuildContext context, String action) async {
     final provider = context.read<BloodPressureProvider>();
 
@@ -994,11 +891,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         break;
       case 'export_month':
         await _exportMonth(context, provider.readings);
-        break;
-      case 'settings':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Settings coming soon')),
-        );
         break;
     }
   }
@@ -1051,15 +943,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  void _showReadingDetails(BuildContext context, BloodPressureReading reading) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => ReadingDetailsSheet(reading: reading),
-    );
-  }
-
+  
   Color _getCategoryColor(BuildContext context, BloodPressureCategory category) {
     switch (category) {
       case BloodPressureCategory.low:
@@ -1095,308 +979,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
-/// Modal bottom sheet for reading details
-class ReadingDetailsSheet extends StatelessWidget {
-  final BloodPressureReading reading;
-
-  const ReadingDetailsSheet({super.key, required this.reading});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final categoryColor = _getCategoryColor(context, reading.category);
-
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Handle bar
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.outline.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Header
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: categoryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.favorite,
-                      size: 24,
-                      color: categoryColor,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Reading Details',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          _getCategoryText(reading.category),
-                          style: theme.textTheme.labelMedium?.copyWith(
-                            color: categoryColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // Reading values
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDetailValue(
-                      context,
-                      'Systolic',
-                      '${reading.systolic}',
-                      'mmHg',
-                      Colors.red,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildDetailValue(
-                      context,
-                      'Diastolic',
-                      '${reading.diastolic}',
-                      'mmHg',
-                      Colors.blue,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildDetailValue(
-                      context,
-                      'Pulse',
-                      '${reading.heartRate}',
-                      'bpm',
-                      Colors.pink,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // Timestamp
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Date & Time',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _formatDateTime(reading.timestamp),
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Notes (if available)
-              if (reading.notes != null && reading.notes!.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Notes',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        reading.notes!,
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              const SizedBox(height: 24),
-
-              // Actions
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Edit feature coming soon')),
-                        );
-                      },
-                      icon: const Icon(Icons.edit),
-                      label: const Text('Edit'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: FilledButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Delete feature coming soon')),
-                        );
-                      },
-                      icon: const Icon(Icons.delete),
-                      label: const Text('Delete'),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: theme.colorScheme.errorContainer,
-                        foregroundColor: theme.colorScheme.error,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailValue(
-    BuildContext context,
-    String label,
-    String value,
-    String unit,
-    Color color,
-  ) {
-    final theme = Theme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Text(
-            label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          Text(
-            unit,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _getCategoryColor(BuildContext context, BloodPressureCategory category) {
-    switch (category) {
-      case BloodPressureCategory.low:
-        return AppTheme.getLowColor(context);
-      case BloodPressureCategory.normal:
-        return AppTheme.getNormalColor(context);
-      case BloodPressureCategory.elevated:
-        return AppTheme.getElevatedColor(context);
-      case BloodPressureCategory.stage1:
-        return AppTheme.getStage1Color(context);
-      case BloodPressureCategory.stage2:
-        return AppTheme.getStage2Color(context);
-      case BloodPressureCategory.crisis:
-        return AppTheme.getCrisisColor(context);
-    }
-  }
-
-  String _getCategoryText(BloodPressureCategory category) {
-    switch (category) {
-      case BloodPressureCategory.low:
-        return 'Low';
-      case BloodPressureCategory.normal:
-        return 'Normal';
-      case BloodPressureCategory.elevated:
-        return 'Elevated';
-      case BloodPressureCategory.stage1:
-        return 'Stage 1';
-      case BloodPressureCategory.stage2:
-        return 'Stage 2';
-      case BloodPressureCategory.crisis:
-        return 'Crisis';
-    }
-  }
-
-  String _formatDateTime(DateTime dateTime) {
-    final day = dateTime.day.toString().padLeft(2, '0');
-    final month = dateTime.month.toString().padLeft(2, '0');
-    final year = dateTime.year;
-    final hour = dateTime.hour.toString().padLeft(2, '0');
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-
-    return '$day/$month/$year at $hour:$minute';
-  }
-}
 
 /// Custom painter for blood pressure chart
 class _BPChartPainter extends CustomPainter {

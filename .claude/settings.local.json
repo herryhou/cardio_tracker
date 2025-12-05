@@ -17,7 +17,9 @@
       "Skill(brainstorming)",
       "Skill(writing-plans)",
       "Skill(using-superpowers)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Skill(subagent-driven-development)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
