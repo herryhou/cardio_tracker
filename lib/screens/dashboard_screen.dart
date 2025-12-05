@@ -140,7 +140,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             const SizedBox(height: 24),
 
                             // Recent Readings Section
-                            _buildRecentReadingsSection(context, provider.recentReadings),
+                            _buildSimpleRecentReadingsList(context, provider.recentReadings),
                           ] else ...[
                             _buildEmptyState(context),
                           ],
@@ -792,6 +792,154 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               );
             }).toList(),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildSimpleRecentReadingsList(BuildContext context, List<BloodPressureReading> recentReadings) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Recent Readings',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1F2937),
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        if (recentReadings.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Row(
+              children: [
+                Icon(
+                  Icons.history,
+                  size: 24,
+                  color: Color(0xFF9CA3AF),
+                ),
+                SizedBox(width: 12),
+                Text(
+                  'No recent readings',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF6B7280),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              children: recentReadings.take(5).toList().asMap().entries.map((entry) {
+                final index = entry.key;
+                final reading = entry.value;
+                final isLast = index == recentReadings.length - 1 || index == 4;
+
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      child: Row(
+                        children: [
+                          // Date
+                          SizedBox(
+                            width: 60,
+                            child: Text(
+                              '${reading.timestamp.day}/${reading.timestamp.month}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1F2937),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+
+                          // BP Values
+                          Expanded(
+                            child: Text(
+                              '${reading.systolic}/${reading.diastolic}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: _getCategoryColor(context, reading.category),
+                              ),
+                            ),
+                          ),
+
+                          // Pulse
+                          const SizedBox(width: 16),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.favorite,
+                                size: 16,
+                                color: const Color(0xFFEF4444),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${reading.heartRate}',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFFEF4444),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // Category indicator
+                          const SizedBox(width: 12),
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: _getCategoryColor(context, reading.category),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (!isLast)
+                      const Divider(
+                        height: 1,
+                        color: Color(0xFFE5E7EB),
+                        indent: 20,
+                        endIndent: 20,
+                      ),
+                  ],
+                );
+              }).toList(),
+            ),
           ),
       ],
     );
