@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fl_chart/fl_chart.dart';
 import '../providers/blood_pressure_provider.dart';
 import '../models/blood_pressure_reading.dart';
 
@@ -31,34 +30,6 @@ class _DistributionScreenState extends State<DistributionScreen> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: Theme.of(context).colorScheme.primary,
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.filter_list),
-            onSelected: (String value) {
-              setState(() {
-                _selectedTimeFilter = value;
-              });
-            },
-            itemBuilder: (BuildContext context) => [
-              const PopupMenuItem<String>(
-                value: 'All',
-                child: Text('All Time'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Month',
-                child: Text('This Month'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Season',
-                child: Text('This Season'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Year',
-                child: Text('This Year'),
-              ),
-            ],
-          ),
-        ],
       ),
       body: Consumer<BloodPressureProvider>(
         builder: (context, provider, child) {
@@ -100,9 +71,7 @@ class _DistributionScreenState extends State<DistributionScreen> {
             );
           }
 
-          final filteredReadings = _getFilteredReadings(provider.readings);
-
-          if (filteredReadings.isEmpty) {
+          if (provider.readings.isEmpty) {
             return _buildEmptyState();
           }
 
@@ -111,25 +80,7 @@ class _DistributionScreenState extends State<DistributionScreen> {
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Summary Cards
-                  _buildSummaryCards(filteredReadings),
-                  const SizedBox(height: 16),
-
-                  // Scatter Plot Chart
-                  _buildScatterPlotChart(filteredReadings),
-                  const SizedBox(height: 16),
-
-                  // Legend
-                  _buildLegend(),
-                  const SizedBox(height: 16),
-
-                  // Zone Analysis
-                  _buildZoneAnalysis(filteredReadings),
-                ],
-              ),
+              child: _buildCleanDistributionChart(context, provider),
             ),
           );
         },
@@ -146,7 +97,7 @@ class _DistributionScreenState extends State<DistributionScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.scatter_plot,
+                Icons.bar_chart,
                 size: 64,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
               ),
@@ -181,671 +132,124 @@ class _DistributionScreenState extends State<DistributionScreen> {
     );
   }
 
-  Widget _buildSummaryCards(List<BloodPressureReading> readings) {
-    final zoneCounts = _getZoneCounts(readings);
+  Widget _buildCleanDistributionChart(BuildContext context, BloodPressureProvider provider) {
+    final categoryCounts = _getCategoryCounts(provider.readings);
+    final total = provider.readings.length;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Distribution',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF1F2937),
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Clean horizontal bars
+          _buildHorizontalBar(context, 'Normal', categoryCounts['normal']!, total, Colors.green),
+          const SizedBox(height: 16),
+          _buildHorizontalBar(context, 'Elevated', categoryCounts['elevated']!, total, Colors.orange),
+          const SizedBox(height: 16),
+          _buildHorizontalBar(context, 'High', categoryCounts['high']!, total, Colors.red),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHorizontalBar(BuildContext context, String label, int count, int total, Color color) {
+    final percentage = total > 0 ? (count / total * 100) : 0.0;
 
     return Row(
       children: [
-        Expanded(child: _buildZoneCard('Normal', zoneCounts['normal'] ?? 0, Colors.green)),
-        const SizedBox(width: 8),
-        Expanded(child: _buildZoneCard('Elevated', zoneCounts['elevated'] ?? 0, Colors.orange)),
-        const SizedBox(width: 8),
-        Expanded(child: _buildZoneCard('High', zoneCounts['high'] ?? 0, Colors.red)),
+        SizedBox(
+          width: 80,
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF1F2937),
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Container(
+            height: 24,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: percentage / 100,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        SizedBox(
+          width: 60,
+          child: Text(
+            '$count (${percentage.toStringAsFixed(0)}%)',
+            textAlign: TextAlign.right,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF6B7280),
+            ),
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildZoneCard(String label, int count, Color color) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          children: [
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              count.toString(),
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildScatterPlotChart(List<BloodPressureReading> readings) {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Blood Pressure Distribution with Medical Zones',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Background colors indicate blood pressure categories',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 400,
-              child: Stack(
-                children: [
-                  // Background zones
-                  _buildBackgroundZones(),
-                  // Scatter chart on top
-                  ScatterChart(
-                    ScatterChartData(
-                      scatterSpots: readings.map<ScatterSpot>((reading) {
-                        final category = reading.category;
-                        return ScatterSpot(
-                          reading.systolic.toDouble(),
-                          reading.diastolic.toDouble(),
-                          color: _getCategoryColor(category),
-                          radius: 6,
-                        );
-                      }).cast<ScatterSpot>().toList(),
-                      minX: 70,
-                      maxX: 200,
-                      minY: 40,
-                      maxY: 140,
-                      gridData: FlGridData(
-                        show: false,
-                        drawVerticalLine: false,
-                        drawHorizontalLine: false,
-                      ),
-                      titlesData: FlTitlesData(
-                        show: true,
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            interval: 20,
-                            reservedSize: 28,
-                            getTitlesWidget: (value, meta) {
-                              return Text(
-                                value.toInt().toString(),
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            interval: 40,
-                            getTitlesWidget: (value, meta) {
-                              return Text(
-                                value.toInt().toString(),
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      ),
-                      borderData: FlBorderData(
-                        show: true,
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Systolic (mmHg)',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  'Diastolic (mmHg)',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            // Add zone indicators below the chart
-            _buildZoneIndicators(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLegend() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Blood Pressure Categories',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            _buildLegendItem('Normal', '< 120 / < 80', Colors.green),
-            _buildLegendItem('Elevated', '121-129 / < 80', Colors.orange),
-            _buildLegendItem('Stage 1', '130-139 / 80-89', Colors.deepOrange),
-            _buildLegendItem('Stage 2', '≥ 140 / ≥ 90', Colors.red),
-            _buildLegendItem('Crisis', '≥ 180 / ≥ 120', Colors.purple),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLegendItem(String category, String range, Color color) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        children: [
-          Container(
-            width: 16,
-            height: 16,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(3),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            flex: 2,
-            child: Text(
-              category,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              range,
-              style: TextStyle(
-                fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildZoneAnalysis(List<BloodPressureReading> readings) {
-    final zoneCounts = _getZoneCounts(readings);
-    final total = readings.length;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Zone Analysis',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (total == 0)
-              const Text('No data to analyze')
-            else ...[
-              _buildAnalysisRow('Normal', zoneCounts['normal'] ?? 0, total, Colors.green),
-              _buildAnalysisRow('Elevated', zoneCounts['elevated'] ?? 0, total, Colors.orange),
-              _buildAnalysisRow('Stage 1', zoneCounts['stage1'] ?? 0, total, Colors.deepOrange),
-              _buildAnalysisRow('Stage 2', zoneCounts['stage2'] ?? 0, total, Colors.red),
-              _buildAnalysisRow('Crisis', zoneCounts['crisis'] ?? 0, total, Colors.purple),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAnalysisRow(String label, int count, int total, Color color) {
-    final percentage = total > 0 ? (count / total * 100).toStringAsFixed(1) : '0.0';
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            flex: 2,
-            child: Text(
-              label,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              '$count readings',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                fontSize: 13,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              '$percentage%',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: color,
-                fontSize: 13,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  List<BloodPressureReading> _getFilteredReadings(List<BloodPressureReading> readings) {
-    final now = DateTime.now();
-
-    switch (_selectedTimeFilter) {
-      case 'Month':
-        final monthAgo = now.subtract(const Duration(days: 30));
-        return readings.where((r) => r.timestamp.isAfter(monthAgo)).toList();
-      case 'Season':
-        final seasonAgo = now.subtract(const Duration(days: 90));
-        return readings.where((r) => r.timestamp.isAfter(seasonAgo)).toList();
-      case 'Year':
-        final yearAgo = now.subtract(const Duration(days: 365));
-        return readings.where((r) => r.timestamp.isAfter(yearAgo)).toList();
-      default:
-        return readings;
-    }
-  }
-
-  Map<String, int> _getZoneCounts(List<BloodPressureReading> readings) {
+  Map<String, int> _getCategoryCounts(List<BloodPressureReading> readings) {
     final counts = <String, int>{
       'normal': 0,
       'elevated': 0,
-      'stage1': 0,
-      'stage2': 0,
-      'crisis': 0,
+      'high': 0,
     };
 
     for (final reading in readings) {
       switch (reading.category) {
         case BloodPressureCategory.normal:
+        case BloodPressureCategory.low:
           counts['normal'] = (counts['normal'] ?? 0) + 1;
           break;
         case BloodPressureCategory.elevated:
           counts['elevated'] = (counts['elevated'] ?? 0) + 1;
           break;
         case BloodPressureCategory.stage1:
-          counts['stage1'] = (counts['stage1'] ?? 0) + 1;
-          break;
         case BloodPressureCategory.stage2:
-          counts['stage2'] = (counts['stage2'] ?? 0) + 1;
-          break;
         case BloodPressureCategory.crisis:
-          counts['crisis'] = (counts['crisis'] ?? 0) + 1;
-          break;
-        case BloodPressureCategory.low:
-          // Count low readings as normal for simplicity
-          counts['normal'] = (counts['normal'] ?? 0) + 1;
+          counts['high'] = (counts['high'] ?? 0) + 1;
           break;
       }
     }
 
     return counts;
-  }
-
-  Color _getCategoryColor(BloodPressureCategory category) {
-    switch (category) {
-      case BloodPressureCategory.low:
-        return Colors.blue;
-      case BloodPressureCategory.normal:
-        return Colors.green;
-      case BloodPressureCategory.elevated:
-        return Colors.orange;
-      case BloodPressureCategory.stage1:
-        return Colors.deepOrange;
-      case BloodPressureCategory.stage2:
-        return Colors.red;
-      case BloodPressureCategory.crisis:
-        return Colors.purple;
-    }
-  }
-
-  /// Get boundary line color based on value
-  Color _getBoundaryLineColor(double value) {
-    switch (value.toInt()) {
-      case 80: // Diastolic boundary
-        return Colors.orange.withOpacity(0.4);
-      case 90: // Diastolic boundary
-        return Colors.red.withOpacity(0.4);
-      case 120: // Both systolic and diastolic boundary
-        return Colors.purple.withOpacity(0.4);
-      case 130: // Systolic boundary
-        return Colors.deepOrange.withOpacity(0.4);
-      case 140: // Systolic boundary
-        return Colors.red.withOpacity(0.4);
-      case 180: // Crisis threshold
-        return Colors.purple.withOpacity(0.4);
-      default:
-        return Colors.grey.withOpacity(0.4);
-    }
-  }
-
-  /// Build background zones for the scatter chart
-  Widget _buildBackgroundZones() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final chartWidth = constraints.maxWidth;
-        final chartHeight = constraints.maxHeight;
-
-        // Chart coordinate system mapping
-        const minX = 70.0;
-        const maxX = 200.0;
-        const minY = 40.0;
-        const maxY = 140.0;
-
-        return Stack(
-          children: [
-            // Low zone (very low blood pressure)
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              minX, 100, minY, 60,
-              Colors.blue.withOpacity(0.1),
-            ),
-            // Normal zone: <120 systolic AND <80 diastolic
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              minX, 120, minY, 80,
-              Colors.green.withOpacity(0.1),
-            ),
-            // Elevated zone: 120-129 systolic AND <80 diastolic
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              120, 130, minY, 80,
-              Colors.orange.withOpacity(0.1),
-            ),
-            // Stage 1 zone: 130-139 systolic OR 80-89 diastolic
-            // This forms an L-shape region
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              130, 140, minY, 80,
-              Colors.deepOrange.withOpacity(0.1),
-            ),
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              minX, 140, 80, 90,
-              Colors.deepOrange.withOpacity(0.1),
-            ),
-            // Stage 2 zone: ≥140 systolic OR ≥90 diastolic
-            // This forms a larger L-shape region
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              140, 180, minY, 90,
-              Colors.red.withOpacity(0.1),
-            ),
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              minX, 180, 90, 120,
-              Colors.red.withOpacity(0.1),
-            ),
-            // Crisis zone: ≥180 systolic OR ≥120 diastolic
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              180, maxX, minY, 120,
-              Colors.purple.withOpacity(0.1),
-            ),
-            _buildZoneRect(
-              chartWidth,
-              chartHeight,
-              minX, maxX, minY, maxY,
-              minX, maxX, 120, maxY,
-              Colors.purple.withOpacity(0.1),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// Build a single zone rectangle
-  Widget _buildZoneRect(
-    double chartWidth,
-    double chartHeight,
-    double minX, double maxX, double minY, double maxY,
-    double zoneMinX, double zoneMaxX, double zoneMinY, double zoneMaxY,
-    Color color,
-  ) {
-    // Calculate pixel positions
-    final left = ((zoneMinX - minX) / (maxX - minX)) * chartWidth;
-    final right = ((zoneMaxX - minX) / (maxX - minX)) * chartWidth;
-    final top = ((maxY - zoneMaxY) / (maxY - minY)) * chartHeight;
-    final bottom = ((maxY - zoneMinY) / (maxY - minY)) * chartHeight;
-
-    final width = right - left;
-    final height = bottom - top;
-
-    return Positioned(
-      left: left,
-      top: top,
-      width: width,
-      height: height,
-      child: Container(
-        decoration: BoxDecoration(
-          color: color,
-          border: Border.all(
-            color: color.withOpacity(0.3),
-            width: 0.5,
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Build zone indicators showing blood pressure categories
-  Widget _buildZoneIndicators() {
-    return Container(
-      height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-        ),
-      ),
-      child: Row(
-        children: [
-          // Normal zone
-          Expanded(
-            flex: 5,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(7),
-                  bottomLeft: Radius.circular(7),
-                ),
-                border: Border.all(
-                  color: Colors.green.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  'Normal\n<120/<80',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.green.shade700,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // Elevated zone
-          Expanded(
-            flex: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
-                border: Border.all(
-                  color: Colors.orange.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  'Elevated\n121-129\n<80',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.orange.shade700,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // Stage 1 zone
-          Expanded(
-            flex: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.deepOrange.withOpacity(0.1),
-                border: Border.all(
-                  color: Colors.deepOrange.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  'Stage 1\n130-139/\n80-89',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.deepOrange.shade700,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // Stage 2 zone
-          Expanded(
-            flex: 2,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.1),
-                border: Border.all(
-                  color: Colors.red.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  'Stage 2\n≥140/≥90',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red.shade700,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // Crisis zone
-          Expanded(
-            flex: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.1),
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(7),
-                  bottomRight: Radius.circular(7),
-                ),
-                border: Border.all(
-                  color: Colors.purple.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  'Crisis\n≥180/≥120',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.purple.shade700,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
