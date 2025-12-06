@@ -236,7 +236,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     }
 
     return Container(
-      padding: _chartPadding,
+      padding: EdgeInsets.zero,
       decoration: _buildContainerDecoration(),
       child: Column(
         children: [

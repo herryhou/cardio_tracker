@@ -104,75 +104,75 @@ class _DualChartContainerState extends State<DualChartContainer> {
                 Container(
                   height: finalScatterHeight,
                   margin: EdgeInsets.zero,
-                  child: Card(
-                    elevation: chartProvider.hasSelection ? 6 : 2,
-                    shadowColor: chartProvider.hasSelection
-                        ? Theme.of(context).colorScheme.primary.withOpacity(0.3)
-                        : Colors.black.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: chartProvider.hasSelection
-                          ? BorderSide(
-                              color: Theme.of(context).colorScheme.primary,
-                              width: 2,
-                            )
-                          : BorderSide.none,
-                    ),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      padding: EdgeInsets.all(isMobile ? 4.0 : 8.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        gradient: chartProvider.hasSelection
-                            ? LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Theme.of(context).colorScheme.primary.withOpacity(0.05),
-                                  Colors.transparent,
-                                ],
-                              )
-                            : null,
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
-                      child: Column(
+                    ],
+                  ),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    padding: EdgeInsets.zero,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: chartProvider.hasSelection
+                          ? LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Theme.of(context).colorScheme.primary.withOpacity(0.05),
+                                Colors.transparent,
+                              ],
+                            )
+                          : null,
+                    ),
+                    child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Blood Pressure Distribution',
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Blood Pressure Distribution',
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: chartProvider.hasSelection
+                                        ? Theme.of(context).colorScheme.primary
+                                        : null,
+                                  ),
+                                ),
+                                if (chartProvider.hasSelection) ...[
+                                  const SizedBox(width: 8),
+                                  Icon(
+                                    Icons.fiber_manual_record,
+                                    size: 16,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              child: Text(
+                                chartProvider.hasSelection
+                                    ? 'Selected: ${_formatReading(chartProvider.selectedReading!)}'
+                                    : 'Tap data points to see details in the timeline below',
+                                key: ValueKey(chartProvider.hasSelection),
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                   color: chartProvider.hasSelection
                                       ? Theme.of(context).colorScheme.primary
-                                      : null,
+                                      : Colors.grey[600],
+                                  fontWeight: chartProvider.hasSelection
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
                                 ),
-                              ),
-                              if (chartProvider.hasSelection) ...[
-                                const SizedBox(width: 8),
-                                Icon(
-                                  Icons.fiber_manual_record,
-                                  size: 16,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ],
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 200),
-                            child: Text(
-                              chartProvider.hasSelection
-                                  ? 'Selected: ${_formatReading(chartProvider.selectedReading!)}'
-                                  : 'Tap data points to see details in the timeline below',
-                              key: ValueKey(chartProvider.hasSelection),
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: chartProvider.hasSelection
-                                    ? Theme.of(context).colorScheme.primary
-                                    : Colors.grey[600],
-                                fontWeight: chartProvider.hasSelection
-                                    ? FontWeight.w600
-                                    : FontWeight.normal,
                               ),
                             ),
                           ),
@@ -194,48 +194,42 @@ class _DualChartContainerState extends State<DualChartContainer> {
                 Container(
                   height: finalScatterHeight * 0.533, // 2/3 of 0.8x
                   margin: EdgeInsets.zero,
-                  child: Card(
-                    elevation: chartProvider.hasSelection ? 6 : 2,
-                    shadowColor: chartProvider.hasSelection
-                        ? Theme.of(context).colorScheme.primary.withOpacity(0.3)
-                        : Colors.black.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    padding: EdgeInsets.zero,
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      side: chartProvider.hasSelection
-                          ? BorderSide(
-                              color: Theme.of(context).colorScheme.secondary,
-                              width: 2,
+                      gradient: chartProvider.hasSelection
+                          ? LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              colors: [
+                                Theme.of(context).colorScheme.secondary.withOpacity(0.05),
+                                Colors.transparent,
+                              ],
                             )
-                          : BorderSide.none,
+                          : null,
                     ),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      padding: EdgeInsets.all(isMobile ? 4.0 : 8.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        gradient: chartProvider.hasSelection
-                            ? LinearGradient(
-                                begin: Alignment.topRight,
-                                end: Alignment.bottomLeft,
-                                colors: [
-                                  Theme.of(context).colorScheme.secondary.withOpacity(0.05),
-                                  Colors.transparent,
-                                ],
-                              )
-                            : null,
-                      ),
-                      child: FlTimeSeriesChart(
-                        key: _flTimeSeriesChartKey,
-                        readings: widget.readings,
-                        selectedReading: chartProvider.selectedReading,
-                        onReadingSelected: chartProvider.selectReading,
-                        initialTimeRange: _currentTimeRange,
-                        startDate: widget.startDate,
-                        endDate: widget.endDate,
-                        onTimeRangeChanged: _handleTimeRangeChanged,
-                        showTimeRangeSelector: false,
-                        currentTimeRange: _currentTimeRange, // Pass current time range
-                      ),
+                    child: FlTimeSeriesChart(
+                      key: _flTimeSeriesChartKey,
+                      readings: widget.readings,
+                      selectedReading: chartProvider.selectedReading,
+                      onReadingSelected: chartProvider.selectReading,
+                      initialTimeRange: _currentTimeRange,
+                      startDate: widget.startDate,
+                      endDate: widget.endDate,
+                      onTimeRangeChanged: _handleTimeRangeChanged,
+                      showTimeRangeSelector: false,
+                      currentTimeRange: _currentTimeRange, // Pass current time range
                     ),
                   ),
                 ),
