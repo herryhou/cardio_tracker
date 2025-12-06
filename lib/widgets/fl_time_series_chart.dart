@@ -74,20 +74,47 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     final sortedReadings = List<BloodPressureReading>.from(widget.readings)
       ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
-    // NO AGGREGATION - Use raw readings directly, just filter by time range based on actual data
+    // Filter readings by time range - show EXACT readings without aggregation
     List<BloodPressureReading> filteredReadings;
 
     if (sortedReadings.isEmpty) {
       filteredReadings = [];
     } else {
+      final now = DateTime.now();
+
       switch (_currentTimeRange) {
         case ExtendedTimeRange.day:
+          // Show readings from today only
+          filteredReadings = sortedReadings.where((reading) {
+            return reading.timestamp.year == now.year &&
+                   reading.timestamp.month == now.month &&
+                   reading.timestamp.day == now.day;
+          }).toList();
+          break;
         case ExtendedTimeRange.week:
+          // Show readings from the last 7 days
+          filteredReadings = sortedReadings.where((reading) {
+            return reading.timestamp.isAfter(now.subtract(const Duration(days: 7)));
+          }).toList();
+          break;
         case ExtendedTimeRange.month:
+          // Show readings from the current month
+          filteredReadings = sortedReadings.where((reading) {
+            return reading.timestamp.year == now.year &&
+                   reading.timestamp.month == now.month;
+          }).toList();
+          break;
         case ExtendedTimeRange.season:
+          // Show readings from the current season (last 3 months)
+          filteredReadings = sortedReadings.where((reading) {
+            return reading.timestamp.isAfter(now.subtract(const Duration(days: 90)));
+          }).toList();
+          break;
         case ExtendedTimeRange.year:
-          // Show all readings without any aggregation or filtering
-          filteredReadings = sortedReadings;
+          // Show readings from the current year
+          filteredReadings = sortedReadings.where((reading) {
+            return reading.timestamp.year == now.year;
+          }).toList();
           break;
       }
     }
@@ -292,7 +319,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
         // Systolic line
         LineChartBarData(
           spots: systolicSpots,
-          isCurved: true,
+          isCurved: false,  // Straight lines
           color: const Color(0xFF1976D2),
           barWidth: 3,
           isStrokeCapRound: true,
@@ -326,7 +353,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
         // Diastolic line
         LineChartBarData(
           spots: diastolicSpots,
-          isCurved: true,
+          isCurved: false,  // Straight lines
           color: const Color(0xFF03A9F4),
           barWidth: 2,
           isStrokeCapRound: true,
@@ -387,20 +414,29 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            reservedSize: 30,
+            reservedSize: 40,
+            interval: _calculateXAxisInterval(),
             getTitlesWidget: (value, meta) {
               // Find closest data point for this x-value
               final index = _getClosestIndexForX(value);
               if (index != null && index >= 0 && index < _timeSeriesData.length) {
                 final date = _timeSeriesData[index].timestamp;
+                // Show fewer labels to prevent crowding
+                final shouldShowLabel = _shouldShowXAxisLabel(index);
+                if (!shouldShowLabel) {
+                  return const SizedBox.shrink();
+                }
                 return Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    DateFormat(_getXAxisLabelFormat()).format(date),
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
+                  child: Transform.rotate(
+                    angle: -0.3,  // Rotate labels slightly to prevent overlap
+                    child: Text(
+                      DateFormat(_getXAxisLabelFormat()).format(date),
+                      style: const TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
                     ),
                   ),
                 );
@@ -556,6 +592,31 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       case ExtendedTimeRange.year:
         return 'Yearly view';
     }
+  }
+
+  // Calculate X-axis interval to prevent label crowding
+  double _calculateXAxisInterval() {
+    if (_timeSeriesData.isEmpty) return 1.0;
+
+    final dataCount = _timeSeriesData.length;
+    if (dataCount <= 5) return 2.0;  // Show all if few points
+    if (dataCount <= 10) return 2.5;  // Show every other
+    if (dataCount <= 20) return 3.0;  // Show every third
+    return 4.0;  // Show every fourth for many points
+  }
+
+  // Determine if a label should be shown to prevent crowding
+  bool _shouldShowXAxisLabel(int index) {
+    if (_timeSeriesData.isEmpty) return false;
+
+    final dataCount = _timeSeriesData.length;
+    final interval = _calculateXAxisInterval().round();
+
+    // Always show first and last labels
+    if (index == 0 || index == dataCount - 1) return true;
+
+    // Show labels at regular intervals
+    return index % interval == 0;
   }
 
   Widget _buildEmptyState() {
