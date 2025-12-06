@@ -839,85 +839,102 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
             child: Column(
-              children: recentReadings.take(5).toList().asMap().entries.map((entry) {
+              children: recentReadings.take(10).toList().asMap().entries.map((entry) {
                 final index = entry.key;
                 final reading = entry.value;
-                final isLast = index == recentReadings.length - 1 || index == 4;
+                final isLast = index == recentReadings.length - 1 || index == 9;
 
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                      child: Row(
-                        children: [
-                          // Date
-                          SizedBox(
-                            width: 60,
-                            child: Text(
-                              '${reading.timestamp.day}/${reading.timestamp.month}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF1F2937),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-
-                          // BP Values
-                          Expanded(
-                            child: Text(
-                              '${reading.systolic}/${reading.diastolic}',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: _getCategoryColor(context, reading.category),
-                              ),
-                            ),
-                          ),
-
-                          // Pulse
-                          const SizedBox(width: 16),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.favorite,
-                                size: 16,
-                                color: const Color(0xFFEF4444),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${reading.heartRate}',
+                return Dismissible(
+                  key: ValueKey(reading.id),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (direction) {
+                    _deleteReading(reading);
+                  },
+                  background: Container(
+                    color: const Color(0xFFEF4444),
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.only(right: 20),
+                    child: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        child: Row(
+                          children: [
+                            // Date
+                            SizedBox(
+                              width: 60,
+                              child: Text(
+                                '${reading.timestamp.day}/${reading.timestamp.month}',
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFFEF4444),
+                                  color: Color(0xFF1F2937),
                                 ),
                               ),
-                            ],
-                          ),
-
-                          // Category indicator
-                          const SizedBox(width: 12),
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: _getCategoryColor(context, reading.category),
-                              borderRadius: BorderRadius.circular(4),
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 16),
+
+                            // BP Values
+                            Expanded(
+                              child: Text(
+                                '${reading.systolic}/${reading.diastolic}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: _getCategoryColor(context, reading.category),
+                                ),
+                              ),
+                            ),
+
+                            // Pulse
+                            const SizedBox(width: 16),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.favorite,
+                                  size: 16,
+                                  color: const Color(0xFFEF4444),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${reading.heartRate}',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFEF4444),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            // Category indicator
+                            const SizedBox(width: 12),
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: _getCategoryColor(context, reading.category),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    if (!isLast)
-                      const Divider(
-                        height: 1,
-                        color: Color(0xFFE5E7EB),
-                        indent: 20,
-                        endIndent: 20,
-                      ),
-                  ],
+                      if (!isLast)
+                        const Divider(
+                          height: 1,
+                          color: Color(0xFFE5E7EB),
+                          indent: 20,
+                          endIndent: 20,
+                        ),
+                    ],
+                  ),
                 );
               }).toList(),
             ),
@@ -1024,6 +1041,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       case BloodPressureCategory.crisis:
         return 'Crisis';
     }
+  }
+
+  void _deleteReading(BloodPressureReading reading) {
+    final provider = context.read<BloodPressureProvider>();
+    provider.deleteReading(reading.id);
   }
 }
 

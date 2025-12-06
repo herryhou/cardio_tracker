@@ -133,11 +133,6 @@ class ClinicalScatterPainter extends CustomPainter {
     // Draw grid lines
     _drawGridLines(canvas, drawArea);
 
-    // Draw trend line if enabled
-    if (showTrendLine && readings.isNotEmpty) {
-      _drawTrendLine(canvas, drawArea);
-    }
-
     // Draw axes and labels
     _drawAxes(canvas, drawArea);
 
@@ -229,54 +224,6 @@ class ClinicalScatterPainter extends CustomPainter {
         gridPaint,
       );
     }
-  }
-
-  void _drawTrendLine(Canvas canvas, Rect drawArea) {
-    if (readings.length < 2) return;
-
-    // Calculate linear regression
-    double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-    final n = readings.length.toDouble();
-
-    for (final reading in readings) {
-      sumX += reading.systolic;
-      sumY += reading.diastolic;
-      sumXY += reading.systolic * reading.diastolic;
-      sumX2 += reading.systolic * reading.systolic;
-    }
-
-    final slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-    final intercept = (sumY - slope * sumX) / n;
-
-    // Draw trend line
-    final trendPaint = Paint()
-      ..color = Colors.purple.withValues(alpha: 0.5)
-      ..strokeWidth = 2.0
-      ..style = PaintingStyle.stroke;
-
-    final startX = 60.0;
-    final endX = 200.0;
-    final startY = slope * startX + intercept;
-    final endY = slope * endX + intercept;
-
-    final start = _scalePointToDrawingArea(Offset(startX, startY), drawArea);
-    final end = _scalePointToDrawingArea(Offset(endX, endY), drawArea);
-
-    canvas.drawLine(start, end, trendPaint);
-
-    // Draw trend line label
-    final labelStyle = TextStyle(
-      color: Colors.purple,
-      fontSize: 11,
-      fontWeight: FontWeight.w500,
-    );
-
-    _drawText(
-      canvas,
-      'Trend: y=${slope.toStringAsFixed(1)}x+${intercept.toStringAsFixed(0)}',
-      Offset(drawArea.right - 120, drawArea.top + 10),
-      labelStyle
-    );
   }
 
   void _drawAxes(Canvas canvas, Rect drawArea) {
@@ -376,28 +323,15 @@ class ClinicalScatterPainter extends CustomPainter {
       // Don't draw regular point if it's selected
       if (isSelected) continue;
 
-      // Draw shadow
-      final shadowPaint = Paint()
-        ..color = Colors.black.withValues(alpha: 0.1)
-        ..style = PaintingStyle.fill
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
+      // Darken the color for solid circles
+      final darkerColor = _darkenColor(color);
 
-      canvas.drawCircle(point + const Offset(1, 1), 4, shadowPaint);
-
-      // Main point
+      // Main solid point
       final pointPaint = Paint()
-        ..color = color
+        ..color = darkerColor
         ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(point, 4, pointPaint);
-
-      // White border
-      final borderPaint = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5;
-
-      canvas.drawCircle(point, 4, borderPaint);
+      canvas.drawCircle(point, 5, pointPaint);
     }
   }
 
@@ -408,10 +342,11 @@ class ClinicalScatterPainter extends CustomPainter {
     );
 
     final color = ClinicalZones.getCategoryColor(reading.category);
+    final darkerColor = _darkenColor(color);
 
     // Outer glow
     final glowPaint = Paint()
-      ..color = color.withValues(alpha: 0.3)
+      ..color = darkerColor.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
 
@@ -419,26 +354,18 @@ class ClinicalScatterPainter extends CustomPainter {
 
     // Selection ring
     final ringPaint = Paint()
-      ..color = Colors.white
+      ..color = darkerColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+      ..strokeWidth = 2.5;
 
-    canvas.drawCircle(point, 8, ringPaint);
+    canvas.drawCircle(point, 10, ringPaint);
 
-    // Inner colored ring
-    final colorRingPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    canvas.drawCircle(point, 6, colorRingPaint);
-
-    // Center point
+    // Center solid point
     final centerPaint = Paint()
-      ..color = color
+      ..color = darkerColor
       ..style = PaintingStyle.fill;
 
-    canvas.drawCircle(point, 3, centerPaint);
+    canvas.drawCircle(point, 5, centerPaint);
   }
 
   Offset _scalePointToDrawingArea(Offset dataPoint, Rect drawArea) {
@@ -454,6 +381,12 @@ class ClinicalScatterPainter extends CustomPainter {
            point.dx <= drawArea.right + margin &&
            point.dy >= drawArea.top - margin &&
            point.dy <= drawArea.bottom + margin;
+  }
+
+  Color _darkenColor(Color color) {
+    // Darken a color by reducing its brightness significantly
+    final hsl = HSLColor.fromColor(color);
+    return hsl.withLightness((hsl.lightness - 0.45).clamp(0.0, 1.0)).toColor();
   }
 
   Rect _scaleRectToDrawingArea(Rect dataRect, Rect drawArea) {

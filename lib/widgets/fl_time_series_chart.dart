@@ -646,11 +646,11 @@ class _TimeRangeInfo {
       case ExtendedTimeRange.week:
         return Duration(days: 1).inMilliseconds.toDouble();
       case ExtendedTimeRange.month:
-        return Duration(days: 7).inMilliseconds.toDouble();
+        return Duration(days: 3).inMilliseconds.toDouble(); // Changed from 7 to 3 days for better label distribution
       case ExtendedTimeRange.season:
-        return Duration(days: 21).inMilliseconds.toDouble();
+        return Duration(days: 14).inMilliseconds.toDouble(); // Changed from 21 to 14 days
       case ExtendedTimeRange.year:
-        return Duration(days: 60).inMilliseconds.toDouble();
+        return Duration(days: 30).inMilliseconds.toDouble(); // Changed from 60 to 30 days
     }
   }
 
@@ -661,10 +661,11 @@ class _TimeRangeInfo {
       case ExtendedTimeRange.week:
         return 'MMM dd';
       case ExtendedTimeRange.month:
+        return 'MMM dd'; // Changed from 'MMM yy' to show day numbers for clarity
       case ExtendedTimeRange.season:
-        return 'MMM yy';
+        return 'MMM dd';
       case ExtendedTimeRange.year:
-        return 'yyyy';
+        return 'MMM';
     }
   }
 }
