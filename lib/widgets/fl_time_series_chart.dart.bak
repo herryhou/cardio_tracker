@@ -1,0 +1,735 @@
+import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
+import '../models/blood_pressure_reading.dart';
+import 'time_series_chart.dart';
+
+// Chart styling constants
+const Color _systolicColor = Color(0xFF1976D2);
+const Color _diastolicColor = Color(0xFF03A9F4);
+const double _systolicBarWidth = 3.0;
+const double _diastolicBarWidth = 2.0;
+const double _dotRadius = 4.0;
+const double _selectedDotRadius = 6.0;
+const int _minY = 60;
+const int _maxY = 200;
+const double _labelFontSize = 9.0;
+const double _gridAlpha = 0.3;
+const double _shadowAlpha = 0.1;
+const double _rotationAngle = -0.3;
+
+/// Time Series Chart Widget using fl_chart
+class FlTimeSeriesChart extends StatefulWidget {
+  const FlTimeSeriesChart({
+    super.key,
+    required this.readings,
+    this.selectedReading,
+    this.onReadingSelected,
+    this.initialTimeRange = ExtendedTimeRange.month,
+    this.startDate,
+    this.endDate,
+    this.onTimeRangeChanged,
+    this.showTimeRangeSelector = true,
+    this.currentTimeRange,
+  });
+
+  final List<BloodPressureReading> readings;
+  final BloodPressureReading? selectedReading;
+  final Function(BloodPressureReading?)? onReadingSelected;
+  final ExtendedTimeRange initialTimeRange;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final Function(ExtendedTimeRange, DateTime?, DateTime?)? onTimeRangeChanged;
+  final bool showTimeRangeSelector;
+  final ExtendedTimeRange? currentTimeRange;
+
+  @override
+  State<FlTimeSeriesChart> createState() => _FlTimeSeriesChartState();
+}
+
+class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
+  // State
+  late ExtendedTimeRange _currentTimeRange;
+  List<TimeSeriesData> _timeSeriesData = [];
+  Map<double, int> _xValueToIndex = {};
+
+  // Getters for convenient range computation
+  late final _rangeInfo = _TimeRangeInfo(
+    timeRange: _currentTimeRange,
+    startDateOverride: widget.startDate,
+    endDateOverride: widget.endDate,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _currentTimeRange = widget.currentTimeRange ?? widget.initialTimeRange;
+    _updateTimeSeriesData();
+  }
+
+  @override
+  void didUpdateWidget(FlTimeSeriesChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.readings != oldWidget.readings ||
+        widget.currentTimeRange != oldWidget.currentTimeRange ||
+        widget.initialTimeRange != oldWidget.initialTimeRange ||
+        widget.startDate != oldWidget.startDate ||
+        widget.endDate != oldWidget.endDate) {
+      setState(() {
+        _currentTimeRange = widget.currentTimeRange ?? widget.initialTimeRange;
+      });
+      _updateTimeSeriesData();
+    }
+  }
+
+  void _updateTimeSeriesData() {
+    if (widget.readings.isEmpty) {
+      _setTimeSeriesData([]);
+      return;
+    }
+
+    final sortedReadings = List<BloodPressureReading>.from(widget.readings)
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    final filteredReadings = _filterReadingsByTimeRange(sortedReadings);
+    final timeSeriesData = _convertToTimeSeriesData(filteredReadings);
+
+    _setTimeSeriesData(timeSeriesData);
+    debugPrint(
+      'FlTimeSeriesChart: updated timeSeriesData count=${_timeSeriesData.length} '
+      'for range=$_currentTimeRange',
+    );
+  }
+
+  /// Filter readings based on the current time range.
+  List<BloodPressureReading> _filterReadingsByTimeRange(
+    List<BloodPressureReading> readings,
+  ) {
+    if (readings.isEmpty) return [];
+
+    final rangeStart = _rangeInfo.rangeStart;
+    final rangeEnd = _rangeInfo.rangeEnd;
+
+    return readings
+        .where((r) => r.timestamp.isAfter(rangeStart) && r.timestamp.isBefore(rangeEnd))
+        .toList();
+  }
+
+  /// Convert filtered readings to TimeSeriesData format.
+  List<TimeSeriesData> _convertToTimeSeriesData(
+    List<BloodPressureReading> readings,
+  ) {
+    return readings
+        .map((reading) => TimeSeriesData(
+          timestamp: reading.timestamp,
+          systolic: reading.systolic,
+          diastolic: reading.diastolic,
+          heartRate: reading.heartRate,
+          notes: reading.notes,
+          category: reading.category,
+          originalReadings: [reading],
+        ))
+        .toList();
+  }
+
+  /// Update state with new time series data and rebuild mapping.
+  void _setTimeSeriesData(List<TimeSeriesData> data) {
+    setState(() {
+      _timeSeriesData = data;
+      _buildXValueMapping();
+    });
+  }
+
+  void _buildXValueMapping() {
+    _xValueToIndex = {};
+    
+    if (_timeSeriesData.isEmpty) return;
+    // Use timestamp-based X values (millisecondsSinceEpoch) so the X-axis
+    // represents real datetimes and can be static across renders.
+    for (int i = 0; i < _timeSeriesData.length; i++) {
+      final ts = _timeSeriesData[i].timestamp.millisecondsSinceEpoch.toDouble();
+      _xValueToIndex[ts] = i;
+    }
+    final first = _timeSeriesData.first.timestamp;
+    final last = _timeSeriesData.last.timestamp;
+    debugPrint('FlTimeSeriesChart: built X mapping for ${_timeSeriesData.length} points from $first to $last');
+  }
+
+  int? _getClosestIndexForX(double x) {
+    if (_xValueToIndex.isEmpty) return null;
+    // Find the closest timestamp to the provided x value.
+    double minDistance = double.infinity;
+    double? closestX;
+    for (final xValue in _xValueToIndex.keys) {
+      final distance = (x - xValue).abs();
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestX = xValue;
+      }
+    }
+    final idx = closestX != null ? _xValueToIndex[closestX] : null;
+    debugPrint('FlTimeSeriesChart: _getClosestIndexForX x=$x -> closestX=$closestX index=$idx distance=${minDistance.isFinite ? minDistance : -1}');
+    return idx;
+  }
+
+  String _getXAxisLabelFormat() {
+    switch (_currentTimeRange) {
+      case ExtendedTimeRange.day:
+      case ExtendedTimeRange.week:
+        return 'MMM dd';
+      case ExtendedTimeRange.month:
+      case ExtendedTimeRange.season:
+        return 'MMM yy';
+      case ExtendedTimeRange.year:
+        return 'yyyy';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_timeSeriesData.isEmpty) {
+      return _buildEmptyState();
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          if (widget.showTimeRangeSelector) ...[
+            const SizedBox(height: 16),
+            _buildTimeRangeSelector(),
+            const SizedBox(height: 16),
+          ] else ...[
+            const SizedBox(height: 32),
+          ],
+          Expanded(
+            child: _buildChart(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Blood Pressure Trends',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Tap on any data point for details • ${_getTimeRangeDescription()}',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Colors.grey[600],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTimeRangeSelector() {
+    return SegmentedButton<ExtendedTimeRange>(
+      segments: const [
+        ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.day,
+          label: Text('Day'),
+        ),
+        ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.week,
+          label: Text('Week'),
+        ),
+        ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.month,
+          label: Text('Month'),
+        ),
+        ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.season,
+          label: Text('Season'),
+        ),
+        ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.year,
+          label: Text('Year'),
+        ),
+      ],
+      selected: {_currentTimeRange},
+      onSelectionChanged: (Set<ExtendedTimeRange> selection) {
+        if (selection.isNotEmpty) {
+          setState(() {
+            _currentTimeRange = selection.first;
+          });
+          _updateTimeSeriesData();
+          widget.onTimeRangeChanged?.call(_currentTimeRange, widget.startDate, widget.endDate);
+        }
+      },
+    );
+  }
+
+  Widget _buildChart() {
+    return LineChart(
+      _getLineChartData(),
+      duration: const Duration(milliseconds: 250),
+    );
+  }
+
+  LineChartData _getLineChartData() {
+    if (_timeSeriesData.isEmpty) {
+      return _getEmptyLineChartData();
+    }
+
+    final List<FlSpot> systolicSpots = [];
+    final List<FlSpot> diastolicSpots = [];
+
+    // Build spots using the same x-value calculation
+    // Build spots using timestamp-based X values.
+    for (int i = 0; i < _timeSeriesData.length; i++) {
+      final x = _getXValueForIndex(i);
+      final data = _timeSeriesData[i];
+      systolicSpots.add(FlSpot(x, data.systolic.toDouble()));
+      diastolicSpots.add(FlSpot(x, data.diastolic.toDouble()));
+    }
+    // Log computed range and point counts for diagnostics
+    final computedMinX = _computeRangeStart().millisecondsSinceEpoch.toDouble();
+    final computedMaxX = _computeRangeEnd().millisecondsSinceEpoch.toDouble();
+    debugPrint('FlTimeSeriesChart: building LineChartData points=${_timeSeriesData.length} minX=$computedMinX maxX=$computedMaxX');
+
+    return LineChartData(
+      lineBarsData: [
+        // Systolic line
+        LineChartBarData(
+          spots: systolicSpots,
+          isCurved: false,  // Straight lines
+          color: const Color(0xFF1976D2),
+          barWidth: 3,
+          isStrokeCapRound: true,
+          dotData: FlDotData(
+            show: true,
+            getDotPainter: (spot, percent, barData, index) {
+              final dataIndex = _getClosestIndexForX(spot.x);
+              if (dataIndex == null || dataIndex >= _timeSeriesData.length) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: Colors.white,
+                  strokeColor: const Color(0xFF1976D2),
+                  strokeWidth: 2,
+                );
+              }
+
+              final data = _timeSeriesData[dataIndex];
+              final reading = _getOriginalReading(data);
+              final isSelected = widget.selectedReading == reading;
+
+              return FlDotCirclePainter(
+                radius: isSelected ? 6 : 4,
+                color: Colors.white,
+                strokeColor: const Color(0xFF1976D2),
+                strokeWidth: 2,
+              );
+            },
+          ),
+          belowBarData: BarAreaData(show: false),
+        ),
+        // Diastolic line
+        LineChartBarData(
+          spots: diastolicSpots,
+          isCurved: false,  // Straight lines
+          color: const Color(0xFF03A9F4),
+          barWidth: 2,
+          isStrokeCapRound: true,
+          dashArray: [5, 5],
+          dotData: FlDotData(
+            show: true,
+            getDotPainter: (spot, percent, barData, index) {
+              final dataIndex = _getClosestIndexForX(spot.x);
+              if (dataIndex == null || dataIndex >= _timeSeriesData.length) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: Colors.white,
+                  strokeColor: const Color(0xFF03A9F4),
+                  strokeWidth: 2,
+                );
+              }
+
+              final data = _timeSeriesData[dataIndex];
+              final reading = _getOriginalReading(data);
+              final isSelected = widget.selectedReading == reading;
+
+              return FlDotCirclePainter(
+                radius: isSelected ? 6 : 4,
+                color: Colors.white,
+                strokeColor: const Color(0xFF03A9F4),
+                strokeWidth: 2,
+              );
+            },
+          ),
+          belowBarData: BarAreaData(show: false),
+        ),
+      ],
+      titlesData: FlTitlesData(
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            interval: 20,
+            reservedSize: 40,
+            getTitlesWidget: (value, meta) {
+              return Text(
+                value.toInt().toString(),
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.right,
+              );
+            },
+          ),
+        ),
+        rightTitles: AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        topTitles: AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 40,
+            interval: _calculateXAxisInterval(),  // Use smart time-based interval
+            getTitlesWidget: (value, meta) {
+              // Convert X value (timestamp ms) back to DateTime and format
+              try {
+                final xMs = value.toInt();
+                final date = DateTime.fromMillisecondsSinceEpoch(xMs);
+                final formattedDate = DateFormat(_getXAxisLabelFormat()).format(date);
+
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Transform.rotate(
+                    angle: -0.3,  // Rotate labels slightly to prevent overlap
+                    child: Text(
+                      formattedDate,
+                      style: const TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                );
+              } catch (e) {
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        ),
+      ),
+      gridData: FlGridData(
+        show: true,
+        drawVerticalLine: true,
+        horizontalInterval: 20,
+        getDrawingHorizontalLine: (value) {
+          return FlLine(
+            color: Colors.grey.withValues(alpha: 0.3),
+            strokeWidth: 0.5,
+          );
+        },
+        getDrawingVerticalLine: (value) {
+          return FlLine(
+            color: Colors.grey.withValues(alpha: 0.3),
+            strokeWidth: 0.5,
+          );
+        },
+      ),
+      borderData: FlBorderData(
+        show: true,
+        border: Border.all(
+          color: Colors.black.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      // Set a static datetime axis range based on the selected time range
+      // (or provided start/end). Use millisecondsSinceEpoch as X values.
+      minX: _computeRangeStart().millisecondsSinceEpoch.toDouble(),
+      maxX: _computeRangeEnd().millisecondsSinceEpoch.toDouble(),
+      minY: 60,
+      maxY: 200,
+      lineTouchData: LineTouchData(
+        touchTooltipData: LineTouchTooltipData(
+          getTooltipColor: (group) => Colors.white,
+          tooltipBorder: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
+          getTooltipItems: (touchedSpots) {
+            return touchedSpots.map((spot) {
+              final index = _getClosestIndexForX(spot.x);
+              if (index == null || index >= _timeSeriesData.length) {
+                return null;
+              }
+
+              final data = _timeSeriesData[index];
+              final isSystolic = spot.barIndex == 0;
+              final value = isSystolic ? data.systolic : data.diastolic;
+
+              final tooltipText = isSystolic
+                  ? 'Systolic: $value'
+                  : 'Diastolic: $value\n${DateFormat('MMM dd, HH:mm').format(data.timestamp)}';
+
+              return LineTooltipItem(
+                tooltipText,
+                TextStyle(
+                  color: isSystolic ? const Color(0xFF1976D2) : const Color(0xFF03A9F4),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              );
+            }).toList();
+          },
+        ),
+        touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
+          if (event is FlTapUpEvent && touchResponse != null) {
+            final touchedSpots = touchResponse.lineBarSpots;
+            if (touchedSpots != null && touchedSpots.isNotEmpty) {
+              final x = touchedSpots.first.x;
+              final index = _getClosestIndexForX(x);
+              debugPrint('FlTimeSeriesChart: tap at x=$x -> index=$index');
+
+              if (index != null && index >= 0 && index < _timeSeriesData.length) {
+                final reading = _getOriginalReading(_timeSeriesData[index]);
+                widget.onReadingSelected?.call(reading);
+              }
+            } else {
+              widget.onReadingSelected?.call(null);
+            }
+          }
+        },
+        handleBuiltInTouches: true,
+      ),
+    );
+  }
+
+  LineChartData _getEmptyLineChartData() {
+    return LineChartData(
+      lineBarsData: [],
+      titlesData: FlTitlesData(
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            interval: 20,
+            reservedSize: 40,
+            getTitlesWidget: (value, meta) {
+              return Text(
+                value.toInt().toString(),
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.right,
+              );
+            },
+          ),
+        ),
+        rightTitles: AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        topTitles: AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(showTitles: true, reservedSize: 30),
+        ),
+      ),
+      gridData: FlGridData(show: false),
+      borderData: FlBorderData(
+        show: true,
+        border: Border.all(
+          color: Colors.black.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      minX: 0,
+      maxX: 1,
+      minY: 60,
+      maxY: 200,
+    );
+  }
+
+  BloodPressureReading? _getOriginalReading(TimeSeriesData data) {
+    if (data.originalReadings.isNotEmpty) {
+      return data.originalReadings.first;
+    }
+    return null;
+  }
+
+  String _getTimeRangeDescription() {
+    switch (_currentTimeRange) {
+      case ExtendedTimeRange.day:
+        return 'Daily view';
+      case ExtendedTimeRange.week:
+        return 'Weekly view';
+      case ExtendedTimeRange.month:
+        return 'Monthly view';
+      case ExtendedTimeRange.season:
+        return 'Seasonal view';
+      case ExtendedTimeRange.year:
+        return 'Yearly view';
+    }
+  }
+
+  // Get the X value for a specific data index
+  double _getXValueForIndex(int index) {
+    if (index < 0 || index >= _timeSeriesData.length) return 0.0;
+    return _timeSeriesData[index].timestamp.millisecondsSinceEpoch.toDouble();
+  }
+
+  // ============================================================================
+  // CHART RENDERING HELPERS
+  // ============================================================================
+
+  /// Build line chart data with systolic and diastolic lines.
+  LineChartData _buildChartData() {
+
+
+  Widget _buildEmptyState() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.show_chart,
+            size: 48,
+            color: Colors.grey[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No data available',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Start recording blood pressure to see trends here',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Colors.grey[500],
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Helper class to encapsulate time range logic.
+class _TimeRangeInfo {
+  _TimeRangeInfo({
+    required this.timeRange,
+    required this.startDateOverride,
+    required this.endDateOverride,
+  });
+
+  final ExtendedTimeRange timeRange;
+  final DateTime? startDateOverride;
+  final DateTime? endDateOverride;
+
+  DateTime get rangeStart {
+    if (startDateOverride != null) return startDateOverride!;
+    return _computeRangeStart();
+  }
+
+  DateTime get rangeEnd {
+    if (endDateOverride != null) return endDateOverride!;
+    return _computeRangeEnd();
+  }
+
+  DateTime _computeRangeStart() {
+    final now = DateTime.now();
+    switch (timeRange) {
+      case ExtendedTimeRange.day:
+        return DateTime(now.year, now.month, now.day);
+      case ExtendedTimeRange.week:
+        return DateTime(now.year, now.month, now.day).subtract(const Duration(days: 6));
+      case ExtendedTimeRange.month:
+        return DateTime(now.year, now.month, 1);
+      case ExtendedTimeRange.season:
+        return now.subtract(const Duration(days: 90));
+      case ExtendedTimeRange.year:
+        return DateTime(now.year, 1, 1);
+    }
+  }
+
+  DateTime _computeRangeEnd() {
+    final start = _computeRangeStart();
+    switch (timeRange) {
+      case ExtendedTimeRange.day:
+        return start.add(const Duration(days: 1));
+      case ExtendedTimeRange.week:
+        return start.add(const Duration(days: 7));
+      case ExtendedTimeRange.month:
+        // Handle year boundary
+        int nextMonth = start.month + 1;
+        int nextYear = start.year;
+        if (nextMonth > 12) {
+          nextMonth = 1;
+          nextYear += 1;
+        }
+        return DateTime(nextYear, nextMonth, 1);
+      case ExtendedTimeRange.season:
+        return start.add(const Duration(days: 90));
+      case ExtendedTimeRange.year:
+        return DateTime(start.year + 1, 1, 1);
+    }
+  }
+
+  /// Get X-axis interval in milliseconds based on time range.
+  double getXAxisInterval() {
+    switch (timeRange) {
+      case ExtendedTimeRange.day:
+        return Duration(hours: 4).inMilliseconds.toDouble();
+      case ExtendedTimeRange.week:
+        return Duration(days: 1).inMilliseconds.toDouble();
+      case ExtendedTimeRange.month:
+        return Duration(days: 7).inMilliseconds.toDouble();
+      case ExtendedTimeRange.season:
+        return Duration(days: 21).inMilliseconds.toDouble();
+      case ExtendedTimeRange.year:
+        return Duration(days: 60).inMilliseconds.toDouble();
+    }
+  }
+
+  /// Get date format string based on time range.
+  String getDateFormat() {
+    switch (timeRange) {
+      case ExtendedTimeRange.day:
+      case ExtendedTimeRange.week:
+        return 'MMM dd';
+      case ExtendedTimeRange.month:
+      case ExtendedTimeRange.season:
+        return 'MMM yy';
+      case ExtendedTimeRange.year:
+        return 'yyyy';
+    }
+  }
+}

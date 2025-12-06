@@ -1,0 +1,6 @@
+Planned edits:
+- Remove unused widget props: showTimeRangeSelector, onTimeRangeChanged, currentTimeRange
+- Keep readings, selectedReading, onReadingSelected, initialTimeRange, startDate, endDate
+- Update initState/didUpdateWidget/_shouldUpdateData accordingly
+- Remove methods: _buildHeader, _buildTimeRangeSelector
+- Run flutter analyze
