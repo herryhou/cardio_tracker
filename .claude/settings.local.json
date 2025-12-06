@@ -19,7 +19,9 @@
       "Bash(git merge:*)",
       "Bash(git branch:*)",
       "Skill(executing-plans)",
-      "Bash(nc:*)"
+      "Bash(nc:*)",
+      "WebSearch",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/blood_pressure_reading.dart';
 import '../providers/dual_chart_provider.dart';
 import 'clinical_scatter_plot.dart';
+import 'fl_time_series_chart.dart';
 import 'time_series_chart.dart';
 
 /// Dual Chart Container with synchronized scatter plot and time series chart
@@ -28,7 +29,7 @@ class DualChartContainer extends StatefulWidget {
 
 class _DualChartContainerState extends State<DualChartContainer> {
   ExtendedTimeRange _currentTimeRange = ExtendedTimeRange.month;
-  final GlobalKey<TimeSeriesChartState> _timeSeriesChartKey = GlobalKey();
+  final GlobalKey _flTimeSeriesChartKey = GlobalKey();
 
   @override
   void initState() {
@@ -40,8 +41,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
     setState(() {
       _currentTimeRange = timeRange;
     });
-    // Update time series chart
-    _timeSeriesChartKey.currentState?.updateTimeRange(timeRange, startDate, endDate);
+    // fl_chart doesn't need explicit update method, just rebuild
     widget.onTimeRangeChanged?.call(timeRange, startDate, endDate);
   }
 
@@ -217,8 +217,8 @@ class _DualChartContainerState extends State<DualChartContainer> {
                               )
                             : null,
                       ),
-                      child: TimeSeriesChart(
-                        key: _timeSeriesChartKey,
+                      child: FlTimeSeriesChart(
+                        key: _flTimeSeriesChartKey,
                         readings: widget.readings,
                         selectedReading: chartProvider.selectedReading,
                         onReadingSelected: chartProvider.selectReading,
@@ -227,6 +227,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
                         endDate: widget.endDate,
                         onTimeRangeChanged: _handleTimeRangeChanged,
                         showTimeRangeSelector: false,
+                        currentTimeRange: _currentTimeRange, // Pass current time range
                       ),
                     ),
                   ),
