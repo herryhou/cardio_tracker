@@ -415,38 +415,40 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: 40,
-            interval: 2,  // Show labels at regular intervals
+            interval: null,  // Disable automatic intervals
             getTitlesWidget: (value, meta) {
-              // Find the data point that exactly matches this X value
+              // Since we can't control which X values fl_chart requests,
+              // we'll show labels for the closest data point to any requested X value
               final xValue = value;
+              final closestIndex = _getClosestIndexForX(xValue);
 
-              // Check if this X value exists in our data mapping
-              if (_xValueToIndex.containsKey(xValue)) {
-                final index = _xValueToIndex[xValue]!;
+              if (closestIndex != null &&
+                  closestIndex >= 0 &&
+                  closestIndex < _timeSeriesData.length) {
 
-                if (index >= 0 && index < _timeSeriesData.length) {
-                  // Only show labels at specific intervals to prevent crowding
-                  final shouldShowLabel = _shouldShowXAxisLabel(index);
-                  if (!shouldShowLabel) {
-                    return const SizedBox.shrink();
-                  }
+                // Only show labels at specific intervals to prevent crowding
+                final shouldShowLabel = _shouldShowXAxisLabel(closestIndex);
+                if (!shouldShowLabel) {
+                  return const SizedBox.shrink();
+                }
 
-                  final date = _timeSeriesData[index].timestamp;
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Transform.rotate(
-                      angle: -0.3,  // Rotate labels slightly to prevent overlap
-                      child: Text(
-                        DateFormat(_getXAxisLabelFormat()).format(date),
-                        style: const TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
+                final date = _timeSeriesData[closestIndex].timestamp;
+                final formattedDate = DateFormat(_getXAxisLabelFormat()).format(date);
+
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Transform.rotate(
+                    angle: -0.3,  // Rotate labels slightly to prevent overlap
+                    child: Text(
+                      formattedDate,
+                      style: const TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
                       ),
                     ),
-                  );
-                }
+                  ),
+                );
               }
               return const SizedBox.shrink();
             },
