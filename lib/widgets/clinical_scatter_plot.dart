@@ -4,6 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/semantics.dart';
 import '../models/blood_pressure_reading.dart';
 
+// Default height for the clinical scatter chart when not constrained by parent
+const double kClinicalScatterChartHeight = 420.0;
+
 /// AHA Clinical Zone definition for blood pressure categorization
 class ClinicalZone {
   final String name;
@@ -747,30 +750,9 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8, top: 8),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.scatter_plot_outlined,
-                  color: Colors.grey[700],
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Blood Pressure Classification',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-              ],
-            ),
-          ),
           // Chart
-          Expanded(
+          SizedBox(
+            height: kClinicalScatterChartHeight,
             child: GestureDetector(
               onTapUp: _handleTap,
               onLongPressEnd: _handleLongPress,
@@ -789,7 +771,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 20),
           // Legend
           SizedBox(
             width: double.infinity,
