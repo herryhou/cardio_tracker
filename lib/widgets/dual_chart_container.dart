@@ -185,40 +185,14 @@ class _DualChartContainerState extends State<DualChartContainer> {
                             ),
                           ),
                         ],
-                      ),
+                        ),
                     ),
-                  ),
                 ),
 
                                 // Time Series Chart
                 Container(
                   height: finalScatterHeight * 0.533, // 2/3 of 0.8x
                   margin: EdgeInsets.zero,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    padding: EdgeInsets.zero,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      gradient: chartProvider.hasSelection
-                          ? LinearGradient(
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                              colors: [
-                                Theme.of(context).colorScheme.secondary.withOpacity(0.05),
-                                Colors.transparent,
-                              ],
-                            )
-                          : null,
-                    ),
                     child: FlTimeSeriesChart(
                       key: _flTimeSeriesChartKey,
                       readings: widget.readings,
@@ -229,10 +203,9 @@ class _DualChartContainerState extends State<DualChartContainer> {
                       endDate: widget.endDate,
                       onTimeRangeChanged: _handleTimeRangeChanged,
                       showTimeRangeSelector: false,
-                      currentTimeRange: _currentTimeRange, // Pass current time range
+                      currentTimeRange: _currentTimeRange,
                     ),
                   ),
-                ),
               ],
             );
           },
