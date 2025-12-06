@@ -130,6 +130,13 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       originalReadings: [reading],
     )).toList();
 
+    // print(timeSeriesData);
+    // debug Print timeSeriesData
+    print("Time Series Data:");
+    for (var data in timeSeriesData) {
+      print("Timestamp: ${data.timestamp}, Systolic: ${data.systolic}, Diastolic: ${data.diastolic}");
+    }
+
     setState(() {
       _timeSeriesData = timeSeriesData;
       _buildXValueMapping();
@@ -415,17 +422,20 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: 40,
-            interval: _calculateXAxisInterval(),
+            interval: 1,  // Use simple integer intervals
             getTitlesWidget: (value, meta) {
-              // Find closest data point for this x-value
-              final index = _getClosestIndexForX(value);
+              // Convert X position to data index
+              final xValue = value;
+              final index = _getClosestIndexForX(xValue);
+
               if (index != null && index >= 0 && index < _timeSeriesData.length) {
-                final date = _timeSeriesData[index].timestamp;
-                // Show fewer labels to prevent crowding
+                // Only show labels at specific intervals to prevent crowding
                 final shouldShowLabel = _shouldShowXAxisLabel(index);
                 if (!shouldShowLabel) {
                   return const SizedBox.shrink();
                 }
+
+                final date = _timeSeriesData[index].timestamp;
                 return Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Transform.rotate(
@@ -617,6 +627,27 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
 
     // Show labels at regular intervals
     return index % interval == 0;
+  }
+
+  // Get the X value for a specific data index
+  double _getXValueForIndex(int index) {
+    if (_xValueToIndex.isEmpty || index < 0 || index >= _timeSeriesData.length) {
+      return 0.0;
+    }
+
+    // Find the X value that maps to this index
+    for (final entry in _xValueToIndex.entries) {
+      if (entry.value == index) {
+        return entry.key;
+      }
+    }
+
+    // Fallback: calculate directly
+    if (_timeSeriesData.length == 1) {
+      return 5.0;
+    }
+
+    return (index / (_timeSeriesData.length - 1)) * 10;
   }
 
   Widget _buildEmptyState() {

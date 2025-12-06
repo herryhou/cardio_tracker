@@ -287,10 +287,6 @@ class _DualChartContainerState extends State<DualChartContainer> {
       // For mobile, use abbreviated labels but still span the full width
       List<ButtonSegment<ExtendedTimeRange>> mobileSegments = [
         const ButtonSegment<ExtendedTimeRange>(
-          value: ExtendedTimeRange.day,
-          label: Text('D'),
-        ),
-        const ButtonSegment<ExtendedTimeRange>(
           value: ExtendedTimeRange.week,
           label: Text('W'),
         ),
@@ -321,10 +317,6 @@ class _DualChartContainerState extends State<DualChartContainer> {
     } else {
       // For larger screens, use all segments with full width expansion
       List<ButtonSegment<ExtendedTimeRange>> segments = [
-        const ButtonSegment<ExtendedTimeRange>(
-          value: ExtendedTimeRange.day,
-          label: Text('Day'),
-        ),
         const ButtonSegment<ExtendedTimeRange>(
           value: ExtendedTimeRange.week,
           label: Text('Week'),
@@ -372,8 +364,6 @@ class _DualChartContainerState extends State<DualChartContainer> {
   
   String _getCurrentRangeLabel() {
     switch (_currentTimeRange) {
-      case ExtendedTimeRange.day:
-        return 'Daily View';
       case ExtendedTimeRange.week:
         return 'Weekly View';
       case ExtendedTimeRange.month:
@@ -382,6 +372,8 @@ class _DualChartContainerState extends State<DualChartContainer> {
         return 'Seasonal View';
       case ExtendedTimeRange.year:
         return 'Yearly View';
+      case ExtendedTimeRange.day:
+        return 'Daily View'; // Keep for compatibility, though not selectable
     }
   }
 
