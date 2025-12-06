@@ -627,17 +627,35 @@ class TimeSeriesChartState extends State<TimeSeriesChart> with WidgetsBindingObs
     });
   }
 
-  String _getXAxisLabelFormat() {
+  // Try the simplest possible format strings
+  String _getSimpleDateFormat() {
     switch (_currentTimeRange) {
       case ExtendedTimeRange.day:
+        return 'M/d';
       case ExtendedTimeRange.week:
-        return 'MMM dd';
+        return 'M/d';
       case ExtendedTimeRange.month:
-        return 'MMM yy';
+        return 'MMM';
       case ExtendedTimeRange.season:
-        return 'MMM yyyy';
+        return 'MMM';
       case ExtendedTimeRange.year:
         return 'yyyy';
+    }
+  }
+
+  // Get appropriate interval for x-axis labels
+  double? _getXAxisInterval() {
+    switch (_currentTimeRange) {
+      case ExtendedTimeRange.day:
+        return 1; // 1 day interval
+      case ExtendedTimeRange.week:
+        return 7; // 7 days (1 week) interval
+      case ExtendedTimeRange.month:
+        return 30; // ~1 month interval
+      case ExtendedTimeRange.season:
+        return 90; // ~3 months (1 season) interval
+      case ExtendedTimeRange.year:
+        return 365; // ~1 year interval
     }
   }
 
@@ -845,7 +863,8 @@ class TimeSeriesChartState extends State<TimeSeriesChart> with WidgetsBindingObs
             fontWeight: FontWeight.w500,
           ),
         ),
-        labelFormat: _getXAxisLabelFormat(),
+        // Try the simplest possible format strings
+        labelFormat: _getSimpleDateFormat(),
         labelStyle: const TextStyle(fontSize: 10),
         majorGridLines: const MajorGridLines(width: 0.5, color: Colors.grey),
         edgeLabelPlacement: EdgeLabelPlacement.shift,
@@ -912,12 +931,6 @@ class TimeSeriesChartState extends State<TimeSeriesChart> with WidgetsBindingObs
           animationDuration: 800,
         ),
       ],
-      zoomPanBehavior: ZoomPanBehavior(
-        enablePanning: true,
-        enablePinching: true,
-        enableMouseWheelZooming: true,
-        zoomMode: ZoomMode.x,
-      ),
       selectionGesture: ActivationMode.singleTap,
       trackballBehavior: TrackballBehavior(
         enable: true,

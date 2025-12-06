@@ -278,79 +278,72 @@ class _DualChartContainerState extends State<DualChartContainer> {
     final isMobile = MediaQuery.of(context).size.width < 400;
     final isSmallMobile = MediaQuery.of(context).size.width < 360;
 
-    // Adjust segments based on screen size
-    List<ButtonSegment<ExtendedTimeRange>> segments = [
-      const ButtonSegment<ExtendedTimeRange>(
-        value: ExtendedTimeRange.day,
-        label: Text('D'),
-      ),
-      const ButtonSegment<ExtendedTimeRange>(
-        value: ExtendedTimeRange.week,
-        label: Text('W'),
-      ),
-      const ButtonSegment<ExtendedTimeRange>(
-        value: ExtendedTimeRange.month,
-        label: Text('M'),
-      ),
-    ];
-
-    // Add more segments for larger screens
-    if (!isSmallMobile) {
-      segments.addAll([
-        const ButtonSegment<ExtendedTimeRange>(
-          value: ExtendedTimeRange.season,
-          label: Text('S'),
-        ),
-      ]);
-    }
-
-    if (!isMobile) {
-      segments.addAll([
-        const ButtonSegment<ExtendedTimeRange>(
-          value: ExtendedTimeRange.year,
-          label: Text('Y'),
-        ),
-      ]);
-    }
-
-    // Use different layouts for different screen sizes
+    // Segmented buttons should span available horizontal space evenly
+    // according to Material Design 3 guidelines
     Widget selectorWidget;
+
     if (isMobile) {
-      // For mobile, use a scrollable row or wrap
-      selectorWidget = SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: segments.map((segment) => Padding(
-            padding: const EdgeInsets.only(right: 4),
-            child: _buildCompactTimeButton(segment),
-          )).toList(),
+      // For mobile, use abbreviated labels but still span the full width
+      List<ButtonSegment<ExtendedTimeRange>> mobileSegments = [
+        const ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.day,
+          label: Text('D'),
         ),
-      );
-    } else {
-      // For larger screens, use the segmented button
-      selectorWidget = SegmentedButton<ExtendedTimeRange>(
-        segments: [
-          const ButtonSegment<ExtendedTimeRange>(
-            value: ExtendedTimeRange.day,
-            label: Text('Day'),
-          ),
-          const ButtonSegment<ExtendedTimeRange>(
-            value: ExtendedTimeRange.week,
-            label: Text('Week'),
-          ),
-          const ButtonSegment<ExtendedTimeRange>(
-            value: ExtendedTimeRange.month,
-            label: Text('Month'),
-          ),
+        const ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.week,
+          label: Text('W'),
+        ),
+        const ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.month,
+          label: Text('M'),
+        ),
+      ];
+
+      if (!isSmallMobile) {
+        mobileSegments.add(
           const ButtonSegment<ExtendedTimeRange>(
             value: ExtendedTimeRange.season,
-            label: Text('Season'),
+            label: Text('S'),
           ),
-          const ButtonSegment<ExtendedTimeRange>(
-            value: ExtendedTimeRange.year,
-            label: Text('Year'),
-          ),
-        ],
+        );
+      }
+
+      selectorWidget = SegmentedButton<ExtendedTimeRange>(
+        segments: mobileSegments,
+        selected: {_currentTimeRange},
+        onSelectionChanged: (Set<ExtendedTimeRange> selection) {
+          if (selection.isNotEmpty) {
+            _handleTimeRangeChanged(selection.first, widget.startDate, widget.endDate);
+          }
+        },
+      );
+    } else {
+      // For larger screens, use all segments with full width expansion
+      List<ButtonSegment<ExtendedTimeRange>> segments = [
+        const ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.day,
+          label: Text('Day'),
+        ),
+        const ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.week,
+          label: Text('Week'),
+        ),
+        const ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.month,
+          label: Text('Month'),
+        ),
+        const ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.season,
+          label: Text('Season'),
+        ),
+        const ButtonSegment<ExtendedTimeRange>(
+          value: ExtendedTimeRange.year,
+          label: Text('Year'),
+        ),
+      ];
+
+      selectorWidget = SegmentedButton<ExtendedTimeRange>(
+        segments: segments,
         selected: {_currentTimeRange},
         onSelectionChanged: (Set<ExtendedTimeRange> selection) {
           if (selection.isNotEmpty) {
@@ -361,36 +354,21 @@ class _DualChartContainerState extends State<DualChartContainer> {
     }
 
     return Container(
+      width: double.infinity, // Ensure container spans full width
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Theme.of(context).dividerColor),
+        border: Border.all(
+          color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
+          width: 1,
+        ),
       ),
       padding: EdgeInsets.all(isMobile ? 2.0 : 4.0),
       child: selectorWidget,
     );
   }
 
-  Widget _buildCompactTimeButton(ButtonSegment<ExtendedTimeRange> segment) {
-    final isSelected = _currentTimeRange == segment.value;
-
-    return FilterChip(
-      label: segment.label ?? Text(''),
-      selected: isSelected,
-      onSelected: (selected) {
-        if (selected) {
-          _handleTimeRangeChanged(segment.value, widget.startDate, widget.endDate);
-        }
-      },
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      labelStyle: TextStyle(
-        fontSize: 12,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-      ),
-    );
-  }
-
+  
   String _getCurrentRangeLabel() {
     switch (_currentTimeRange) {
       case ExtendedTimeRange.day:

@@ -319,10 +319,10 @@ class ClinicalScatterPainter extends CustomPainter {
     }
 
     // Y-axis labels (diastolic)
-    for (int i = 0; i <= 4; i++) {
-      final value = 40 + (i * 18);
+    for (int i = 0; i <= 9; i++) {
+      final value = 40 + (i * 10);
       final x = drawArea.left - 10;
-      final y = drawArea.bottom - (i * drawArea.height / 4);
+      final y = drawArea.bottom - (i * drawArea.height / 9);
 
       _drawText(canvas, value.toString(), Offset(x, y), textStyle, align: TextAlign.right);
     }
