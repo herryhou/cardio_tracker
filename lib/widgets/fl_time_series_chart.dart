@@ -25,7 +25,7 @@ const double _dotStrokeWidth = 2.0;
 
 // Y-axis bounds
 const double _minY = 60.0;
-const double _maxY = 200.0;
+const double _maxY = 170.0;
 const double _yAxisInterval = 20.0;
 
 // Text styling
@@ -265,9 +265,12 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
 
 
   Widget _buildChart() {
-    return LineChart(
-      _buildLineChartData(),
-      duration: const Duration(milliseconds: 250),
+    return SizedBox(
+      height: 450,
+      child: LineChart(
+        _buildLineChartData(),
+        duration: const Duration(milliseconds: 250),
+      ),
     );
   }
 

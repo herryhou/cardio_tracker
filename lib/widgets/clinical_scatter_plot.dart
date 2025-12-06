@@ -22,14 +22,14 @@ class ClinicalZone {
 }
 
 /// AHA Clinical Zones following medical guidelines
-/// X-axis: Systolic (60-200 mmHg), Y-axis: Diastolic (40-130 mmHg)
+/// X-axis: Systolic (70-170 mmHg), Y-axis: Diastolic (50-120 mmHg)
 /// Note: Zones are drawn from largest area to smallest for proper layering
 class ClinicalZones {
   static const List<ClinicalZone> zones = [
     // Normal: < 120 systolic AND < 80 diastolic
     ClinicalZone(
       name: 'Normal',
-      bounds: Rect.fromLTWH(60, 40, 60, 40), // 60-120 systolic, 40-80 diastolic
+      bounds: Rect.fromLTWH(70, 50, 50, 30), // 70-120 systolic, 50-80 diastolic
       color: Color(0xFFC1FACF), // Green-500
       description: 'Normal: <120/<80',
       category: BloodPressureCategory.normal,
@@ -38,7 +38,7 @@ class ClinicalZones {
     // Elevated: 120-129 systolic AND < 80 diastolic
     ClinicalZone(
       name: 'Elevated',
-      bounds: Rect.fromLTWH(60, 40, 69, 40), // 60-129 systolic, 40-80 diastolic
+      bounds: Rect.fromLTWH(70, 50, 59, 30), // 70-129 systolic, 50-80 diastolic
       color: Color(0xFFFAF5C1), // Amber-500
       description: 'Elevated: 120-129/<80',
       category: BloodPressureCategory.elevated,
@@ -47,7 +47,7 @@ class ClinicalZones {
     // Stage 1: 130-139 systolic OR 80-89 diastolic
     ClinicalZone(
       name: 'Stage 1 Hypertension',
-      bounds: Rect.fromLTWH(60, 40, 79, 50), // 60-139 systolic, 40-90 diastolic
+      bounds: Rect.fromLTWH(70, 50, 69, 40), // 70-139 systolic, 50-90 diastolic
       color: Color(0xFFFAD8C1), // Orange-600
       description: 'Stage 1: 130-139/80-89',
       category: BloodPressureCategory.stage1,
@@ -56,7 +56,7 @@ class ClinicalZones {
     // Stage 2: >=140 systolic OR >=90 diastolic
     ClinicalZone(
       name: 'Stage 2 Hypertension',
-      bounds: Rect.fromLTWH(60, 40, 140, 90), // 60-200 systolic, 40-130 diastolic
+      bounds: Rect.fromLTWH(70, 50, 100, 70), // 70-170 systolic, 50-120 diastolic
       color: Color(0xFFFAC1C1), // Red-600
       description: 'Stage 2: ≥140/≥90',
       category: BloodPressureCategory.stage2,
@@ -65,7 +65,7 @@ class ClinicalZones {
     // Low: <90 systolic OR <60 diastolic (drawn last for visibility)
     ClinicalZone(
       name: 'Low',
-      bounds: Rect.fromLTWH(60, 40, 30, 20), // 60-90 systolic, 40-60 diastolic
+      bounds: Rect.fromLTWH(70, 50, 20, 10), // 70-90 systolic, 50-60 diastolic
       color: Color(0xFFC1F2FA), // Blue-500
       description: 'Low: <90/<60',
       category: BloodPressureCategory.low,
@@ -206,8 +206,8 @@ class ClinicalScatterPainter extends CustomPainter {
       ..strokeWidth = 0.5;
 
     // Vertical grid lines (systolic)
-    for (int i = 0; i <= 14; i++) {
-      final x = drawArea.left + (i * drawArea.width / 14);
+    for (int i = 0; i <= 10; i++) {
+      final x = drawArea.left + (i * drawArea.width / 10);
       canvas.drawLine(
         Offset(x, drawArea.top),
         Offset(x, drawArea.bottom),
@@ -216,8 +216,8 @@ class ClinicalScatterPainter extends CustomPainter {
     }
 
     // Horizontal grid lines (diastolic)
-    for (int i = 0; i <= 9; i++) {
-      final y = drawArea.top + (i * drawArea.height / 9);
+    for (int i = 0; i <= 7; i++) {
+      final y = drawArea.top + (i * drawArea.height / 7);
       canvas.drawLine(
         Offset(drawArea.left, y),
         Offset(drawArea.right, y),
@@ -257,19 +257,19 @@ class ClinicalScatterPainter extends CustomPainter {
     );
 
     // X-axis labels (systolic)
-    for (int i = 0; i <= 7; i++) {
-      final value = 60 + (i * 20);
-      final x = drawArea.left + (i * drawArea.width / 7);
+    for (int i = 0; i <= 10; i++) {
+      final value = 70 + (i * 10);
+      final x = drawArea.left + (i * drawArea.width / 10);
       final y = drawArea.bottom + 20;
 
       _drawText(canvas, value.toString(), Offset(x, y), textStyle, align: TextAlign.center);
     }
 
     // Y-axis labels (diastolic)
-    for (int i = 0; i <= 9; i++) {
-      final value = 40 + (i * 10);
+    for (int i = 0; i <= 7; i++) {
+      final value = 50 + (i * 10);
       final x = drawArea.left - 10;
-      final y = drawArea.bottom - (i * drawArea.height / 9);
+      final y = drawArea.bottom - (i * drawArea.height / 7);
 
       _drawText(canvas, value.toString(), Offset(x, y), textStyle, align: TextAlign.right);
     }
@@ -369,9 +369,9 @@ class ClinicalScatterPainter extends CustomPainter {
   }
 
   Offset _scalePointToDrawingArea(Offset dataPoint, Rect drawArea) {
-    // Scale data point (systolic: 60-200, diastolic: 40-130) to drawing area
-    final x = drawArea.left + ((dataPoint.dx - 60) / (200 - 60)) * drawArea.width;
-    final y = drawArea.bottom - ((dataPoint.dy - 40) / (130 - 40)) * drawArea.height;
+    // Scale data point (systolic: 70-170, diastolic: 50-120) to drawing area
+    final x = drawArea.left + ((dataPoint.dx - 70) / (170 - 70)) * drawArea.width;
+    final y = drawArea.bottom - ((dataPoint.dy - 50) / (120 - 50)) * drawArea.height;
     return Offset(x, y);
   }
 
@@ -390,11 +390,11 @@ class ClinicalScatterPainter extends CustomPainter {
   }
 
   Rect _scaleRectToDrawingArea(Rect dataRect, Rect drawArea) {
-    // Scale data rectangle (systolic: 60-200, diastolic: 40-130) to drawing area
-    final left = drawArea.left + ((dataRect.left - 60) / (200 - 60)) * drawArea.width;
-    final top = drawArea.bottom - ((dataRect.top - 40) / (130 - 40)) * drawArea.height;
-    final right = drawArea.left + ((dataRect.right - 60) / (200 - 60)) * drawArea.width;
-    final bottom = drawArea.bottom - ((dataRect.bottom - 40) / (130 - 40)) * drawArea.height;
+    // Scale data rectangle (systolic: 70-170, diastolic: 50-120) to drawing area
+    final left = drawArea.left + ((dataRect.left - 70) / (170 - 70)) * drawArea.width;
+    final top = drawArea.bottom - ((dataRect.top - 50) / (120 - 50)) * drawArea.height;
+    final right = drawArea.left + ((dataRect.right - 70) / (170 - 70)) * drawArea.width;
+    final bottom = drawArea.bottom - ((dataRect.bottom - 50) / (120 - 50)) * drawArea.height;
     return Rect.fromLTRB(left, top, right, bottom);
   }
 
@@ -705,23 +705,26 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$label ',
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: '$label ',
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+                color: Colors.black87,
+              ),
             ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 12),
+            TextSpan(
+              text: value,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black87,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -729,7 +732,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -746,7 +749,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8, top: 8),
             child: Row(
               children: [
                 Icon(
@@ -786,18 +789,27 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           // Legend
-          _buildLegend(),
+          SizedBox(
+            width: double.infinity,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: _buildLegend(),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildLegend() {
-    return Wrap(
+    return Row(
+      mainAxisSize: MainAxisSize.min,
       spacing: 16,
-      runSpacing: 8,
       children: ClinicalZones.zones.map((zone) => _buildLegendItem(zone)).toList(),
     );
   }

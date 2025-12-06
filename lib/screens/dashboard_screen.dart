@@ -866,14 +866,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                         child: Row(
                           children: [
-                            // Date
+                            // DateTime
                             SizedBox(
-                              width: 60,
+                              width: 110,
                               child: Text(
-                                '${reading.timestamp.day}/${reading.timestamp.month}',
+                                '${reading.timestamp.month.toString().padLeft(2, '0')}/${reading.timestamp.day.toString().padLeft(2, '0')} ${reading.timestamp.hour.toString().padLeft(2, '0')}:${reading.timestamp.minute.toString().padLeft(2, '0')}',
                                 style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
                                   color: Color(0xFF1F2937),
                                 ),
                               ),

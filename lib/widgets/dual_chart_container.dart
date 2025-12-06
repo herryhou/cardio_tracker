@@ -97,7 +97,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
                 // Clinical Scatter Plot
                 Container(
                   height: finalScatterHeight,
-                  margin: EdgeInsets.only(bottom: spacing),
+                  margin: EdgeInsets.only(bottom: spacing, left: 4, right: 4),
                   child: Card(
                     elevation: chartProvider.hasSelection ? 6 : 2,
                     shadowColor: chartProvider.hasSelection
@@ -114,7 +114,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
                     ),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
-                      padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
+                      padding: EdgeInsets.all(isMobile ? 4.0 : 8.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         gradient: chartProvider.hasSelection
@@ -184,9 +184,10 @@ class _DualChartContainerState extends State<DualChartContainer> {
                   ),
                 ),
 
-                // Time Series Chart
+                                // Time Series Chart
                 Container(
-                  height: finalScatterHeight * 0.8, // 0.8x the scatter plot height
+                  height: finalScatterHeight * 0.533, // 2/3 of 0.8x
+                  margin: EdgeInsets.only(left: 4, right: 4),
                   child: Card(
                     elevation: chartProvider.hasSelection ? 6 : 2,
                     shadowColor: chartProvider.hasSelection
@@ -203,7 +204,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
                     ),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
-                      padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
+                      padding: EdgeInsets.all(isMobile ? 4.0 : 8.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         gradient: chartProvider.hasSelection
