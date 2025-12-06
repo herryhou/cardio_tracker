@@ -85,19 +85,25 @@ class _DualChartContainerState extends State<DualChartContainer> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header with title and clear selection button
-                _buildHeader(chartProvider),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: _buildHeader(chartProvider),
+                ),
 
                 SizedBox(height: spacing),
 
                 // Time Range Selector (shared between both charts)
-                _buildSharedTimeRangeSelector(chartProvider),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: _buildSharedTimeRangeSelector(chartProvider),
+                ),
 
                 SizedBox(height: spacing * 2),
 
                 // Clinical Scatter Plot
                 Container(
                   height: finalScatterHeight,
-                  margin: EdgeInsets.only(bottom: spacing, left: 4, right: 4),
+                  margin: EdgeInsets.zero,
                   child: Card(
                     elevation: chartProvider.hasSelection ? 6 : 2,
                     shadowColor: chartProvider.hasSelection
@@ -187,7 +193,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
                                 // Time Series Chart
                 Container(
                   height: finalScatterHeight * 0.533, // 2/3 of 0.8x
-                  margin: EdgeInsets.only(left: 4, right: 4),
+                  margin: EdgeInsets.zero,
                   child: Card(
                     elevation: chartProvider.hasSelection ? 6 : 2,
                     shadowColor: chartProvider.hasSelection

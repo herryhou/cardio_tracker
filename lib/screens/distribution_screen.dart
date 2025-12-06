@@ -83,7 +83,7 @@ class _DistributionScreenState extends State<DistributionScreen> {
               onRefresh: () => provider.loadReadings(),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.zero,
                 child: DualChartContainer(
                   readings: provider.readings,
                   onTimeRangeChanged: (timeRange, startDate, endDate) {

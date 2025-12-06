@@ -69,7 +69,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return RefreshIndicator(
       onRefresh: () => provider.loadReadings(),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.zero,
         child: DualChartContainer(
           readings: provider.readings,
           onTimeRangeChanged: (timeRange, startDate, endDate) {
