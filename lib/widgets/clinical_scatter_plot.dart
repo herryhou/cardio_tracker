@@ -332,7 +332,7 @@ class ClinicalScatterPainter extends CustomPainter {
         ..color = darkerColor
         ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(point, 5, pointPaint);
+      canvas.drawCircle(point, 3, pointPaint);
     }
   }
 
@@ -829,7 +829,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               color: zone.color,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
-                color: Colors.grey[400]!,
+                color: zone.color.withValues(alpha: 0.8),
                 width: 1,
               ),
             ),
