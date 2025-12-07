@@ -104,7 +104,6 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         Row(
           children: [
             Expanded(
@@ -158,7 +157,6 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         Row(
           children: [
             Expanded(
@@ -176,7 +174,6 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
                 },
               ),
             ),
-
           ],
         ),
       ],
@@ -237,8 +234,13 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
     return InkWell(
       onTap: _selectDateTime,
       borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[300]!),
+        ),
         child: Row(
           children: [
             Icon(
@@ -346,7 +348,8 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
           const SizedBox(height: 12),
           _buildReferenceRow('Normal', '< 120/80', const Color(0xFF00C853)),
           const SizedBox(height: 6),
-          _buildReferenceRow('Elevated', '120-129/<80', const Color(0xFFFFB300)),
+          _buildReferenceRow(
+              'Elevated', '120-129/<80', const Color(0xFFFFB300)),
           const SizedBox(height: 6),
           _buildReferenceRow('High', '≥ 130/80', const Color(0xFFD32F2F)),
         ],
@@ -435,7 +438,8 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
 
   Future<void> _saveReading() async {
     if (_systolicController.text.isEmpty || _diastolicController.text.isEmpty) {
-      _showSnackBar('Please enter blood pressure values', const Color(0xFFD32F2F));
+      _showSnackBar(
+          'Please enter blood pressure values', const Color(0xFFD32F2F));
       return;
     }
 
@@ -458,7 +462,9 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
         diastolic: diastolic,
         heartRate: heartRate,
         timestamp: _selectedDateTime,
-        notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+        notes: _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim(),
       );
 
       await context.read<BloodPressureProvider>().addReading(reading);
@@ -492,7 +498,20 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
   }
 
   String _formatDate(DateTime dateTime) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
     return '${months[dateTime.month - 1]} ${dateTime.day}, ${dateTime.year}';
   }
 
@@ -545,9 +564,9 @@ class _AddReadingContentState extends State<AddReadingContent> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildBloodPressureInput(),
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
           _buildHeartRateInput(),
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
           _buildDateTimeSelector(),
           const SizedBox(height: 32),
           _buildNotesInput(),
@@ -562,7 +581,6 @@ class _AddReadingContentState extends State<AddReadingContent> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         Row(
           children: [
             Expanded(
@@ -606,7 +624,6 @@ class _AddReadingContentState extends State<AddReadingContent> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         Row(
           children: [
             Expanded(
@@ -624,7 +641,6 @@ class _AddReadingContentState extends State<AddReadingContent> {
                 },
               ),
             ),
-
           ],
         ),
       ],
@@ -665,59 +681,80 @@ class _AddReadingContentState extends State<AddReadingContent> {
               color: Colors.grey[300],
             ),
             border: InputBorder.none,
-            contentPadding: EdgeInsets.zero,
-            isDense: true,
+            contentPadding: const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 12.0),
+            isDense: false,
+            filled: true,
+            fillColor: Colors.grey[100],
           ),
           validator: validator,
         ),
-
       ],
     );
   }
 
   Widget _buildDateTimeSelector() {
-    return InkWell(
-      onTap: _selectDateTime,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            Icon(
-              Icons.calendar_today_outlined,
-              size: 18,
-              color: Colors.grey[600],
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _formatDate(_selectedDateTime),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    _formatTime(_selectedDateTime),
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.chevron_right,
-              color: Colors.grey[400],
-              size: 20,
-            ),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Date/Time',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[600],
+            letterSpacing: 0.5,
+          ),
         ),
-      ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: _selectDateTime,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 18,
+                  color: Colors.grey[600],
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _formatDate(_selectedDateTime),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        _formatTime(_selectedDateTime),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right,
+                  color: Colors.grey[400],
+                  size: 20,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -737,11 +774,11 @@ class _AddReadingContentState extends State<AddReadingContent> {
         const SizedBox(height: 12),
         TextFormField(
           controller: _notesController,
-          maxLines: 3,
-          maxLength: 150,
+          maxLines: 1,
+          maxLength: 60,
           style: const TextStyle(fontSize: 15),
           decoration: InputDecoration(
-            hintText: 'Add notes about this reading...',
+            hintText: 'e.g., After workout, woke up...',
             hintStyle: TextStyle(
               color: Colors.grey[400],
               fontSize: 15,
@@ -760,6 +797,8 @@ class _AddReadingContentState extends State<AddReadingContent> {
             ),
             contentPadding: const EdgeInsets.all(16),
             counterText: '',
+            filled: true,
+            fillColor: Colors.grey[100],
           ),
         ),
       ],
@@ -847,7 +886,8 @@ class _AddReadingContentState extends State<AddReadingContent> {
 
   Future<void> _saveReading() async {
     if (_systolicController.text.isEmpty || _diastolicController.text.isEmpty) {
-      _showSnackBar('Please enter blood pressure values', const Color(0xFFD32F2F));
+      _showSnackBar(
+          'Please enter blood pressure values', const Color(0xFFD32F2F));
       return;
     }
 
@@ -870,7 +910,9 @@ class _AddReadingContentState extends State<AddReadingContent> {
         diastolic: diastolic,
         heartRate: heartRate,
         timestamp: _selectedDateTime,
-        notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+        notes: _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim(),
       );
 
       await context.read<BloodPressureProvider>().addReading(reading);
@@ -920,7 +962,20 @@ class _AddReadingContentState extends State<AddReadingContent> {
   }
 
   String _formatDate(DateTime dateTime) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
     return '${months[dateTime.month - 1]} ${dateTime.day}, ${dateTime.year}';
   }
 
