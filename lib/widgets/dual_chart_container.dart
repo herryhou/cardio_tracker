@@ -58,28 +58,9 @@ class _DualChartContainerState extends State<DualChartContainer> {
         builder: (context, chartProvider, child) {
         return LayoutBuilder(
           builder: (context, constraints) {
-            // Enhanced responsive breakpoints
+            // Dynamic spacing based on screen size
             final isMobile = constraints.maxWidth < 400;
-            final isSmallMobile = constraints.maxWidth < 360;
-            final isTablet = constraints.maxWidth > 600;
-            final isLargeTablet = constraints.maxWidth > 900;
-            final isDesktop = constraints.maxWidth > 1200;
-
-            // Dynamic height calculations based on screen size
-            final availableHeight = constraints.maxHeight;
-            final headerHeight = isMobile ? 80.0 : 100.0;
-            final timeRangeHeight = isMobile ? 50.0 : 60.0;
             final spacing = isMobile ? 8.0 : 16.0;
-
-            // Calculate scatter plot height (60% of available space on mobile, 80% on tablet) - doubled
-            final scatterHeight = isMobile
-                ? (availableHeight - headerHeight - timeRangeHeight - spacing * 2) * 0.6
-                : isLargeTablet
-                    ? 800.0  // Doubled from 400
-                    : (availableHeight - headerHeight - timeRangeHeight - spacing * 2) * 0.8;
-
-            // Cap minimum heights for usability - doubled
-            final finalScatterHeight = scatterHeight.clamp(isMobile ? 360.0 : 560.0, isMobile ? 560.0 : 900.0);
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,17 +83,9 @@ class _DualChartContainerState extends State<DualChartContainer> {
 
                 // Clinical Scatter Plot
                 Container(
-                  height: finalScatterHeight,
+                  height: kClinicalScatterChartHeight,
                   margin: EdgeInsets.zero,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
+                  padding: EdgeInsets.zero,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     padding: EdgeInsets.zero,
@@ -188,12 +161,14 @@ class _DualChartContainerState extends State<DualChartContainer> {
                         ),
                     ),
                 ),
+                SizedBox(height: spacing * 2),
 
-                                // Time Series Chart
+                // Time Series Chart
                 Container(
-                  height: finalScatterHeight * 0.533, // 2/3 of 0.8x
+                  height: kClinicalScatterChartHeight * 0.533,
                   margin: EdgeInsets.zero,
-                    child: FlTimeSeriesChart(
+                  padding: EdgeInsets.zero,
+                  child: FlTimeSeriesChart(
                       key: _flTimeSeriesChartKey,
                       readings: widget.readings,
                       selectedReading: chartProvider.selectedReading,
@@ -205,7 +180,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
                       showTimeRangeSelector: false,
                       currentTimeRange: _currentTimeRange,
                     ),
-                  ),
+                ),
               ],
             );
           },
