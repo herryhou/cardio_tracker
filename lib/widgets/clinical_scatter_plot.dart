@@ -50,7 +50,7 @@ class ClinicalZones {
 
     // Stage 1: 130-139 systolic OR 80-89 diastolic
     ClinicalZone(
-      name: 'Stage 1 Hypertension',
+      name: 'Stage 1',
       bounds: Rect.fromLTWH(70, 50, 69, 40), // 70-139 systolic, 50-90 diastolic
       color: Color(0xFFFAD8C1), // Orange-600
       description: 'Stage 1: 130-139/80-89',
@@ -65,15 +65,6 @@ class ClinicalZones {
       color: Color(0xFFFAC1C1), // Red-600
       description: 'Stage 2: ≥140/≥90',
       category: BloodPressureCategory.stage2,
-    ),
-
-    // Low: <90 systolic OR <60 diastolic (drawn last for visibility)
-    ClinicalZone(
-      name: 'Low',
-      bounds: Rect.fromLTWH(70, 50, 20, 10), // 70-90 systolic, 50-60 diastolic
-      color: Color(0xFFC1F2FA), // Blue-500
-      description: 'Low: <90/<60',
-      category: BloodPressureCategory.low,
     ),
   ];
 
@@ -182,8 +173,6 @@ class ClinicalScatterPainter extends CustomPainter {
           .firstWhere((z) => z.category == BloodPressureCategory.elevated),
       ClinicalZones.zones
           .firstWhere((z) => z.category == BloodPressureCategory.normal),
-      ClinicalZones.zones
-          .firstWhere((z) => z.category == BloodPressureCategory.low),
     ];
 
     for (final zone in orderedZones) {
@@ -197,8 +186,8 @@ class ClinicalScatterPainter extends CustomPainter {
       canvas.drawRect(scaledBounds, zonePaint);
 
       // Draw zone border only for the outermost edges
-      if (zone.name != 'Low') {
-        // Skip border for low zone as it's overlapped
+      if (zone.name != 'Normal') {
+        // Skip border for Nrmal zone as it's overlapped
         final borderPaint = Paint()
           ..color = zone.color.withValues(alpha: 1.0)
           ..style = PaintingStyle.stroke
