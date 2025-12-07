@@ -21,7 +21,11 @@
       "Skill(executing-plans)",
       "Bash(nc:*)",
       "WebSearch",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Skill(using-superpowers)",
+      "Skill(systematic-debugging)",
+      "Bash(git rm:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
