@@ -749,11 +749,9 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
           // Chart
-          SizedBox(
-            height: kClinicalScatterChartHeight,
+          Expanded(
             child: GestureDetector(
               onTapUp: _handleTap,
               onLongPressEnd: _handleLongPress,
