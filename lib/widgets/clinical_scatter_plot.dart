@@ -781,14 +781,93 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
           ),
           const SizedBox(height: 20),
           // Legend
-          SizedBox(
-            width: double.infinity,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: _buildLegend(),
-              ),
+          _buildLegend(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLegend() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Blood Pressure Categories',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[800],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 20,
+            runSpacing: 12,
+            children: ClinicalZones.zones
+                .map((zone) => _buildEnhancedLegendItem(zone))
+                .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEnhancedLegendItem(ClinicalZone zone) {
+    return Container(
+      constraints: const BoxConstraints(minWidth: 120),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Color indicator
+          Container(
+            width: 16,
+            height: 16,
+            margin: const EdgeInsets.only(top: 2),
+            decoration: BoxDecoration(
+              color: zone.color,
+              borderRadius: BorderRadius.circular(4),
+              boxShadow: [
+                BoxShadow(
+                  color: zone.color.withOpacity(0.3),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Legend text
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  zone.name,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: _getZoneTextColor(zone.category),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  zone.description,
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey[600],
+                    height: 1.3,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -796,37 +875,20 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     );
   }
 
-  Widget _buildLegend() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      spacing: 16,
-      children:
-          ClinicalZones.zones.map((zone) => _buildLegendItem(zone)).toList(),
-    );
-  }
-
-  Widget _buildLegendItem(ClinicalZone zone) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: zone.color,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          zone.name,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey[700],
-          ),
-        ),
-      ],
-    );
+  Color _getZoneTextColor(BloodPressureCategory category) {
+    switch (category) {
+      case BloodPressureCategory.low:
+        return const Color(0xFF1E40AF); // Dark blue
+      case BloodPressureCategory.normal:
+        return const Color(0xFF065F46); // Dark green
+      case BloodPressureCategory.elevated:
+        return const Color(0xFF92400E); // Dark amber
+      case BloodPressureCategory.stage1:
+        return const Color(0xFFDC2626); // Red
+      case BloodPressureCategory.stage2:
+        return const Color(0xFF991B1B); // Dark red
+      case BloodPressureCategory.crisis:
+        return const Color(0xFF7F1D1D); // Very dark red
+    }
   }
 }
