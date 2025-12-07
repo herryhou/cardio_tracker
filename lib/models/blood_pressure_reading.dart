@@ -14,6 +14,8 @@ class BloodPressureReading {
   final int heartRate;
   final DateTime timestamp;
   final String? notes;
+  final DateTime lastModified;  // NEW
+  final bool isDeleted;         // NEW
 
   BloodPressureReading({
     required this.id,
@@ -22,6 +24,8 @@ class BloodPressureReading {
     required this.heartRate,
     required this.timestamp,
     this.notes,
+    required this.lastModified,
+    this.isDeleted = false,
   });
 
   BloodPressureCategory get category {
@@ -62,6 +66,8 @@ class BloodPressureReading {
       heartRate: json['heartRate'] as int,
       timestamp: DateTime.parse(json['timestamp'] as String),
       notes: json['notes'] as String?,
+      lastModified: DateTime.parse(json['lastModified']),
+      isDeleted: json['isDeleted'] ?? false,
     );
   }
 
@@ -73,6 +79,8 @@ class BloodPressureReading {
       'heartRate': heartRate,
       'timestamp': timestamp.toIso8601String(),
       'notes': notes,
+      'lastModified': lastModified.toIso8601String(),
+      'isDeleted': isDeleted,
     };
   }
 
@@ -83,6 +91,8 @@ class BloodPressureReading {
     int? heartRate,
     DateTime? timestamp,
     String? notes,
+    DateTime? lastModified,
+    bool? isDeleted,
   }) {
     return BloodPressureReading(
       id: id ?? this.id,
@@ -91,12 +101,14 @@ class BloodPressureReading {
       heartRate: heartRate ?? this.heartRate,
       timestamp: timestamp ?? this.timestamp,
       notes: notes ?? this.notes,
+      lastModified: lastModified ?? this.lastModified,
+      isDeleted: isDeleted ?? this.isDeleted,
     );
   }
 
   @override
   String toString() {
-    return 'BloodPressureReading(id: $id, systolic: $systolic, diastolic: $diastolic, heartRate: $heartRate, timestamp: $timestamp, notes: $notes)';
+    return 'BloodPressureReading(id: $id, systolic: $systolic, diastolic: $diastolic, heartRate: $heartRate, timestamp: $timestamp, notes: $notes, lastModified: $lastModified, isDeleted: $isDeleted)';
   }
 
   @override
@@ -108,7 +120,9 @@ class BloodPressureReading {
         other.diastolic == diastolic &&
         other.heartRate == heartRate &&
         other.timestamp == timestamp &&
-        other.notes == notes;
+        other.notes == notes &&
+        other.lastModified == lastModified &&
+        other.isDeleted == isDeleted;
   }
 
   @override
@@ -118,6 +132,8 @@ class BloodPressureReading {
         diastolic.hashCode ^
         heartRate.hashCode ^
         timestamp.hashCode ^
-        notes.hashCode;
+        notes.hashCode ^
+        lastModified.hashCode ^
+        isDeleted.hashCode;
   }
 }
