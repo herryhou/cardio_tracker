@@ -868,7 +868,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           children: [
                             // DateTime
                             SizedBox(
-                              width: 110,
+                              width: 100,
                               child: Text(
                                 '${reading.timestamp.month.toString().padLeft(2, '0')}/${reading.timestamp.day.toString().padLeft(2, '0')} ${reading.timestamp.hour.toString().padLeft(2, '0')}:${reading.timestamp.minute.toString().padLeft(2, '0')}',
                                 style: const TextStyle(
@@ -878,43 +878,49 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 16),
+                            const SizedBox(width: 12),
 
                             // BP Values
-                            Expanded(
+                            SizedBox(
+                              width: 50,
                               child: Text(
                                 '${reading.systolic}/${reading.diastolic}',
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   color: _getCategoryColor(context, reading.category),
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
 
                             // Pulse
-                            const SizedBox(width: 16),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.favorite,
-                                  size: 16,
-                                  color: const Color(0xFFEF4444),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  '${reading.heartRate}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFFEF4444),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Icon(
+                                    Icons.favorite,
+                                    size: 16,
+                                    color: const Color(0xFFEF4444),
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${reading.heartRate}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFFEF4444),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
 
                             // Category indicator
-                            const SizedBox(width: 12),
+                            const SizedBox(width: 8),
                             Container(
                               width: 8,
                               height: 8,
@@ -1255,7 +1261,7 @@ class AddReadingModalSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Add Reading',
+                          'New Reading',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),

@@ -109,13 +109,17 @@ class _DualChartContainerState extends State<DualChartContainer> {
                             padding: const EdgeInsets.all(8),
                             child: Row(
                               children: [
-                                Text(
-                                  'Blood Pressure Distribution',
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: chartProvider.hasSelection
-                                        ? Theme.of(context).colorScheme.primary
-                                        : null,
+                                Expanded(
+                                  child: Text(
+                                    'Blood Pressure Distribution',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: chartProvider.hasSelection
+                                          ? Theme.of(context).colorScheme.primary
+                                          : null,
+                                    ),
                                   ),
                                 ),
                                 if (chartProvider.hasSelection) ...[
@@ -133,19 +137,27 @@ class _DualChartContainerState extends State<DualChartContainer> {
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: AnimatedSwitcher(
                               duration: const Duration(milliseconds: 200),
-                              child: Text(
-                                chartProvider.hasSelection
-                                    ? 'Selected: ${_formatReading(chartProvider.selectedReading!)}'
-                                    : 'Tap data points to see details in the timeline below',
+                              child: Row(
                                 key: ValueKey(chartProvider.hasSelection),
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: chartProvider.hasSelection
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Colors.grey[600],
-                                  fontWeight: chartProvider.hasSelection
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
-                                ),
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      chartProvider.hasSelection
+                                          ? 'Selected: ${_formatReading(chartProvider.selectedReading!)}'
+                                          : 'Tap data points to see details in the timeline below',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: chartProvider.hasSelection
+                                            ? Theme.of(context).colorScheme.primary
+                                            : Colors.grey[600],
+                                        fontWeight: chartProvider.hasSelection
+                                            ? FontWeight.w600
+                                            : FontWeight.normal,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),

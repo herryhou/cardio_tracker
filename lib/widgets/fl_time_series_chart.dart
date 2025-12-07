@@ -122,21 +122,8 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     final sortedReadings = _sortReadings(widget.readings);
     final filteredReadings = _filterReadingsByTimeRange(sortedReadings);
     final timeSeriesData = _convertToTimeSeriesData(filteredReadings);
-    // domp timeSeriesData as debugprint
-    for (var data in timeSeriesData) {
-      debugPrint(
-        'FlTimeSeriesChart: TimeSeriesData timestamp=${data.timestamp}, '
-        'systolic=${data.systolic}, diastolic=${data.diastolic}, '
-        'heartRate=${data.heartRate}, notes=${data.notes}, '
-        'category=${data.category}, originalReadingsCount=${data.originalReadings.length}',
-      );
-    }
 
     _setTimeSeriesData(timeSeriesData);
-    debugPrint(
-      'FlTimeSeriesChart: updated timeSeriesData count=${_timeSeriesData.length} '
-      'for range=$_currentTimeRange',
-    );
   }
 
   List<BloodPressureReading> _sortReadings(List<BloodPressureReading> readings) {
@@ -197,10 +184,6 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
 
     final first = _timeSeriesData.first.timestamp;
     final last = _timeSeriesData.last.timestamp;
-    debugPrint(
-      'FlTimeSeriesChart: built X mapping for ${_timeSeriesData.length} points '
-      'from $first to $last',
-    );
   }
 
   int? _getClosestIndexForX(double x) {
@@ -218,10 +201,6 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     }
 
     final idx = closestX != null ? _xValueToIndex[closestX] : null;
-    // debugPrint(
-    //   'FlTimeSeriesChart: _getClosestIndexForX x=$x -> index=$idx '
-    //   'distance=${minDistance.isFinite ? minDistance : -1}',
-    // );
     return idx;
   }
 
@@ -325,10 +304,6 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     final rangeStart = rangeInfo.rangeStart.millisecondsSinceEpoch.toDouble();
     final rangeEnd = rangeInfo.rangeEnd.millisecondsSinceEpoch.toDouble();
 
-    debugPrint(
-      'FlTimeSeriesChart: building LineChartData points=${_timeSeriesData.length} '
-      'minX=$rangeStart maxX=$rangeEnd',
-    );
 
     return LineChartData(
       lineBarsData: [
@@ -443,8 +418,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       final xMs = value.toInt();
       final date = DateTime.fromMillisecondsSinceEpoch(xMs);
       final formattedDate = DateFormat(rangeInfo.getDateFormat()).format(date);
-      //debugPrint('FlTimeSeriesChart: X-axis label for x=$xMs -> $formattedDate');
-
+      
       return Padding(
         padding: const EdgeInsets.only(top: _labelTopPadding),
         child: Transform.rotate(
@@ -536,8 +510,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
 
     final x = touchedSpots.first.x;
     final index = _getClosestIndexForX(x);
-    debugPrint('FlTimeSeriesChart: tap at x=$x -> index=$index');
-
+    
     if (index != null && index >= 0 && index < _timeSeriesData.length) {
       final reading = _timeSeriesData[index].originalReadings.isNotEmpty
           ? _timeSeriesData[index].originalReadings.first

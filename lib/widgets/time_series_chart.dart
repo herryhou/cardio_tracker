@@ -455,6 +455,7 @@ class TimeSeriesTooltipRenderer {
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 width: 8,
@@ -465,11 +466,15 @@ class TimeSeriesTooltipRenderer {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                DateFormat('MMM dd, yyyy').format(data.timestamp),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
+              Flexible(
+                child: Text(
+                  DateFormat('MMM dd, yyyy').format(data.timestamp),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ],
