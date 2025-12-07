@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/blood_pressure_reading.dart';
+import '../models/chart_types.dart';
 import '../providers/dual_chart_provider.dart';
 import 'clinical_scatter_plot.dart';
 import 'fl_time_series_chart.dart';
-import 'time_series_chart.dart';
 
 /// Dual Chart Container with synchronized scatter plot and time series chart
 class DualChartContainer extends StatefulWidget {

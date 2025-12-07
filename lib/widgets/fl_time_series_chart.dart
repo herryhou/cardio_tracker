@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../models/blood_pressure_reading.dart';
-import 'time_series_chart.dart';
+import '../models/chart_types.dart';
 
 // ============================================================================
 // CONSTANTS
@@ -158,11 +158,11 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     return readings
         .map((reading) => TimeSeriesData(
               timestamp: reading.timestamp,
-              systolic: reading.systolic,
-              diastolic: reading.diastolic,
-              heartRate: reading.heartRate,
+              systolic: reading.systolic.toDouble(),
+              diastolic: reading.diastolic.toDouble(),
+              heartRate: reading.heartRate?.toDouble(),
               notes: reading.notes,
-              category: reading.category,
+              category: reading.category?.name,
               originalReadings: [reading],
             ))
         .toList();
