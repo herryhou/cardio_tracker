@@ -35,8 +35,17 @@ class ClinicalZones {
       name: 'Normal',
       bounds: Rect.fromLTWH(70, 50, 50, 30), // 70-120 systolic, 50-80 diastolic
       color: Color(0xFFC1FACF), // Green-500
-      description: 'Normal: <120/<80',
+      description: '<120/<80',
       category: BloodPressureCategory.normal,
+    ),
+
+    // Stage 1: 130-139 systolic OR 80-89 diastolic
+    ClinicalZone(
+      name: 'Stage 1 Hypertension',
+      bounds: Rect.fromLTWH(70, 50, 69, 40), // 70-139 systolic, 50-90 diastolic
+      color: Color(0xFFFAD8C1), // Orange-600
+      description: '130-139/80-89',
+      category: BloodPressureCategory.stage1,
     ),
 
     // Elevated: 120-129 systolic AND < 80 diastolic
@@ -44,17 +53,8 @@ class ClinicalZones {
       name: 'Elevated',
       bounds: Rect.fromLTWH(70, 50, 59, 30), // 70-129 systolic, 50-80 diastolic
       color: Color(0xFFFAF5C1), // Amber-500
-      description: 'Elevated: 120-129/<80',
+      description: '120-129/<80',
       category: BloodPressureCategory.elevated,
-    ),
-
-    // Stage 1: 130-139 systolic OR 80-89 diastolic
-    ClinicalZone(
-      name: 'Stage 1',
-      bounds: Rect.fromLTWH(70, 50, 69, 40), // 70-139 systolic, 50-90 diastolic
-      color: Color(0xFFFAD8C1), // Orange-600
-      description: 'Stage 1: 130-139/80-89',
-      category: BloodPressureCategory.stage1,
     ),
 
     // Stage 2: >=140 systolic OR >=90 diastolic
@@ -63,7 +63,7 @@ class ClinicalZones {
       bounds:
           Rect.fromLTWH(70, 50, 100, 70), // 70-170 systolic, 50-120 diastolic
       color: Color(0xFFFAC1C1), // Red-600
-      description: 'Stage 2: ≥140/≥90',
+      description: '≥140/≥90',
       category: BloodPressureCategory.stage2,
     ),
   ];
@@ -798,17 +798,6 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
-              'Blood Pressure Categories',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey[800],
-              ),
-            ),
-          ),
           SizedBox(
             width: double.infinity,
             child: Wrap(
@@ -839,13 +828,10 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
             decoration: BoxDecoration(
               color: zone.color,
               borderRadius: BorderRadius.circular(4),
-              boxShadow: [
-                BoxShadow(
-                  color: zone.color.withOpacity(0.3),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              border: Border.all(
+                color: Colors.grey[400]!,
+                width: 1,
+              ),
             ),
           ),
           const SizedBox(width: 8),
