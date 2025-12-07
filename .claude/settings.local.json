@@ -25,7 +25,8 @@
       "Skill(using-superpowers)",
       "Skill(systematic-debugging)",
       "Bash(git rm:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []

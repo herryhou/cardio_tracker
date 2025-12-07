@@ -5,7 +5,8 @@ import 'package:flutter/semantics.dart';
 import '../models/blood_pressure_reading.dart';
 
 // Default height for the clinical scatter chart when not constrained by parent
-const double kClinicalScatterChartHeight = 420.0;
+const double kClinicalScatterChartHeight =
+    546.0; // 420 * 1.3 = 546 (30% increase)
 
 /// AHA Clinical Zone definition for blood pressure categorization
 class ClinicalZone {
@@ -59,7 +60,8 @@ class ClinicalZones {
     // Stage 2: >=140 systolic OR >=90 diastolic
     ClinicalZone(
       name: 'Stage 2 Hypertension',
-      bounds: Rect.fromLTWH(70, 50, 100, 70), // 70-170 systolic, 50-120 diastolic
+      bounds:
+          Rect.fromLTWH(70, 50, 100, 70), // 70-170 systolic, 50-120 diastolic
       color: Color(0xFFFAC1C1), // Red-600
       description: 'Stage 2: ≥140/≥90',
       category: BloodPressureCategory.stage2,
@@ -73,7 +75,6 @@ class ClinicalZones {
       description: 'Low: <90/<60',
       category: BloodPressureCategory.low,
     ),
-
   ];
 
   static Color getCategoryColor(BloodPressureCategory category) {
@@ -121,11 +122,10 @@ class ClinicalScatterPainter extends CustomPainter {
     const leftPadding = 70.0; // Extra space for Y-axis labels
     const bottomPadding = 70.0; // Extra space for X-axis labels
     final drawArea = Rect.fromLTWH(
-      leftPadding,
-      padding,
-      size.width - leftPadding - padding,
-      size.height - padding - bottomPadding
-    );
+        leftPadding,
+        padding,
+        size.width - leftPadding - padding,
+        size.height - padding - bottomPadding);
 
     // Draw background
     _drawBackground(canvas, drawArea);
@@ -174,11 +174,16 @@ class ClinicalScatterPainter extends CustomPainter {
   void _drawClinicalZones(Canvas canvas, Rect drawArea) {
     // Draw zones in order - from largest to smallest for proper layering
     final orderedZones = [
-      ClinicalZones.zones.firstWhere((z) => z.category == BloodPressureCategory.stage2),
-      ClinicalZones.zones.firstWhere((z) => z.category == BloodPressureCategory.stage1),
-      ClinicalZones.zones.firstWhere((z) => z.category == BloodPressureCategory.elevated),
-      ClinicalZones.zones.firstWhere((z) => z.category == BloodPressureCategory.normal),
-      ClinicalZones.zones.firstWhere((z) => z.category == BloodPressureCategory.low),
+      ClinicalZones.zones
+          .firstWhere((z) => z.category == BloodPressureCategory.stage2),
+      ClinicalZones.zones
+          .firstWhere((z) => z.category == BloodPressureCategory.stage1),
+      ClinicalZones.zones
+          .firstWhere((z) => z.category == BloodPressureCategory.elevated),
+      ClinicalZones.zones
+          .firstWhere((z) => z.category == BloodPressureCategory.normal),
+      ClinicalZones.zones
+          .firstWhere((z) => z.category == BloodPressureCategory.low),
     ];
 
     for (final zone in orderedZones) {
@@ -192,7 +197,8 @@ class ClinicalScatterPainter extends CustomPainter {
       canvas.drawRect(scaledBounds, zonePaint);
 
       // Draw zone border only for the outermost edges
-      if (zone.name != 'Low') { // Skip border for low zone as it's overlapped
+      if (zone.name != 'Low') {
+        // Skip border for low zone as it's overlapped
         final borderPaint = Paint()
           ..color = zone.color.withValues(alpha: 1.0)
           ..style = PaintingStyle.stroke
@@ -265,7 +271,8 @@ class ClinicalScatterPainter extends CustomPainter {
       final x = drawArea.left + (i * drawArea.width / 10);
       final y = drawArea.bottom + 20;
 
-      _drawText(canvas, value.toString(), Offset(x, y), textStyle, align: TextAlign.center);
+      _drawText(canvas, value.toString(), Offset(x, y), textStyle,
+          align: TextAlign.center);
     }
 
     // Y-axis labels (diastolic)
@@ -274,21 +281,24 @@ class ClinicalScatterPainter extends CustomPainter {
       final x = drawArea.left - 10;
       final y = drawArea.bottom - (i * drawArea.height / 7);
 
-      _drawText(canvas, value.toString(), Offset(x, y), textStyle, align: TextAlign.right);
+      _drawText(canvas, value.toString(), Offset(x, y), textStyle,
+          align: TextAlign.right);
     }
 
     // Axis titles
     final titleStyle = textStyle.copyWith(
       fontSize: 13,
       fontWeight: FontWeight.bold,
+      color: Colors.black,
     );
 
     _drawText(canvas, 'Systolic (mmHg)',
-      Offset(drawArea.center.dx, drawArea.bottom + 45), titleStyle, align: TextAlign.center);
+        Offset(drawArea.center.dx, drawArea.bottom + 45), titleStyle,
+        align: TextAlign.center);
 
     _drawText(canvas, 'Diastolic (mmHg)',
-      Offset(drawArea.left - 55, drawArea.center.dy), titleStyle, align: TextAlign.center,
-      isVertical: true);
+        Offset(drawArea.left - 55, drawArea.center.dy), titleStyle,
+        align: TextAlign.center, isVertical: true);
   }
 
   void _drawDataPoints(Canvas canvas, Rect drawArea) {
@@ -308,9 +318,8 @@ class ClinicalScatterPainter extends CustomPainter {
 
     for (final reading in visibleReadings) {
       final point = _scalePointToDrawingArea(
-        Offset(reading.systolic.toDouble(), reading.diastolic.toDouble()),
-        drawArea
-      );
+          Offset(reading.systolic.toDouble(), reading.diastolic.toDouble()),
+          drawArea);
 
       // Skip points outside viewport
       if (!_isPointInViewport(point, drawArea)) continue;
@@ -338,11 +347,11 @@ class ClinicalScatterPainter extends CustomPainter {
     }
   }
 
-  void _drawSelectionHighlight(Canvas canvas, Rect drawArea, BloodPressureReading reading) {
+  void _drawSelectionHighlight(
+      Canvas canvas, Rect drawArea, BloodPressureReading reading) {
     final point = _scalePointToDrawingArea(
-      Offset(reading.systolic.toDouble(), reading.diastolic.toDouble()),
-      drawArea
-    );
+        Offset(reading.systolic.toDouble(), reading.diastolic.toDouble()),
+        drawArea);
 
     final color = ClinicalZones.getCategoryColor(reading.category);
     final darkerColor = _darkenColor(color);
@@ -373,17 +382,19 @@ class ClinicalScatterPainter extends CustomPainter {
 
   Offset _scalePointToDrawingArea(Offset dataPoint, Rect drawArea) {
     // Scale data point (systolic: 70-170, diastolic: 50-120) to drawing area
-    final x = drawArea.left + ((dataPoint.dx - 70) / (170 - 70)) * drawArea.width;
-    final y = drawArea.bottom - ((dataPoint.dy - 50) / (120 - 50)) * drawArea.height;
+    final x =
+        drawArea.left + ((dataPoint.dx - 70) / (170 - 70)) * drawArea.width;
+    final y =
+        drawArea.bottom - ((dataPoint.dy - 50) / (120 - 50)) * drawArea.height;
     return Offset(x, y);
   }
 
   bool _isPointInViewport(Offset point, Rect drawArea) {
     const margin = 10.0;
     return point.dx >= drawArea.left - margin &&
-           point.dx <= drawArea.right + margin &&
-           point.dy >= drawArea.top - margin &&
-           point.dy <= drawArea.bottom + margin;
+        point.dx <= drawArea.right + margin &&
+        point.dy >= drawArea.top - margin &&
+        point.dy <= drawArea.bottom + margin;
   }
 
   Color _darkenColor(Color color) {
@@ -394,15 +405,19 @@ class ClinicalScatterPainter extends CustomPainter {
 
   Rect _scaleRectToDrawingArea(Rect dataRect, Rect drawArea) {
     // Scale data rectangle (systolic: 70-170, diastolic: 50-120) to drawing area
-    final left = drawArea.left + ((dataRect.left - 70) / (170 - 70)) * drawArea.width;
-    final top = drawArea.bottom - ((dataRect.top - 50) / (120 - 50)) * drawArea.height;
-    final right = drawArea.left + ((dataRect.right - 70) / (170 - 70)) * drawArea.width;
-    final bottom = drawArea.bottom - ((dataRect.bottom - 50) / (120 - 50)) * drawArea.height;
+    final left =
+        drawArea.left + ((dataRect.left - 70) / (170 - 70)) * drawArea.width;
+    final top =
+        drawArea.bottom - ((dataRect.top - 50) / (120 - 50)) * drawArea.height;
+    final right =
+        drawArea.left + ((dataRect.right - 70) / (170 - 70)) * drawArea.width;
+    final bottom = drawArea.bottom -
+        ((dataRect.bottom - 50) / (120 - 50)) * drawArea.height;
     return Rect.fromLTRB(left, top, right, bottom);
   }
 
   void _drawText(Canvas canvas, String text, Offset position, TextStyle style,
-                    {TextAlign align = TextAlign.left, bool isVertical = false}) {
+      {TextAlign align = TextAlign.left, bool isVertical = false}) {
     final textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
       textDirection: TextDirection.ltr,
@@ -415,8 +430,8 @@ class ClinicalScatterPainter extends CustomPainter {
       final offset = align == TextAlign.center
           ? Offset(position.dx - textPainter.width / 2, position.dy)
           : align == TextAlign.right
-          ? Offset(position.dx - textPainter.width, position.dy)
-          : position;
+              ? Offset(position.dx - textPainter.width, position.dy)
+              : position;
       textPainter.paint(canvas, offset);
     } else {
       canvas.save();
@@ -431,7 +446,8 @@ class ClinicalScatterPainter extends CustomPainter {
   bool shouldRepaint(ClinicalScatterPainter oldDelegate) {
     if (readings.length != oldDelegate.readings.length) return true;
     if (selectedReading != oldDelegate.selectedReading) return true;
-    if (zoomLevel != oldDelegate.zoomLevel || panOffset != oldDelegate.panOffset) return true;
+    if (zoomLevel != oldDelegate.zoomLevel ||
+        panOffset != oldDelegate.panOffset) return true;
     if (showTrendLine != oldDelegate.showTrendLine) return true;
 
     return false;
@@ -524,7 +540,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     _tooltipEntry = null;
   }
 
-  void _showDetailedTooltip(BloodPressureReading reading, Offset globalPosition) {
+  void _showDetailedTooltip(
+      BloodPressureReading reading, Offset globalPosition) {
     _hideTooltip();
 
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
@@ -555,7 +572,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     overlay.insert(_tooltipEntry!);
   }
 
-  Widget _buildTooltipCard(BloodPressureReading reading, {required bool isDetailed}) {
+  Widget _buildTooltipCard(BloodPressureReading reading,
+      {required bool isDetailed}) {
     final color = ClinicalZones.getCategoryColor(reading.category);
 
     return Material(
@@ -597,7 +615,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               _buildDetailRow('Systolic:', '${reading.systolic} mmHg'),
               _buildDetailRow('Diastolic:', '${reading.diastolic} mmHg'),
               _buildDetailRow('Heart Rate:', '${reading.heartRate} bpm'),
-              _buildDetailRow('Category:', ClinicalZones.getCategoryDescription(reading.category)),
+              _buildDetailRow('Category:',
+                  ClinicalZones.getCategoryDescription(reading.category)),
               if (reading.notes?.isNotEmpty ?? false) ...[
                 const SizedBox(height: 8),
                 Container(
@@ -625,16 +644,14 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
   BloodPressureReading? _findReadingAtPosition(Offset position, Size size) {
     const padding = 50.0;
     const leftPadding = 70.0;
-    final drawArea = Rect.fromLTWH(
-      leftPadding,
-      padding,
-      size.width - leftPadding - padding,
-      size.height - 2 * padding
-    );
+    final drawArea = Rect.fromLTWH(leftPadding, padding,
+        size.width - leftPadding - padding, size.height - 2 * padding);
 
     // Reverse calculate data coordinates from tap position
-    final systolicValue = 60 + ((position.dx - drawArea.left) / drawArea.width) * (200 - 60);
-    final diastolicValue = 130 - ((position.dy - drawArea.top) / drawArea.height) * (130 - 40);
+    final systolicValue =
+        60 + ((position.dx - drawArea.left) / drawArea.width) * (200 - 60);
+    final diastolicValue =
+        130 - ((position.dy - drawArea.top) / drawArea.height) * (130 - 40);
 
     final tolerance = 20.0;
 
@@ -643,9 +660,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
 
     for (final reading in widget.readings) {
       final readingPoint = _scalePointToDrawingAreaForHitTesting(
-        Offset(reading.systolic.toDouble(), reading.diastolic.toDouble()),
-        drawArea
-      );
+          Offset(reading.systolic.toDouble(), reading.diastolic.toDouble()),
+          drawArea);
 
       final distance = (position - readingPoint).distance;
       if (distance < tolerance && distance < minDistance) {
@@ -657,9 +673,12 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     return closestReading;
   }
 
-  Offset _scalePointToDrawingAreaForHitTesting(Offset dataPoint, Rect drawArea) {
-    final x = drawArea.left + ((dataPoint.dx - 60) / (200 - 60)) * drawArea.width;
-    final y = drawArea.bottom - ((dataPoint.dy - 40) / (130 - 40)) * drawArea.height;
+  Offset _scalePointToDrawingAreaForHitTesting(
+      Offset dataPoint, Rect drawArea) {
+    final x =
+        drawArea.left + ((dataPoint.dx - 60) / (200 - 60)) * drawArea.width;
+    final y =
+        drawArea.bottom - ((dataPoint.dy - 40) / (130 - 40)) * drawArea.height;
     return Offset(x, y);
   }
 
@@ -691,7 +710,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                 _buildDetailRow('Systolic:', '${reading.systolic} mmHg'),
                 _buildDetailRow('Diastolic:', '${reading.diastolic} mmHg'),
                 _buildDetailRow('Heart Rate:', '${reading.heartRate} bpm'),
-                _buildDetailRow('Category:', ClinicalZones.getCategoryDescription(reading.category)),
+                _buildDetailRow('Category:',
+                    ClinicalZones.getCategoryDescription(reading.category)),
               ],
             ),
           ),
@@ -791,7 +811,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       spacing: 16,
-      children: ClinicalZones.zones.map((zone) => _buildLegendItem(zone)).toList(),
+      children:
+          ClinicalZones.zones.map((zone) => _buildLegendItem(zone)).toList(),
     );
   }
 

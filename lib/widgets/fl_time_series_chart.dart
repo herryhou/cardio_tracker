@@ -126,7 +126,8 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     _setTimeSeriesData(timeSeriesData);
   }
 
-  List<BloodPressureReading> _sortReadings(List<BloodPressureReading> readings) {
+  List<BloodPressureReading> _sortReadings(
+      List<BloodPressureReading> readings) {
     return List<BloodPressureReading>.from(readings)
       ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
   }
@@ -146,7 +147,8 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     final rangeEnd = rangeInfo.rangeEnd;
 
     return readings
-        .where((r) => r.timestamp.isAfter(rangeStart) && r.timestamp.isBefore(rangeEnd))
+        .where((r) =>
+            r.timestamp.isAfter(rangeStart) && r.timestamp.isBefore(rangeEnd))
         .toList();
   }
 
@@ -155,14 +157,14 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
   ) {
     return readings
         .map((reading) => TimeSeriesData(
-          timestamp: reading.timestamp,
-          systolic: reading.systolic,
-          diastolic: reading.diastolic,
-          heartRate: reading.heartRate,
-          notes: reading.notes,
-          category: reading.category,
-          originalReadings: [reading],
-        ))
+              timestamp: reading.timestamp,
+              systolic: reading.systolic,
+              diastolic: reading.diastolic,
+              heartRate: reading.heartRate,
+              notes: reading.notes,
+              category: reading.category,
+              originalReadings: [reading],
+            ))
         .toList();
   }
 
@@ -242,7 +244,6 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     );
   }
 
-
   Widget _buildChart() {
     return SizedBox(
       height: 450,
@@ -269,15 +270,15 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
           Text(
             'No data available',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Colors.grey[600],
-            ),
+                  color: Colors.grey[600],
+                ),
           ),
           const SizedBox(height: 8),
           Text(
             'Start recording blood pressure to see trends here',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[500],
-            ),
+                  color: Colors.grey[500],
+                ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -303,7 +304,6 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
 
     final rangeStart = rangeInfo.rangeStart.millisecondsSinceEpoch.toDouble();
     final rangeEnd = rangeInfo.rangeEnd.millisecondsSinceEpoch.toDouble();
-
 
     return LineChartData(
       lineBarsData: [
@@ -335,7 +335,8 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       color: _systolicColor,
       barWidth: _systolicBarWidth,
       isStrokeCapRound: true,
-      dotData: FlDotData(show: true, getDotPainter: _getDotPainter(_systolicColor)),
+      dotData:
+          FlDotData(show: true, getDotPainter: _getDotPainter(_systolicColor)),
       belowBarData: BarAreaData(show: false),
     );
   }
@@ -348,7 +349,8 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       barWidth: _diastolicBarWidth,
       isStrokeCapRound: true,
       dashArray: _diastolicDashArray,
-      dotData: FlDotData(show: true, getDotPainter: _getDotPainter(_diastolicColor)),
+      dotData:
+          FlDotData(show: true, getDotPainter: _getDotPainter(_diastolicColor)),
       belowBarData: BarAreaData(show: false),
     );
   }
@@ -366,7 +368,8 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       }
 
       final data = _timeSeriesData[dataIndex];
-      final reading = data.originalReadings.isNotEmpty ? data.originalReadings.first : null;
+      final reading =
+          data.originalReadings.isNotEmpty ? data.originalReadings.first : null;
       final isSelected = widget.selectedReading == reading;
 
       return FlDotCirclePainter(
@@ -387,6 +390,15 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
           reservedSize: _yAxisReservedSize,
           getTitlesWidget: (value, meta) => _buildYAxisLabel(value),
         ),
+        axisNameWidget: const Text(
+          'Sys/Dia',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        axisNameSize: 20,
       ),
       rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
       topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -418,7 +430,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       final xMs = value.toInt();
       final date = DateTime.fromMillisecondsSinceEpoch(xMs);
       final formattedDate = DateFormat(rangeInfo.getDateFormat()).format(date);
-      
+
       return Padding(
         padding: const EdgeInsets.only(top: _labelTopPadding),
         child: Transform.rotate(
@@ -468,7 +480,8 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     return LineTouchData(
       touchTooltipData: LineTouchTooltipData(
         getTooltipColor: (group) => Colors.white,
-        tooltipBorder: BorderSide(color: Colors.grey.withValues(alpha: _gridAlpha)),
+        tooltipBorder:
+            BorderSide(color: Colors.grey.withValues(alpha: _gridAlpha)),
         getTooltipItems: _buildTooltipItems,
       ),
       touchCallback: _handleTouchEvent,
@@ -510,7 +523,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
 
     final x = touchedSpots.first.x;
     final index = _getClosestIndexForX(x);
-    
+
     if (index != null && index >= 0 && index < _timeSeriesData.length) {
       final reading = _timeSeriesData[index].originalReadings.isNotEmpty
           ? _timeSeriesData[index].originalReadings.first
@@ -530,10 +543,20 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
             reservedSize: _yAxisReservedSize,
             getTitlesWidget: (value, meta) => _buildYAxisLabel(value),
           ),
+          axisNameWidget: const Text(
+            'Sys/Dia',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          axisNameSize: 20,
         ),
         rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 30)),
+        bottomTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: true, reservedSize: 30)),
       ),
       gridData: FlGridData(show: false),
       borderData: _buildBorderData(),
@@ -582,7 +605,8 @@ class _TimeRangeInfo {
       case ExtendedTimeRange.day:
         return DateTime(now.year, now.month, now.day);
       case ExtendedTimeRange.week:
-        return DateTime(now.year, now.month, now.day).subtract(const Duration(days: 6));
+        return DateTime(now.year, now.month, now.day)
+            .subtract(const Duration(days: 6));
       case ExtendedTimeRange.month:
         return DateTime(now.year, now.month, 1);
       case ExtendedTimeRange.season:
@@ -622,11 +646,17 @@ class _TimeRangeInfo {
       case ExtendedTimeRange.week:
         return Duration(days: 1).inMilliseconds.toDouble();
       case ExtendedTimeRange.month:
-        return Duration(days: 3).inMilliseconds.toDouble(); // Changed from 7 to 3 days for better label distribution
+        return Duration(days: 3)
+            .inMilliseconds
+            .toDouble(); // Changed from 7 to 3 days for better label distribution
       case ExtendedTimeRange.season:
-        return Duration(days: 14).inMilliseconds.toDouble(); // Changed from 21 to 14 days
+        return Duration(days: 14)
+            .inMilliseconds
+            .toDouble(); // Changed from 21 to 14 days
       case ExtendedTimeRange.year:
-        return Duration(days: 30).inMilliseconds.toDouble(); // Changed from 60 to 30 days
+        return Duration(days: 30)
+            .inMilliseconds
+            .toDouble(); // Changed from 60 to 30 days
     }
   }
 

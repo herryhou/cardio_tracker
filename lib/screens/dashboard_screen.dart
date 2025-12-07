@@ -122,7 +122,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Container(
                     decoration: const BoxDecoration(
                       color: Color(0xFFF5F7FA),
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(24)),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -139,7 +140,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             const SizedBox(height: 24),
 
                             // Recent Readings Section
-                            _buildSimpleRecentReadingsList(context, provider.recentReadings),
+                            _buildSimpleRecentReadingsList(
+                                context, provider.recentReadings),
                           ] else ...[
                             _buildEmptyState(context),
                           ],
@@ -158,7 +160,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           _showAddReadingModal(context);
         },
         icon: const Icon(AppIcons.add),
-        label: const Text('Add Reading'),
+        label: const Text('New'),
         elevation: 4,
         backgroundColor: const Color(0xFF8B5CF6),
         foregroundColor: Colors.white,
@@ -167,7 +169,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   // New gradient header method
-  Widget _buildGradientHeader(BuildContext context, BloodPressureReading? latestReading) {
+  Widget _buildGradientHeader(
+      BuildContext context, BloodPressureReading? latestReading) {
     final hour = DateTime.now().hour;
     String greeting = 'Good morning';
     if (hour >= 12 && hour < 17) {
@@ -352,7 +355,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               // Status Badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: categoryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -418,7 +422,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildMetricsGrid(BuildContext context, BloodPressureProvider provider) {
+  Widget _buildMetricsGrid(
+      BuildContext context, BloodPressureProvider provider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -431,7 +436,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
         const SizedBox(height: 16),
-
         LayoutBuilder(
           builder: (context, constraints) {
             // Calculate available width per card (accounting for spacing)
@@ -611,7 +615,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildHistoricalChart(BuildContext context, BloodPressureProvider provider) {
+  Widget _buildHistoricalChart(
+      BuildContext context, BloodPressureProvider provider) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -648,7 +653,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildSimpleChart(BuildContext context, List<BloodPressureReading> readings) {
+  Widget _buildSimpleChart(
+      BuildContext context, List<BloodPressureReading> readings) {
     if (readings.isEmpty) {
       return const Center(
         child: Text(
@@ -693,20 +699,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Text(
               'Unable to load data',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 12),
             Text(
               error,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
+                  ),
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed: () => context.read<BloodPressureProvider>().loadReadings(),
+              onPressed: () =>
+                  context.read<BloodPressureProvider>().loadReadings(),
               icon: const Icon(Icons.refresh),
               label: const Text('Retry'),
             ),
@@ -777,8 +787,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  
-  Widget _buildSimpleRecentReadingsList(BuildContext context, List<BloodPressureReading> recentReadings) {
+  Widget _buildSimpleRecentReadingsList(
+      BuildContext context, List<BloodPressureReading> recentReadings) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -791,7 +801,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
         const SizedBox(height: 16),
-
         if (recentReadings.isEmpty)
           Container(
             padding: const EdgeInsets.all(20),
@@ -839,7 +848,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
             child: Column(
-              children: recentReadings.take(10).toList().asMap().entries.map((entry) {
+              children:
+                  recentReadings.take(10).toList().asMap().entries.map((entry) {
                 final index = entry.key;
                 final reading = entry.value;
                 final isLast = index == recentReadings.length - 1 || index == 9;
@@ -863,7 +873,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
                         child: Row(
                           children: [
                             // DateTime
@@ -889,7 +900,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: _getCategoryColor(context, reading.category),
+                                  color: _getCategoryColor(
+                                      context, reading.category),
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -925,7 +937,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               width: 8,
                               height: 8,
                               decoration: BoxDecoration(
-                                color: _getCategoryColor(context, reading.category),
+                                color: _getCategoryColor(
+                                    context, reading.category),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
@@ -949,7 +962,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  
   void _handleMenuAction(BuildContext context, String action) async {
     final provider = context.read<BloodPressureProvider>();
 
@@ -966,7 +978,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  Future<void> _exportCsv(BuildContext context, List<BloodPressureReading> readings) async {
+  Future<void> _exportCsv(
+      BuildContext context, List<BloodPressureReading> readings) async {
     try {
       await CsvExportService.exportToCsv(readings);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -979,7 +992,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  Future<void> _exportSummary(BuildContext context, List<BloodPressureReading> readings) async {
+  Future<void> _exportSummary(
+      BuildContext context, List<BloodPressureReading> readings) async {
     try {
       await CsvExportService.exportSummaryStats(readings);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -992,7 +1006,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  Future<void> _exportMonth(BuildContext context, List<BloodPressureReading> readings) async {
+  Future<void> _exportMonth(
+      BuildContext context, List<BloodPressureReading> readings) async {
     try {
       await CsvExportService.exportCurrentMonth(readings);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1014,8 +1029,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  
-  Color _getCategoryColor(BuildContext context, BloodPressureCategory category) {
+  Color _getCategoryColor(
+      BuildContext context, BloodPressureCategory category) {
     switch (category) {
       case BloodPressureCategory.low:
         return AppTheme.getLowColor(context);
@@ -1054,7 +1069,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     provider.deleteReading(reading.id);
   }
 }
-
 
 /// Custom painter for blood pressure chart
 class _BPChartPainter extends CustomPainter {
@@ -1118,8 +1132,10 @@ class _BPChartPainter extends CustomPainter {
 
       for (int i = 0; i < readings.length; i++) {
         final x = padding.left + (chartWidth / (readings.length - 1)) * i;
-        final y = padding.top + chartHeight -
-                  ((readings[i].systolic - minSystolic + 10) / systolicRange) * chartHeight;
+        final y = padding.top +
+            chartHeight -
+            ((readings[i].systolic - minSystolic + 10) / systolicRange) *
+                chartHeight;
 
         if (i == 0) {
           systolicPath.moveTo(x, y);
@@ -1141,8 +1157,10 @@ class _BPChartPainter extends CustomPainter {
 
       for (int i = 0; i < readings.length; i++) {
         final x = padding.left + (chartWidth / (readings.length - 1)) * i;
-        final y = padding.top + chartHeight -
-                  ((readings[i].diastolic - minDiastolic + 10) / diastolicRange) * chartHeight;
+        final y = padding.top +
+            chartHeight -
+            ((readings[i].diastolic - minDiastolic + 10) / diastolicRange) *
+                chartHeight;
 
         if (i == 0) {
           diastolicPath.moveTo(x, y);
@@ -1158,13 +1176,17 @@ class _BPChartPainter extends CustomPainter {
         final x = padding.left + (chartWidth / (readings.length - 1)) * i;
 
         // Systolic point
-        final systolicY = padding.top + chartHeight -
-                         ((readings[i].systolic - minSystolic + 10) / systolicRange) * chartHeight;
+        final systolicY = padding.top +
+            chartHeight -
+            ((readings[i].systolic - minSystolic + 10) / systolicRange) *
+                chartHeight;
         canvas.drawCircle(Offset(x, systolicY), 4, systolicPaint);
 
         // Diastolic point
-        final diastolicY = padding.top + chartHeight -
-                          ((readings[i].diastolic - minDiastolic + 10) / diastolicRange) * chartHeight;
+        final diastolicY = padding.top +
+            chartHeight -
+            ((readings[i].diastolic - minDiastolic + 10) / diastolicRange) *
+                chartHeight;
         canvas.drawCircle(Offset(x, diastolicY), 4, diastolicPaint);
       }
     }
@@ -1177,16 +1199,20 @@ class _BPChartPainter extends CustomPainter {
       ..color = const Color(0xFFEF4444)
       ..strokeWidth = 3;
 
-    canvas.drawCircle(Offset(size.width - 120, legendY), 4, systolicLegendPaint);
-    _drawText(canvas, 'Systolic', size.width - 100, legendY - 6, const Color(0xFF6B7280));
+    canvas.drawCircle(
+        Offset(size.width - 120, legendY), 4, systolicLegendPaint);
+    _drawText(canvas, 'Systolic', size.width - 100, legendY - 6,
+        const Color(0xFF6B7280));
 
     // Diastolic legend
     final diastolicLegendPaint = Paint()
       ..color = const Color(0xFF3B82F6)
       ..strokeWidth = 3;
 
-    canvas.drawCircle(Offset(size.width - 120, legendY + 20), 4, diastolicLegendPaint);
-    _drawText(canvas, 'Diastolic', size.width - 100, legendY + 14, const Color(0xFF6B7280));
+    canvas.drawCircle(
+        Offset(size.width - 120, legendY + 20), 4, diastolicLegendPaint);
+    _drawText(canvas, 'Diastolic', size.width - 100, legendY + 14,
+        const Color(0xFF6B7280));
   }
 
   void _drawText(Canvas canvas, String text, double x, double y, Color color) {
@@ -1233,7 +1259,8 @@ class AddReadingModalSheet extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                    color:
+                        Theme.of(context).colorScheme.outline.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -1262,15 +1289,20 @@ class AddReadingModalSheet extends StatelessWidget {
                       children: [
                         Text(
                           'New Reading',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         Text(
                           'Record your blood pressure and heart rate',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withOpacity(0.7),
+                                  ),
                         ),
                       ],
                     ),

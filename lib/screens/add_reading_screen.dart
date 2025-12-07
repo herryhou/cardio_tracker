@@ -255,15 +255,17 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
                 children: [
                   Text(
                     _formatDate(_selectedDateTime),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[600],
                     ),
                   ),
                   Text(
                     _formatTime(_selectedDateTime),
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
                       color: Colors.grey[600],
                     ),
                   ),
@@ -721,7 +723,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
                 Icon(
                   Icons.calendar_today_outlined,
                   size: 18,
-                  color: Colors.grey[600],
+                  color: Colors.grey[500],
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -730,16 +732,17 @@ class _AddReadingContentState extends State<AddReadingContent> {
                     children: [
                       Text(
                         _formatDate(_selectedDateTime),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
+                          color: Colors.grey[500],
                         ),
                       ),
                       Text(
                         _formatTime(_selectedDateTime),
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600],
+                          color: Colors.grey[500],
                         ),
                       ),
                     ],
@@ -747,7 +750,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
                 ),
                 Icon(
                   Icons.chevron_right,
-                  color: Colors.grey[400],
+                  color: Colors.grey[500],
                   size: 20,
                 ),
               ],

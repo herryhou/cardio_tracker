@@ -5,7 +5,6 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/blood_pressure_reading.dart';
 import '../models/user_settings.dart';
-import '../models/sync_status.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -69,19 +68,6 @@ class DatabaseService {
         reminder_times TEXT NOT NULL,
         notifications_enabled INTEGER NOT NULL DEFAULT 1,
         data_sharing_enabled INTEGER NOT NULL DEFAULT 0,
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
-      )
-    ''');
-
-    // Create sync_status table
-    await db.execute('''
-      CREATE TABLE sync_status (
-        id TEXT PRIMARY KEY,
-        last_sync_state TEXT NOT NULL,
-        last_sync_time INTEGER,
-        error_message TEXT,
-        pending_readings_count INTEGER NOT NULL DEFAULT 0,
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL
       )
@@ -296,65 +282,6 @@ class DatabaseService {
       },
       where: 'id = ?',
       whereArgs: [settings.id],
-    );
-  }
-
-  // Sync Status operations
-  Future<void> insertSyncStatus(SyncStatus syncStatus) async {
-    final db = await database;
-
-    await db.insert(
-      'sync_status',
-      {
-        'id': syncStatus.id,
-        'last_sync_state': syncStatus.lastSyncState.toString().split('.').last,
-        'last_sync_time': syncStatus.lastSyncTime?.millisecondsSinceEpoch,
-        'error_message': syncStatus.errorMessage,
-        'pending_readings_count': syncStatus.pendingReadingsCount,
-        'created_at': syncStatus.createdAt.millisecondsSinceEpoch,
-        'updated_at': syncStatus.updatedAt.millisecondsSinceEpoch,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<SyncStatus?> getSyncStatus() async {
-    final db = await database;
-
-    final List<Map<String, dynamic>> maps = await db.query('sync_status');
-
-    if (maps.isEmpty) return null;
-
-    final map = maps.first;
-    return SyncStatus(
-      id: map['id'] as String,
-      lastSyncState: SyncState.values.firstWhere(
-        (e) => e.toString() == 'SyncState.${map['last_sync_state']}',
-      ),
-      lastSyncTime: map['last_sync_time'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['last_sync_time'] as int)
-          : null,
-      errorMessage: map['error_message'] as String?,
-      pendingReadingsCount: map['pending_readings_count'] as int,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
-      updatedAt: DateTime.fromMillisecondsSinceEpoch(map['updated_at'] as int),
-    );
-  }
-
-  Future<void> updateSyncStatus(SyncStatus syncStatus) async {
-    final db = await database;
-
-    await db.update(
-      'sync_status',
-      {
-        'last_sync_state': syncStatus.lastSyncState.toString().split('.').last,
-        'last_sync_time': syncStatus.lastSyncTime?.millisecondsSinceEpoch,
-        'error_message': syncStatus.errorMessage,
-        'pending_readings_count': syncStatus.pendingReadingsCount,
-        'updated_at': DateTime.now().millisecondsSinceEpoch,
-      },
-      where: 'id = ?',
-      whereArgs: [syncStatus.id],
     );
   }
 }

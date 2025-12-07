@@ -98,11 +98,12 @@ class MedicalStatusIndicator extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             status,
-            style: labelStyle ?? TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
+            style: labelStyle ??
+                TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
           ),
         ],
       );
@@ -180,18 +181,18 @@ class AppLogo extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: iconColor,
-                  ),
+                        fontWeight: FontWeight.w700,
+                        color: iconColor,
+                      ),
                 ),
                 Text(
                   'Tracker',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: iconColor.withOpacity(0.7),
-                  ),
+                        fontWeight: FontWeight.w500,
+                        color: iconColor.withOpacity(0.7),
+                      ),
                 ),
               ],
             ),
