@@ -798,21 +798,26 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Blood Pressure Categories',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              'Blood Pressure Categories',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[800],
+              ),
             ),
           ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 20,
-            runSpacing: 12,
-            children: ClinicalZones.zones
-                .map((zone) => _buildEnhancedLegendItem(zone))
-                .toList(),
+          SizedBox(
+            width: double.infinity,
+            child: Wrap(
+              spacing: 20,
+              runSpacing: 12,
+              children: ClinicalZones.zones
+                  .map((zone) => _buildEnhancedLegendItem(zone))
+                  .toList(),
+            ),
           ),
         ],
       ),
