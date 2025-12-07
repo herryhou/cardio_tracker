@@ -749,6 +749,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           // Chart
           SizedBox(
