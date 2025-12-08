@@ -35,6 +35,12 @@ dependencies:
   # Charts
   fl_chart: ^0.68.0
 
+  # HTTP client
+  http: ^1.2.1
+
+  # Secure storage
+  flutter_secure_storage: ^8.0.0
+
 dev_dependencies:
   flutter_lints: ^3.0.0
 
