@@ -467,6 +467,7 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
         notes: _notesController.text.trim().isEmpty
             ? null
             : _notesController.text.trim(),
+        lastModified: DateTime.now(),
       );
 
       await context.read<BloodPressureProvider>().addReading(reading);
@@ -916,6 +917,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
         notes: _notesController.text.trim().isEmpty
             ? null
             : _notesController.text.trim(),
+        lastModified: DateTime.now(),
       );
 
       await context.read<BloodPressureProvider>().addReading(reading);

@@ -84,6 +84,7 @@ class BloodPressureProvider extends ChangeNotifier {
         heartRate: reading.heartRate,
         timestamp: reading.timestamp,
         notes: reading.notes,
+        lastModified: DateTime.now(),
       );
 
       _readings.insert(0, newReading); // Insert at beginning

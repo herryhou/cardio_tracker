@@ -66,7 +66,9 @@ class BloodPressureReading {
       heartRate: json['heartRate'] as int,
       timestamp: DateTime.parse(json['timestamp'] as String),
       notes: json['notes'] as String?,
-      lastModified: DateTime.parse(json['lastModified']),
+      lastModified: json['lastModified'] != null
+          ? DateTime.parse(json['lastModified'] as String)
+          : DateTime.now(),
       isDeleted: json['isDeleted'] ?? false,
     );
   }

@@ -85,7 +85,7 @@ class DatabaseService {
       await db.execute('ALTER TABLE blood_pressure_readings ADD COLUMN isDeleted INTEGER NOT NULL DEFAULT 0');
 
       // Set lastModified to timestamp for existing records
-      await db.execute('UPDATE blood_pressure_readings SET lastModified = timestamp');
+      await db.execute('UPDATE blood_pressure_readings SET lastModified = timestamp WHERE lastModified = 0');
     }
   }
 
@@ -158,9 +158,11 @@ class DatabaseService {
   Future<List<BloodPressureReading>> getAllReadings({bool includeDeleted = false}) async {
     final db = await database;
 
-    String whereClause = includeDeleted ? '' : 'WHERE isDeleted = 0';
-    final List<Map<String, dynamic>> maps = await db.rawQuery(
-      'SELECT * FROM blood_pressure_readings $whereClause ORDER BY timestamp DESC'
+    final List<Map<String, dynamic>> maps = await db.query(
+      'blood_pressure_readings',
+      where: includeDeleted ? null : 'isDeleted = ?',
+      whereArgs: includeDeleted ? null : [0],
+      orderBy: 'timestamp DESC',
     );
 
     return List.generate(maps.length, (i) {
@@ -210,6 +212,14 @@ class DatabaseService {
     final db = await database;
     final now = DateTime.now().millisecondsSinceEpoch;
 
+    // Get current reading to check if isDeleted changed
+    final currentReading = await getReading(reading.id);
+    if (currentReading == null) {
+      throw Exception('Reading not found');
+    }
+
+    final isDeletedChanged = currentReading.isDeleted != reading.isDeleted;
+
     await db.update(
       'blood_pressure_readings',
       {
@@ -218,7 +228,7 @@ class DatabaseService {
         'heart_rate': reading.heartRate,
         'timestamp': reading.timestamp.millisecondsSinceEpoch,
         'notes': reading.notes,
-        'lastModified': now,
+        'lastModified': isDeletedChanged ? now : reading.lastModified.millisecondsSinceEpoch,
         'isDeleted': reading.isDeleted ? 1 : 0,
         'updated_at': now,
       },
