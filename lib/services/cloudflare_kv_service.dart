@@ -10,7 +10,7 @@ class CloudflareKVService {
 
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage(
     iOptions: IOSOptions(
-      accessibility: KeychainAccessibility.after_first_unlock,
+      accessibility: KeychainAccessibility.first_unlock_this_device,
       synchronizable: false,
     ),
     aOptions: AndroidOptions(
