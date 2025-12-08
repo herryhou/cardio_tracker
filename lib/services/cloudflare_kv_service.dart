@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 import '../models/blood_pressure_reading.dart';
 
 class CloudflareKVService {
@@ -46,14 +48,25 @@ class CloudflareKVService {
       print('CloudflareKVService: Namespace ID: ${namespaceId.trim()}');
       print('CloudflareKVService: API Token: ${apiToken.trim().substring(0, 10)}...');
 
-      await _secureStorage.write(key: _accountIdKey, value: accountId.trim());
-      print('CloudflareKVService: Stored Account ID successfully');
+      // Try secure storage first
+      try {
+        await _secureStorage.write(key: _accountIdKey, value: accountId.trim());
+        print('CloudflareKVService: Stored Account ID successfully');
 
-      await _secureStorage.write(key: _namespaceIdKey, value: namespaceId.trim());
-      print('CloudflareKVService: Stored Namespace ID successfully');
+        await _secureStorage.write(key: _namespaceIdKey, value: namespaceId.trim());
+        print('CloudflareKVService: Stored Namespace ID successfully');
 
-      await _secureStorage.write(key: _apiTokenKey, value: apiToken.trim());
-      print('CloudflareKVService: Stored API Token successfully');
+        await _secureStorage.write(key: _apiTokenKey, value: apiToken.trim());
+        print('CloudflareKVService: Stored API Token successfully');
+      } catch (e) {
+        // Fallback to SharedPreferences if keychain fails
+        print('CloudflareKVService: Keychain storage failed, using fallback: ${e.toString()}');
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_accountIdKey, accountId.trim());
+        await prefs.setString(_namespaceIdKey, namespaceId.trim());
+        await prefs.setString(_apiTokenKey, apiToken.trim());
+        print('CloudflareKVService: Stored credentials using SharedPreferences fallback');
+      }
 
       // Verify storage was successful
       print('CloudflareKVService: Verifying stored credentials...');
@@ -75,9 +88,23 @@ class CloudflareKVService {
   Future<Map<String, String>?> getCredentials() async {
     try {
       print('CloudflareKVService: Retrieving stored credentials...');
-      final accountId = await _secureStorage.read(key: _accountIdKey);
-      final namespaceId = await _secureStorage.read(key: _namespaceIdKey);
-      final apiToken = await _secureStorage.read(key: _apiTokenKey);
+      String? accountId, namespaceId, apiToken;
+
+      // Try secure storage first
+      try {
+        accountId = await _secureStorage.read(key: _accountIdKey);
+        namespaceId = await _secureStorage.read(key: _namespaceIdKey);
+        apiToken = await _secureStorage.read(key: _apiTokenKey);
+        print('CloudflareKVService: Retrieved from keychain - Account ID: ${accountId != null ? 'found' : 'not found'}');
+      } catch (e) {
+        print('CloudflareKVService: Keychain read failed, trying fallback: ${e.toString()}');
+        // Fallback to SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        accountId = prefs.getString(_accountIdKey);
+        namespaceId = prefs.getString(_namespaceIdKey);
+        apiToken = prefs.getString(_apiTokenKey);
+        print('CloudflareKVService: Retrieved from SharedPreferences fallback');
+      }
 
       print('CloudflareKVService: Retrieved - Account ID: ${accountId != null ? 'found' : 'not found'}');
       print('CloudflareKVService: Retrieved - Namespace ID: ${namespaceId != null ? 'found' : 'not found'}');
@@ -103,9 +130,25 @@ class CloudflareKVService {
 
   // Clear credentials
   Future<void> clearCredentials() async {
-    await _secureStorage.delete(key: _accountIdKey);
-    await _secureStorage.delete(key: _namespaceIdKey);
-    await _secureStorage.delete(key: _apiTokenKey);
+    // Try to clear from secure storage
+    try {
+      await _secureStorage.delete(key: _accountIdKey);
+      await _secureStorage.delete(key: _namespaceIdKey);
+      await _secureStorage.delete(key: _apiTokenKey);
+    } catch (e) {
+      print('CloudflareKVService: Keychain delete failed, clearing fallback: ${e.toString()}');
+    }
+
+    // Also clear from SharedPreferences fallback
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_accountIdKey);
+      await prefs.remove(_namespaceIdKey);
+      await prefs.remove(_apiTokenKey);
+      print('CloudflareKVService: Cleared credentials from both keychain and fallback');
+    } catch (e) {
+      print('CloudflareKVService: Error clearing fallback credentials: ${e.toString()}');
+    }
   }
 
   // Check if configured

@@ -41,6 +41,9 @@ dependencies:
   # Secure storage
   flutter_secure_storage: ^8.0.0
 
+  # SharedPreferences for fallback storage
+  shared_preferences: ^2.2.2
+
 dev_dependencies:
   flutter_lints: ^3.0.0
 
