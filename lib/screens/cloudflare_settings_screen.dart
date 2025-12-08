@@ -54,13 +54,19 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
+    _clearLastSyncStatus();
 
     try {
+      print('CloudflareSettingsScreen: Starting credential save...');
+
+      // Step 1: Save credentials first
       await _kvService.setCredentials(
         accountId: _accountIdController.text.trim(),
         namespaceId: _namespaceIdController.text.trim(),
         apiToken: _apiTokenController.text.trim(),
       );
+
+      print('CloudflareSettingsScreen: Credentials saved successfully');
 
       final wasInitiallyConfigured = _isConfigured;
 
@@ -83,7 +89,38 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
         );
       }
 
+      // Step 2: Test connection after successful save
+      print('CloudflareSettingsScreen: Testing connection...');
+      final connectionTest = await _kvService.testConnection();
+
+      if (connectionTest) {
+        setState(() {
+          _lastSaveStatus = _lastSaveStatus! + ' - Connection verified';
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Connection to Cloudflare KV verified successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else {
+        setState(() {
+          _lastSaveStatus = _lastSaveStatus! + ' - Connection test failed';
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Credentials saved but connection test failed - check console for details'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      }
+
     } catch (e) {
+      print('CloudflareSettingsScreen: Save failed: ${e.toString()}');
       setState(() {
         _lastSaveStatus = 'Error: ${e.toString()}';
       });
@@ -149,6 +186,13 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
       _namespaceIdController.clear();
       _apiTokenController.clear();
       _lastSaveStatus = 'Configuration cleared';
+    });
+  }
+
+  void _clearLastSyncStatus() {
+    setState(() {
+      _lastSyncStatus = null;
+      _lastSyncTime = null;
     });
   }
 

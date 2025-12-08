@@ -24,46 +24,80 @@ class CloudflareKVService {
     required String apiToken,
   }) async {
     try {
+      print('CloudflareKVService: Starting to store credentials...');
+
       // Validate inputs before storing
       if (accountId.trim().isEmpty) {
+        print('CloudflareKVService: Validation failed - Account ID is empty');
         throw Exception('Account ID cannot be empty');
       }
       if (namespaceId.trim().isEmpty) {
+        print('CloudflareKVService: Validation failed - Namespace ID is empty');
         throw Exception('Namespace ID cannot be empty');
       }
       if (apiToken.trim().isEmpty) {
+        print('CloudflareKVService: Validation failed - API token is empty');
         throw Exception('API token cannot be empty');
       }
 
+      print('CloudflareKVService: Validation passed, storing credentials...');
+      print('CloudflareKVService: Account ID: ${accountId.trim()}');
+      print('CloudflareKVService: Namespace ID: ${namespaceId.trim()}');
+      print('CloudflareKVService: API Token: ${apiToken.trim().substring(0, 10)}...');
+
       await _secureStorage.write(key: _accountIdKey, value: accountId.trim());
+      print('CloudflareKVService: Stored Account ID successfully');
+
       await _secureStorage.write(key: _namespaceIdKey, value: namespaceId.trim());
+      print('CloudflareKVService: Stored Namespace ID successfully');
+
       await _secureStorage.write(key: _apiTokenKey, value: apiToken.trim());
+      print('CloudflareKVService: Stored API Token successfully');
 
       // Verify storage was successful
+      print('CloudflareKVService: Verifying stored credentials...');
       final storedCreds = await getCredentials();
       if (storedCreds == null) {
+        print('CloudflareKVService: Verification failed - could not retrieve stored credentials');
         throw Exception('Failed to store credentials - verification failed');
       }
-    } catch (e) {
+
+      print('CloudflareKVService: Credentials stored and verified successfully');
+    } catch (e, stackTrace) {
+      print('CloudflareKVService: Error storing credentials: ${e.toString()}');
+      print('CloudflareKVService: Stack trace: $stackTrace');
       throw Exception('Failed to store credentials: ${e.toString()}');
     }
   }
 
   // Get credentials
   Future<Map<String, String>?> getCredentials() async {
-    final accountId = await _secureStorage.read(key: _accountIdKey);
-    final namespaceId = await _secureStorage.read(key: _namespaceIdKey);
-    final apiToken = await _secureStorage.read(key: _apiTokenKey);
+    try {
+      print('CloudflareKVService: Retrieving stored credentials...');
+      final accountId = await _secureStorage.read(key: _accountIdKey);
+      final namespaceId = await _secureStorage.read(key: _namespaceIdKey);
+      final apiToken = await _secureStorage.read(key: _apiTokenKey);
 
-    if (accountId == null || namespaceId == null || apiToken == null) {
+      print('CloudflareKVService: Retrieved - Account ID: ${accountId != null ? 'found' : 'not found'}');
+      print('CloudflareKVService: Retrieved - Namespace ID: ${namespaceId != null ? 'found' : 'not found'}');
+      print('CloudflareKVService: Retrieved - API Token: ${apiToken != null ? 'found' : 'not found'}');
+
+      if (accountId == null || namespaceId == null || apiToken == null) {
+        print('CloudflareKVService: One or more credentials are missing');
+        return null;
+      }
+
+      print('CloudflareKVService: All credentials retrieved successfully');
+      return {
+        'accountId': accountId,
+        'namespaceId': namespaceId,
+        'apiToken': apiToken,
+      };
+    } catch (e, stackTrace) {
+      print('CloudflareKVService: Error retrieving credentials: ${e.toString()}');
+      print('CloudflareKVService: Stack trace: $stackTrace');
       return null;
     }
-
-    return {
-      'accountId': accountId,
-      'namespaceId': namespaceId,
-      'apiToken': apiToken,
-    };
   }
 
   // Clear credentials
@@ -161,8 +195,10 @@ class CloudflareKVService {
     final creds = await getCredentials();
     if (creds == null) throw Exception('Cloudflare KV not configured');
 
-    final url = Uri.parse(
-      'https://api.cloudflare.com/client/v4/accounts/${creds['accountId']}/storage/kv/namespaces/${creds['namespaceId']}/keys?prefix=bp_reading_'
+    final url = Uri.https(
+      'api.cloudflare.com',
+      '/client/v4/accounts/${creds['accountId']}/storage/kv/namespaces/${creds['namespaceId']}/keys',
+      {'prefix': 'bp_reading_'},
     );
 
     final response = await http.get(
@@ -189,5 +225,57 @@ class CloudflareKVService {
     }
 
     return keyMetadata;
+  }
+
+  // Test connection to Cloudflare KV
+  Future<bool> testConnection() async {
+    try {
+      final creds = await getCredentials();
+      if (creds == null) {
+        print('CloudflareKVService: Test connection failed - no credentials stored');
+        return false;
+      }
+
+      print('CloudflareKVService: Testing connection with Account ID: ${creds['accountId']}, Namespace ID: ${creds['namespaceId']}');
+
+      final url = Uri.https(
+        'api.cloudflare.com',
+        '/client/v4/accounts/${creds['accountId']}/storage/kv/namespaces/${creds['namespaceId']}/keys',
+        {'prefix': 'bp_reading_'},
+      );
+
+      print('CloudflareKVService: Making request to: ${url.toString().replaceAll(creds['apiToken'], '[REDACTED]')}');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer ${creds['apiToken']}',
+        },
+      );
+
+      print('CloudflareKVService: Response status code: ${response.statusCode}');
+      print('CloudflareKVService: Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        final success = json['success'] as bool? ?? false;
+
+        if (success) {
+          print('CloudflareKVService: Connection test successful');
+          return true;
+        } else {
+          final errors = json['errors'] as List? ?? [];
+          print('CloudflareKVService: Connection test failed - API returned success=false, errors: $errors');
+          return false;
+        }
+      } else {
+        print('CloudflareKVService: Connection test failed - HTTP ${response.statusCode}: ${response.body}');
+        return false;
+      }
+    } catch (e, stackTrace) {
+      print('CloudflareKVService: Connection test error: ${e.toString()}');
+      print('CloudflareKVService: Stack trace: $stackTrace');
+      return false;
+    }
   }
 }
