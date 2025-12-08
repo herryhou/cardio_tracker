@@ -4,8 +4,10 @@ import '../providers/blood_pressure_provider.dart';
 import '../models/blood_pressure_reading.dart';
 import '../theme/app_theme.dart';
 import '../services/csv_export_service.dart';
+import '../services/manual_sync_service.dart';
 import '../screens/add_reading_screen.dart';
 import '../screens/settings_screen.dart';
+import '../screens/cloudflare_settings_screen.dart';
 import '../widgets/app_icon.dart';
 import 'dart:math' as math;
 
@@ -37,6 +39,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
         foregroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: false,
         actions: [
+          // Cloudflare sync status indicator
+          FutureBuilder<bool>(
+            future: ManualSyncService().isSyncAvailable(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data == true) {
+                return IconButton(
+                  icon: Icon(
+                    Icons.cloud_sync_outlined,
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const CloudflareSettingsScreen(),
+                      ),
+                    );
+                  },
+                  tooltip: 'Cloudflare Sync',
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
           IconButton(
             icon: Icon(
               Icons.file_download_outlined,
