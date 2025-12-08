@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/semantics.dart';
 import '../models/blood_pressure_reading.dart';
 
 // Default height for the clinical scatter chart when not constrained by parent
@@ -34,7 +33,7 @@ class ClinicalZones {
     ClinicalZone(
       name: 'Normal',
       bounds: Rect.fromLTWH(70, 50, 50, 30), // 70-120 systolic, 50-80 diastolic
-      color: Color(0xFFC1FACF), // Green-500
+      color: Color.fromARGB(255, 185, 255, 203), // Green-500
       description: '<120/<80',
       category: BloodPressureCategory.normal,
     ),
@@ -43,7 +42,7 @@ class ClinicalZones {
     ClinicalZone(
       name: 'Stage 1 Hypertension',
       bounds: Rect.fromLTWH(70, 50, 69, 40), // 70-139 systolic, 50-90 diastolic
-      color: Color(0xFFFAD8C1), // Orange-600
+      color: Color.fromARGB(255, 255, 207, 156), // Orange-600
       description: '130-139/80-89',
       category: BloodPressureCategory.stage1,
     ),
@@ -52,7 +51,7 @@ class ClinicalZones {
     ClinicalZone(
       name: 'Elevated',
       bounds: Rect.fromLTWH(70, 50, 59, 30), // 70-129 systolic, 50-80 diastolic
-      color: Color(0xFFFAF5C1), // Amber-500
+      color: Color.fromARGB(255, 255, 248, 167), // Amber-500
       description: '120-129/<80',
       category: BloodPressureCategory.elevated,
     ),
@@ -62,7 +61,7 @@ class ClinicalZones {
       name: 'Stage 2 Hypertension',
       bounds:
           Rect.fromLTWH(70, 50, 100, 70), // 70-170 systolic, 50-120 diastolic
-      color: Color(0xFFFAC1C1), // Red-600
+      color: Color.fromARGB(255, 255, 165, 165), // Red-600
       description: '≥140/≥90',
       category: BloodPressureCategory.stage2,
     ),
@@ -463,8 +462,8 @@ class ClinicalScatterPlot extends StatefulWidget {
 }
 
 class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
-  double _zoomLevel = 1.0;
-  Offset _panOffset = Offset.zero;
+  final double _zoomLevel = 1.0;
+  final Offset _panOffset = Offset.zero;
   BloodPressureReading? _selectedReading;
   OverlayEntry? _tooltipEntry;
 
@@ -688,7 +687,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                const Text(
                   'Blood Pressure Reading',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
@@ -791,7 +790,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Colors.grey[20],
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey[200]!),
       ),
