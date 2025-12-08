@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter/foundation.dart';
 import '../models/blood_pressure_reading.dart';
 
 class CloudflareKVService {
@@ -16,9 +15,6 @@ class CloudflareKVService {
     ),
     aOptions: AndroidOptions(
       encryptedSharedPreferences: true,
-    ),
-    macOsOptions: MacOsOptions(
-      accessibility: KeychainAccessibility.unlocked,
     ),
   );
 
