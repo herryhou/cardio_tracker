@@ -35,8 +35,9 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,  // Increment version
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,  // Add this
     );
   }
 
@@ -50,6 +51,8 @@ class DatabaseService {
         heart_rate INTEGER NOT NULL,
         timestamp INTEGER NOT NULL,
         notes TEXT,
+        lastModified INTEGER NOT NULL,  -- NEW
+        isDeleted INTEGER NOT NULL DEFAULT 0,  -- NEW (0 = false, 1 = true)
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL
       )
@@ -72,6 +75,18 @@ class DatabaseService {
         updated_at INTEGER NOT NULL
       )
     ''');
+  }
+
+  // Add migration handler
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Add new columns for sync support
+      await db.execute('ALTER TABLE blood_pressure_readings ADD COLUMN lastModified INTEGER NOT NULL DEFAULT 0');
+      await db.execute('ALTER TABLE blood_pressure_readings ADD COLUMN isDeleted INTEGER NOT NULL DEFAULT 0');
+
+      // Set lastModified to timestamp for existing records
+      await db.execute('UPDATE blood_pressure_readings SET lastModified = timestamp');
+    }
   }
 
   Future<void> init(String dbName) async {
@@ -105,6 +120,8 @@ class DatabaseService {
         'heart_rate': reading.heartRate,
         'timestamp': reading.timestamp.millisecondsSinceEpoch,
         'notes': reading.notes,
+        'lastModified': now,
+        'isDeleted': reading.isDeleted ? 1 : 0,
         'created_at': now,
         'updated_at': now,
       },
@@ -133,15 +150,17 @@ class DatabaseService {
       heartRate: map['heart_rate'] as int,
       timestamp: DateTime.fromMillisecondsSinceEpoch(map['timestamp'] as int),
       notes: map['notes'] as String?,
+      lastModified: DateTime.fromMillisecondsSinceEpoch(map['lastModified'] as int),
+      isDeleted: (map['isDeleted'] as int) == 1,
     );
   }
 
-  Future<List<BloodPressureReading>> getAllReadings() async {
+  Future<List<BloodPressureReading>> getAllReadings({bool includeDeleted = false}) async {
     final db = await database;
 
-    final List<Map<String, dynamic>> maps = await db.query(
-      'blood_pressure_readings',
-      orderBy: 'timestamp DESC',
+    String whereClause = includeDeleted ? '' : 'WHERE isDeleted = 0';
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      'SELECT * FROM blood_pressure_readings $whereClause ORDER BY timestamp DESC'
     );
 
     return List.generate(maps.length, (i) {
@@ -153,6 +172,8 @@ class DatabaseService {
         heartRate: map['heart_rate'] as int,
         timestamp: DateTime.fromMillisecondsSinceEpoch(map['timestamp'] as int),
         notes: map['notes'] as String?,
+        lastModified: DateTime.fromMillisecondsSinceEpoch(map['lastModified'] as int),
+        isDeleted: map['isDeleted'] == 1,
       );
     });
   }
@@ -162,7 +183,7 @@ class DatabaseService {
 
     final List<Map<String, dynamic>> maps = await db.query(
       'blood_pressure_readings',
-      where: 'timestamp >= ? AND timestamp <= ?',
+      where: 'timestamp >= ? AND timestamp <= ? AND isDeleted = 0',
       whereArgs: [
         startDate.millisecondsSinceEpoch,
         endDate.millisecondsSinceEpoch,
@@ -179,12 +200,15 @@ class DatabaseService {
         heartRate: map['heart_rate'] as int,
         timestamp: DateTime.fromMillisecondsSinceEpoch(map['timestamp'] as int),
         notes: map['notes'] as String?,
+        lastModified: DateTime.fromMillisecondsSinceEpoch(map['lastModified'] as int),
+        isDeleted: (map['isDeleted'] as int) == 1,
       );
     });
   }
 
   Future<void> updateReading(BloodPressureReading reading) async {
     final db = await database;
+    final now = DateTime.now().millisecondsSinceEpoch;
 
     await db.update(
       'blood_pressure_readings',
@@ -194,7 +218,9 @@ class DatabaseService {
         'heart_rate': reading.heartRate,
         'timestamp': reading.timestamp.millisecondsSinceEpoch,
         'notes': reading.notes,
-        'updated_at': DateTime.now().millisecondsSinceEpoch,
+        'lastModified': now,
+        'isDeleted': reading.isDeleted ? 1 : 0,
+        'updated_at': now,
       },
       where: 'id = ?',
       whereArgs: [reading.id],
@@ -203,9 +229,15 @@ class DatabaseService {
 
   Future<void> deleteReading(String id) async {
     final db = await database;
+    final now = DateTime.now().millisecondsSinceEpoch;
 
-    await db.delete(
+    await db.update(
       'blood_pressure_readings',
+      {
+        'isDeleted': 1,
+        'lastModified': now,
+        'updated_at': now,
+      },
       where: 'id = ?',
       whereArgs: [id],
     );
