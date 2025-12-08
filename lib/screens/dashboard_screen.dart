@@ -19,6 +19,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final ManualSyncService _syncService = ManualSyncService();
+
   @override
   void initState() {
     super.initState();
@@ -41,8 +43,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
         actions: [
           // Cloudflare sync status indicator
           FutureBuilder<bool>(
-            future: ManualSyncService().isSyncAvailable(),
+            future: _syncService.isSyncAvailable(),
             builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                );
+              }
+
+              if (snapshot.hasError) {
+                // Silently handle error, don't show sync button
+                return const SizedBox.shrink();
+              }
+
               if (snapshot.hasData && snapshot.data == true) {
                 return IconButton(
                   icon: Icon(
