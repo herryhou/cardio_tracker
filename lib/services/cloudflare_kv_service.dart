@@ -8,7 +8,14 @@ class CloudflareKVService {
   static const String _namespaceIdKey = 'cloudflare_namespace_id';
   static const String _apiTokenKey = 'cloudflare_api_token';
 
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage(
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock_this_device,
+    ),
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+    ),
+  );
 
   // Store credentials
   Future<void> setCredentials({
@@ -16,9 +23,30 @@ class CloudflareKVService {
     required String namespaceId,
     required String apiToken,
   }) async {
-    await _secureStorage.write(key: _accountIdKey, value: accountId);
-    await _secureStorage.write(key: _namespaceIdKey, value: namespaceId);
-    await _secureStorage.write(key: _apiTokenKey, value: apiToken);
+    try {
+      // Validate inputs before storing
+      if (accountId.trim().isEmpty) {
+        throw Exception('Account ID cannot be empty');
+      }
+      if (namespaceId.trim().isEmpty) {
+        throw Exception('Namespace ID cannot be empty');
+      }
+      if (apiToken.trim().isEmpty) {
+        throw Exception('API token cannot be empty');
+      }
+
+      await _secureStorage.write(key: _accountIdKey, value: accountId.trim());
+      await _secureStorage.write(key: _namespaceIdKey, value: namespaceId.trim());
+      await _secureStorage.write(key: _apiTokenKey, value: apiToken.trim());
+
+      // Verify storage was successful
+      final storedCreds = await getCredentials();
+      if (storedCreds == null) {
+        throw Exception('Failed to store credentials - verification failed');
+      }
+    } catch (e) {
+      throw Exception('Failed to store credentials: ${e.toString()}');
+    }
   }
 
   // Get credentials
