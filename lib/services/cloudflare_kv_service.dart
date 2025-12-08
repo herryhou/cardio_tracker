@@ -244,7 +244,7 @@ class CloudflareKVService {
         {'prefix': 'bp_reading_'},
       );
 
-      print('CloudflareKVService: Making request to: ${url.toString().replaceAll(creds['apiToken'], '[REDACTED]')}');
+      print('CloudflareKVService: Making request to: ${creds['apiToken'] != null ? url.toString().replaceAll(creds['apiToken']!, '[REDACTED]') : url.toString()}');
 
       final response = await http.get(
         url,
