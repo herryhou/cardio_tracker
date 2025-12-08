@@ -22,6 +22,7 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
   bool _isConfigured = false;
   String? _lastSyncStatus;
   DateTime? _lastSyncTime;
+  String? _lastSaveStatus;
 
   @override
   void initState() {
@@ -31,9 +32,22 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
 
   Future<void> _loadConfiguration() async {
     final configured = await _kvService.isConfigured();
-    setState(() {
-      _isConfigured = configured;
-    });
+    if (configured) {
+      final credentials = await _kvService.getCredentials();
+      if (credentials != null) {
+        setState(() {
+          _isConfigured = configured;
+          _accountIdController.text = credentials['accountId'] ?? '';
+          _namespaceIdController.text = credentials['namespaceId'] ?? '';
+          // For security, don't pre-populate the API token
+          _apiTokenController.clear();
+        });
+      }
+    } else {
+      setState(() {
+        _isConfigured = configured;
+      });
+    }
   }
 
   Future<void> _saveConfiguration() async {
@@ -48,23 +62,37 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
         apiToken: _apiTokenController.text.trim(),
       );
 
+      final wasInitiallyConfigured = _isConfigured;
+
       setState(() {
         _isConfigured = true;
-        _lastSyncStatus = 'Credentials saved successfully';
+        _lastSaveStatus = wasInitiallyConfigured
+            ? 'Credentials updated successfully'
+            : 'Credentials saved successfully';
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cloudflare KV configured successfully')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              wasInitiallyConfigured
+                  ? 'Cloudflare KV credentials updated'
+                  : 'Cloudflare KV configured successfully'
+            ),
+          ),
+        );
+      }
 
     } catch (e) {
       setState(() {
-        _lastSyncStatus = 'Error: ${e.toString()}';
+        _lastSaveStatus = 'Error: ${e.toString()}';
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
     } finally {
       setState(() => _isLoading = false);
     }
@@ -91,18 +119,22 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
         }
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_lastSyncStatus ?? 'Sync complete')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_lastSyncStatus ?? 'Sync complete')),
+        );
+      }
 
     } catch (e) {
       setState(() {
         _lastSyncStatus = 'Sync error: ${e.toString()}';
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sync error: ${e.toString()}')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sync error: ${e.toString()}')),
+        );
+      }
     } finally {
       setState(() => _isLoading = false);
     }
@@ -116,8 +148,16 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
       _accountIdController.clear();
       _namespaceIdController.clear();
       _apiTokenController.clear();
-      _lastSyncStatus = 'Configuration cleared';
+      _lastSaveStatus = 'Configuration cleared';
     });
+  }
+
+  @override
+  void dispose() {
+    _accountIdController.dispose();
+    _namespaceIdController.dispose();
+    _apiTokenController.dispose();
+    super.dispose();
   }
 
   @override
@@ -158,12 +198,24 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
-                    if (_lastSyncStatus != null) ...[
+                    if (_lastSaveStatus != null) ...[
                       const SizedBox(height: 8),
                       Text(
-                        _lastSyncStatus!,
+                        'Config: $_lastSaveStatus!',
                         style: TextStyle(
-                          color: _lastSyncStatus!.contains('error')
+                          color: _lastSaveStatus!.contains('error')
+                              ? Colors.red
+                              : Colors.green,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                    if (_lastSyncStatus != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        'Sync: $_lastSyncStatus!',
+                        style: TextStyle(
+                          color: _lastSyncStatus!.contains('error') || _lastSyncStatus!.contains('failed')
                               ? Colors.red
                               : Colors.green,
                           fontSize: 12,
@@ -211,9 +263,12 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
 
                     TextFormField(
                       controller: _accountIdController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Account ID',
                         hintText: 'Your Cloudflare account ID',
+                        suffixIcon: _accountIdController.text.isNotEmpty
+                            ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
+                            : null,
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -227,9 +282,12 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
 
                     TextFormField(
                       controller: _namespaceIdController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Namespace ID',
                         hintText: 'Your KV namespace ID',
+                        suffixIcon: _namespaceIdController.text.isNotEmpty
+                            ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
+                            : null,
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -243,9 +301,14 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
 
                     TextFormField(
                       controller: _apiTokenController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'API Token',
-                        hintText: 'Your Cloudflare API token',
+                        hintText: _isConfigured
+                            ? 'Re-enter your API token to update credentials'
+                            : 'Your Cloudflare API token',
+                        helperText: _isConfigured
+                            ? 'For security, API token is not stored in memory'
+                            : null,
                       ),
                       obscureText: true,
                       validator: (value) {

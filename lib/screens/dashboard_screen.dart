@@ -5,6 +5,7 @@ import '../models/blood_pressure_reading.dart';
 import '../theme/app_theme.dart';
 import '../services/csv_export_service.dart';
 import '../screens/add_reading_screen.dart';
+import '../screens/settings_screen.dart';
 import '../widgets/app_icon.dart';
 import 'dart:math' as math;
 
@@ -64,6 +65,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
               _handleMenuAction(context, value);
             },
             itemBuilder: (context) => [
+              PopupMenuItem<String>(
+                value: 'settings',
+                child: Row(
+                  children: [
+                    const Icon(Icons.settings, size: 18),
+                    const SizedBox(width: 12),
+                    const Text('Settings'),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
               PopupMenuItem<String>(
                 value: 'export_csv',
                 child: Row(
@@ -966,6 +978,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final provider = context.read<BloodPressureProvider>();
 
     switch (action) {
+      case 'settings':
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const SettingsScreen(),
+          ),
+        );
+        break;
       case 'export_csv':
         await _exportCsv(context, provider.readings);
         break;
