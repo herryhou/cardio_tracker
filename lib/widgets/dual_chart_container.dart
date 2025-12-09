@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/blood_pressure_reading.dart';
 import '../models/chart_types.dart';
 import '../providers/dual_chart_provider.dart';
+import '../utils/bp_format.dart';
 import 'clinical_scatter_plot.dart';
 import 'fl_time_series_chart.dart';
 
@@ -340,7 +341,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
 
   String _formatReading(BloodPressureReading reading) {
     final category = reading.category.name.toUpperCase();
-    return '${reading.systolic}/${reading.diastolic} mmHg ($category)';
+    return '${formatBloodPressure(reading.systolic, reading.diastolic)} ($category)';
   }
 
   // Accessibility helper methods

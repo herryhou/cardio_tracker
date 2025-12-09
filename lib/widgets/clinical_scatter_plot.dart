@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/blood_pressure_reading.dart';
 import '../theme/app_theme.dart';
+import '../utils/bp_format.dart';
 
 // Default height for the clinical scatter chart when not constrained by parent
 const double kClinicalScatterChartHeight =
@@ -937,8 +938,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                 ],
               ),
               SizedBox(height: AppSpacing.cardsGap),
-              _buildDetailRow('Systolic:', '${reading.systolic} mmHg'),
-              _buildDetailRow('Diastolic:', '${reading.diastolic} mmHg'),
+              _buildDetailRow('Blood Pressure:', formatBloodPressure(reading.systolic, reading.diastolic)),
               _buildDetailRow('Heart Rate:', '${reading.heartRate} bpm'),
               _buildDetailRow('Category:',
                   ClinicalZones.getCategoryDescription(reading.category)),
@@ -1077,8 +1077,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                   ),
                 ),
                 SizedBox(height: AppSpacing.sm),
-                _buildDetailRow('Systolic:', '${reading.systolic} mmHg'),
-                _buildDetailRow('Diastolic:', '${reading.diastolic} mmHg'),
+                _buildDetailRow('Blood Pressure:', formatBloodPressure(reading.systolic, reading.diastolic)),
                 _buildDetailRow('Heart Rate:', '${reading.heartRate} bpm'),
                 _buildDetailRow('Category:',
                     ClinicalZones.getCategoryDescription(reading.category)),

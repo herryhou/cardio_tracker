@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/blood_pressure_reading.dart';
 import '../theme/app_theme.dart';
+import '../utils/bp_format.dart';
 
 /// Modern Reading Summary Card Component
 /// Displays individual blood pressure readings with swipe actions
@@ -195,59 +196,11 @@ class ReadingSummaryCard extends StatelessWidget {
 
     return Row(
       children: [
-        // Systolic
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              reading.systolic.toString(),
-              style: AppTheme.displayStyle.copyWith(
-                fontSize: 24, // Override for card context
-                color: categoryColor,
-              ),
-            ),
-            Text(
-              'Systolic',
-              style: AppTheme.bodyStyle.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(width: 16),
-        // Separator
         Text(
-          '/',
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.4),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(width: 16),
-        // Diastolic
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              reading.diastolic.toString(),
-              style: AppTheme.displayStyle.copyWith(
-                fontSize: 24, // Override for card context
-                color: categoryColor,
-              ),
-            ),
-            Text(
-              'Diastolic',
-              style: AppTheme.bodyStyle.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(width: 8),
-        Text(
-          'mmHg',
-          style: AppTheme.bodyStyle.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+          formatBloodPressure(reading.systolic, reading.diastolic),
+          style: AppTheme.displayStyle.copyWith(
+            fontSize: 24, // Override for card context
+            color: categoryColor,
           ),
         ),
       ],
@@ -392,17 +345,10 @@ class CompactReadingCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      '${reading.systolic}/${reading.diastolic}',
+                      formatBloodPressure(reading.systolic, reading.diastolic),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: categoryColor,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'mmHg',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
                       ),
                     ),
                   ],
