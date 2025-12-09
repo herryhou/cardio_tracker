@@ -10,8 +10,8 @@ import '../theme/app_theme.dart';
 // ============================================================================
 
 // Chart colors
-const Color _systolicColor = Color(0xFF1976D2);
-const Color _diastolicColor = Color(0xFF03A9F4);
+const Color _systolicColor = Color(0xFFFF0000);  // Red
+const Color _diastolicColor = Color(0xFF0000FF); // Blue
 
 // Line styling
 const double _systolicBarWidth = 3.0;
@@ -32,7 +32,7 @@ const double _yAxisInterval = 20.0;
 // Text styling
 const double _xAxisLabelFontSize = 9.0;
 const double _yAxisLabelFontSize = 10.0;
-const double _labelRotationAngle = -0.3;
+const double _labelRotationAngle = 0.0; // Horizontal labels
 const double _xAxisReservedSize = 40.0;
 const double _yAxisReservedSize = 40.0;
 
@@ -190,21 +190,16 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
   }
 
   int? _getClosestIndexForX(double x) {
-    if (_xValueToIndex.isEmpty) return null;
+    if (_timeSeriesData.isEmpty) return null;
 
-    double minDistance = double.infinity;
-    double? closestX;
+    // Since we're using indices directly, round to nearest index
+    final index = x.round();
 
-    for (final xValue in _xValueToIndex.keys) {
-      final distance = (x - xValue).abs();
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestX = xValue;
-      }
+    if (index >= 0 && index < _timeSeriesData.length) {
+      return index;
     }
 
-    final idx = closestX != null ? _xValueToIndex[closestX] : null;
-    return idx;
+    return null;
   }
 
   // ============================================================================
@@ -248,8 +243,8 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
   Widget _buildChart() {
     return SizedBox(
       height: 450,
-      child: BarChart(
-        _buildBarChartData(),
+      child: LineChart(
+        _buildLineChartData(),
       ),
     );
   }
@@ -291,56 +286,41 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
   // CHART DATA BUILDING
   // ============================================================================
 
-  BarChartData _buildBarChartData() {
-    if (_timeSeriesData.isEmpty) return _buildEmptyBarChartData();
+  LineChartData _buildLineChartData() {
+    if (_timeSeriesData.isEmpty) return _buildEmptyChartData();
 
-    final barGroups = <BarChartGroupData>[];
+    // Calculate averages
+    final avgSystolic = _timeSeriesData.isEmpty ? 0.0 :
+        _timeSeriesData.map((d) => d.systolic).reduce((a, b) => a + b) / _timeSeriesData.length;
+    final avgDiastolic = _timeSeriesData.isEmpty ? 0.0 :
+        _timeSeriesData.map((d) => d.diastolic).reduce((a, b) => a + b) / _timeSeriesData.length;
 
-    // Build bar groups for each reading
+    // Build spots using indices for X-axis (simpler approach)
+    final systolicSpots = <FlSpot>[];
+    final diastolicSpots = <FlSpot>[];
+
     for (int i = 0; i < _timeSeriesData.length; i++) {
       final data = _timeSeriesData[i];
-      final reading = data.originalReadings.isNotEmpty ? data.originalReadings.first : null;
-
-      // Get category color
-      Color categoryColor = _getCategoryColor(reading?.category ?? BloodPressureCategory.normal);
-
-      // Create a vertical line segment from diastolic to systolic
-      // We'll use the fromY and toY properties to create a range
-      barGroups.add(
-        BarChartGroupData(
-          x: i, // Use index as x position for proper spacing
-          barRods: [
-            // Single rod that represents the range from diastolic to systolic
-            BarChartRodData(
-              fromY: data.diastolic, // Bottom of the bar (diastolic)
-              toY: data.systolic, // Top of the bar (systolic)
-              color: categoryColor.withValues(alpha: 0.7),
-              width: 5, // 5 pixel width as requested
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
-            ),
-          ],
-        ),
-      );
+      systolicSpots.add(FlSpot(i.toDouble(), data.systolic));
+      diastolicSpots.add(FlSpot(i.toDouble(), data.diastolic));
     }
 
-    final rangeInfo = _TimeRangeInfo(
-      timeRange: _currentTimeRange,
-      startDateOverride: widget.startDate,
-      endDateOverride: widget.endDate,
-    );
-
-    final rangeStart = rangeInfo.rangeStart.millisecondsSinceEpoch.toDouble();
-    final rangeEnd = rangeInfo.rangeEnd.millisecondsSinceEpoch.toDouble();
-
-    return BarChartData(
-      barGroups: barGroups,
-      titlesData: _buildBarTitlesData(rangeInfo),
+    return LineChartData(
+      lineBarsData: [
+        _buildSystolicLine(systolicSpots),
+        _buildDiastolicLine(diastolicSpots),
+        // Add average reference lines
+        _buildAverageLine(avgSystolic, _systolicColor.withValues(alpha: 0.5)),
+        _buildAverageLine(avgDiastolic, _diastolicColor.withValues(alpha: 0.5)),
+      ],
+      titlesData: _buildTitlesData(),
       gridData: _buildGridData(),
       borderData: _buildBorderData(),
+      minX: 0,
+      maxX: (_timeSeriesData.length - 1).toDouble(),
       minY: _minY,
       maxY: _maxY,
-      barTouchData: _buildBarTouchData(),
-      alignment: BarChartAlignment.spaceAround,
+      lineTouchData: _buildLineTouchData(),
     );
   }
 
@@ -395,6 +375,26 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     );
   }
 
+  LineChartBarData _buildAverageLine(double averageValue, Color color) {
+    if (_timeSeriesData.isEmpty) {
+      return LineChartBarData(spots: []);
+    }
+
+    return LineChartBarData(
+      spots: [
+        FlSpot(0, averageValue),
+        FlSpot((_timeSeriesData.length - 1).toDouble(), averageValue),
+      ],
+      isCurved: false,
+      color: color,
+      barWidth: 1.5,
+      isStrokeCapRound: false,
+      dashArray: [5, 5], // Dotted line
+      dotData: FlDotData(show: false), // No dots on average line
+      belowBarData: BarAreaData(show: false),
+    );
+  }
+
   GetDotPainterCallback _getDotPainter(Color strokeColor) {
     return (spot, percent, barData, index) {
       final dataIndex = _getClosestIndexForX(spot.x);
@@ -421,7 +421,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     };
   }
 
-  FlTitlesData _buildTitlesData(_TimeRangeInfo rangeInfo) {
+  FlTitlesData _buildTitlesData() {
     return FlTitlesData(
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
@@ -446,44 +446,17 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: _xAxisReservedSize,
-          interval: rangeInfo.getXAxisInterval(),
-          getTitlesWidget: (value, meta) => _buildXAxisLabel(value, rangeInfo),
+          interval: 3.0, // Show every 3rd index
+          getTitlesWidget: (value, meta) {
+            final index = value.toInt();
+            return _buildBarXAxisLabel(index);
+          },
         ),
       ),
     );
   }
 
-  FlTitlesData _buildBarTitlesData(_TimeRangeInfo rangeInfo) {
-    return FlTitlesData(
-      leftTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          interval: _yAxisInterval,
-          reservedSize: _yAxisReservedSize,
-          getTitlesWidget: (value, meta) => _buildYAxisLabel(value),
-        ),
-        axisNameWidget: Text(
-          'Sys/Dia',
-          style: AppTheme.bodyStyle.copyWith(
-            fontSize: 13, // Override for axis label
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        axisNameSize: 20,
-      ),
-      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      bottomTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: _xAxisReservedSize,
-          interval: 1, // Show every reading
-          getTitlesWidget: (value, meta) => _buildBarXAxisLabel(value.toInt()),
-        ),
-      ),
-    );
-  }
+  // Removed _buildBarTitlesData as we're using LineChart now
 
   Text _buildYAxisLabel(double value) {
     return Text(
@@ -499,6 +472,11 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
 
   Widget _buildBarXAxisLabel(int index) {
     if (index < 0 || index >= _timeSeriesData.length) {
+      return const SizedBox.shrink();
+    }
+
+    // Only show label for every 3rd index
+    if (index % 3 != 0) {
       return const SizedBox.shrink();
     }
 
@@ -569,15 +547,15 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     );
   }
 
-  BarTouchData _buildBarTouchData() {
-    return BarTouchData(
-      touchTooltipData: BarTouchTooltipData(
-        getTooltipColor: (group) => Colors.white,
+  LineTouchData _buildLineTouchData() {
+    return LineTouchData(
+      touchTooltipData: LineTouchTooltipData(
+        getTooltipColor: (touchedSpot) => Colors.white,
         tooltipBorder:
             BorderSide(color: Colors.grey.withValues(alpha: _gridAlpha)),
-        getTooltipItem: _buildBarTooltipItem,
+        getTooltipItems: _buildTooltipItems,
       ),
-      touchCallback: _handleBarTouchEvent,
+      touchCallback: _handleTouchEvent,
       handleBuiltInTouches: true,
     );
   }
@@ -605,43 +583,44 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     }).toList();
   }
 
-  BarTooltipItem? _buildBarTooltipItem(group, int groupIndex, BarChartRodData rod, int rodIndex) {
-    // Find the reading associated with this bar
-    if (groupIndex >= _timeSeriesData.length) return null;
+  // Bar chart methods are no longer needed but kept for reference
+  // BarTooltipItem? _buildBarTooltipItem(group, int groupIndex, BarChartRodData rod, int rodIndex) {
+  //   // Find the reading associated with this bar
+  //   if (groupIndex >= _timeSeriesData.length) return null;
 
-    final data = _timeSeriesData[groupIndex];
-    final reading = data.originalReadings.isNotEmpty ? data.originalReadings.first : null;
-    final category = reading?.category?.name ?? 'Normal';
+  //   final data = _timeSeriesData[groupIndex];
+  //   final reading = data.originalReadings.isNotEmpty ? data.originalReadings.first : null;
+  //   final category = reading?.category?.name ?? 'Normal';
 
-    return BarTooltipItem(
-      'Systolic: ${data.systolic}\nDiastolic: ${data.diastolic}\n$category\n${DateFormat('MMM dd, HH:mm').format(data.timestamp)}',
-      TextStyle(
-        color: _getCategoryColor(reading?.category ?? BloodPressureCategory.normal),
-        fontWeight: FontWeight.bold,
-        fontSize: 12,
-      ),
-    );
-  }
+  //   return BarTooltipItem(
+  //     'Systolic: ${data.systolic}\nDiastolic: ${data.diastolic}\n$category\n${DateFormat('MMM dd, HH:mm').format(data.timestamp)}',
+  //     TextStyle(
+  //       color: _getCategoryColor(reading?.category ?? BloodPressureCategory.normal),
+  //       fontWeight: FontWeight.bold,
+  //       fontSize: 12,
+  //     ),
+  //   );
+  // }
 
-  void _handleBarTouchEvent(FlTouchEvent event, BarTouchResponse? touchResponse) {
-    if (event is! FlTapUpEvent || touchResponse == null) return;
+  // void _handleBarTouchEvent(FlTouchEvent event, BarTouchResponse? touchResponse) {
+  //   if (event is! FlTapUpEvent || touchResponse == null) return;
 
-    final touchedGroup = touchResponse.spot?.touchedBarGroup;
-    if (touchedGroup == null) {
-      widget.onReadingSelected?.call(null);
-      return;
-    }
+  //   final touchedGroup = touchResponse.spot?.touchedBarGroup;
+  //   if (touchedGroup == null) {
+  //     widget.onReadingSelected?.call(null);
+  //     return;
+  //   }
 
-    // Use the x value directly as the reading index
-    final readingIndex = touchedGroup.x;
+  //   // Use the x value directly as the reading index
+  //   final readingIndex = touchedGroup.x;
 
-    if (readingIndex >= 0 && readingIndex < _timeSeriesData.length) {
-      final reading = _timeSeriesData[readingIndex].originalReadings.isNotEmpty
-          ? _timeSeriesData[readingIndex].originalReadings.first
-          : null;
-      widget.onReadingSelected?.call(reading);
-    }
-  }
+  //   if (readingIndex >= 0 && readingIndex < _timeSeriesData.length) {
+  //     final reading = _timeSeriesData[readingIndex].originalReadings.isNotEmpty
+  //         ? _timeSeriesData[readingIndex].originalReadings.first
+  //         : null;
+  //     widget.onReadingSelected?.call(reading);
+  //   }
+  // }
 
   void _handleTouchEvent(FlTouchEvent event, LineTouchResponse? touchResponse) {
     if (event is! FlTapUpEvent || touchResponse == null) return;
@@ -663,65 +642,12 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     }
   }
 
-  BarChartData _buildEmptyBarChartData() {
-    return BarChartData(
-      barGroups: [],
-      titlesData: FlTitlesData(
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            interval: _yAxisInterval,
-            reservedSize: _yAxisReservedSize,
-            getTitlesWidget: (value, meta) => _buildYAxisLabel(value),
-          ),
-          axisNameWidget: Text(
-            'Sys/Dia',
-            style: AppTheme.bodyStyle.copyWith(
-              fontSize: 13, // Override for axis label
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          axisNameSize: 20,
-        ),
-        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        bottomTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: true, reservedSize: 30)),
-      ),
-      gridData: FlGridData(show: false),
-      borderData: _buildBorderData(),
-      minY: _minY,
-      maxY: _maxY,
-    );
-  }
+  // Removed _buildEmptyBarChartData as we're using LineChart now
 
   LineChartData _buildEmptyChartData() {
     return LineChartData(
       lineBarsData: [],
-      titlesData: FlTitlesData(
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            interval: _yAxisInterval,
-            reservedSize: _yAxisReservedSize,
-            getTitlesWidget: (value, meta) => _buildYAxisLabel(value),
-          ),
-          axisNameWidget: Text(
-            'Sys/Dia',
-            style: AppTheme.bodyStyle.copyWith(
-              fontSize: 13, // Override for axis label
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          axisNameSize: 20,
-        ),
-        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        bottomTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: true, reservedSize: 30)),
-      ),
+      titlesData: _buildTitlesData(),
       gridData: FlGridData(show: false),
       borderData: _buildBorderData(),
       minX: 0,
@@ -737,7 +663,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
 
   double _getXValueForIndex(int index) {
     if (index < 0 || index >= _timeSeriesData.length) return 0.0;
-    return _timeSeriesData[index].timestamp.millisecondsSinceEpoch.toDouble();
+    return index.toDouble(); // Return index directly
   }
 }
 
@@ -802,25 +728,19 @@ class _TimeRangeInfo {
     }
   }
 
-  /// Get X-axis interval in milliseconds based on time range.
+  /// Get X-axis interval based on time range.
   double getXAxisInterval() {
     switch (timeRange) {
       case ExtendedTimeRange.day:
-        return Duration(hours: 4).inMilliseconds.toDouble();
+        return 3.0; // Show every 3rd reading
       case ExtendedTimeRange.week:
-        return Duration(days: 1).inMilliseconds.toDouble();
+        return 3.0; // Show every 3rd reading
       case ExtendedTimeRange.month:
-        return Duration(days: 3)
-            .inMilliseconds
-            .toDouble(); // Changed from 7 to 3 days for better label distribution
+        return 3.0; // Show every 3rd reading
       case ExtendedTimeRange.season:
-        return Duration(days: 14)
-            .inMilliseconds
-            .toDouble(); // Changed from 21 to 14 days
+        return 3.0; // Show every 3rd reading
       case ExtendedTimeRange.year:
-        return Duration(days: 30)
-            .inMilliseconds
-            .toDouble(); // Changed from 60 to 30 days
+        return 3.0; // Show every 3rd reading
     }
   }
 
