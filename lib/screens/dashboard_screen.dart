@@ -1386,6 +1386,9 @@ class _BPChartPainter extends CustomPainter {
 
   _BPChartPainter(this.readings);
 
+  // Helper method for safe value calculation
+  double safeValue(double value) => value.isFinite ? value : 0.0;
+
   @override
   void paint(Canvas canvas, Size size) {
     if (readings.isEmpty) return;
@@ -1430,98 +1433,225 @@ class _BPChartPainter extends CustomPainter {
       );
     }
 
-    // Draw systolic line
+    // Draw vertical grid lines
+    if (readings.length > 1) {
+      for (int i = 0; i < readings.length; i++) {
+        final x = padding.left + (chartWidth / (readings.length - 1)) * i;
+        canvas.drawLine(
+          Offset(x, padding.top),
+          Offset(x, size.height - padding.bottom),
+          gridPaint,
+        );
+      }
+    }
+
+    // Draw line charts for systolic and diastolic
     if (readings.isNotEmpty) {
-      final systolicPaint = Paint()
-        ..color = const Color(0xFFEF4444)
-        ..strokeWidth = 3
-        ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round;
+      if (readings.length == 1) {
+        // For single reading, just draw a point
+        final x = padding.left + chartWidth / 2;
+        final systolicY = safeValue(
+          padding.top + chartHeight -
+          ((readings[0].systolic - minSystolic + 10) / systolicRange) * chartHeight
+        );
+        final diastolicY = safeValue(
+          padding.top + chartHeight -
+          ((readings[0].diastolic - minDiastolic + 10) / diastolicRange) * chartHeight
+        );
 
-      final systolicPath = Path();
+        // Draw points
+        final systolicPaint = Paint()
+          ..color = const Color(0xFFEF4444)
+          ..style = PaintingStyle.fill;
+        canvas.drawCircle(Offset(x, systolicY), 6, systolicPaint);
 
-      for (int i = 0; i < readings.length; i++) {
-        final x = padding.left + (chartWidth / (readings.length - 1)) * i;
-        final y = padding.top +
-            chartHeight -
-            ((readings[i].systolic - minSystolic + 10) / systolicRange) *
-                chartHeight;
+        final diastolicPaint = Paint()
+          ..color = const Color(0xFF3B82F6)
+          ..style = PaintingStyle.fill;
+        canvas.drawCircle(Offset(x, diastolicY), 6, diastolicPaint);
 
-        if (i == 0) {
-          systolicPath.moveTo(x, y);
-        } else {
-          systolicPath.lineTo(x, y);
+        // Draw values
+        _drawText(
+          canvas,
+          '${readings[0].systolic}',
+          x,
+          systolicY - 15,
+          const Color(0xFFEF4444)
+        );
+        _drawText(
+          canvas,
+          '${readings[0].diastolic}',
+          x,
+          diastolicY + 15,
+          const Color(0xFF3B82F6)
+        );
+        _drawText(
+          canvas,
+          '${readings[0].heartRate}',
+          x,
+          (systolicY + diastolicY) / 2,
+          const Color(0xFF10B981)
+        );
+      } else {
+        // Draw systolic line
+        final systolicPath = Path();
+        final systolicPaint = Paint()
+          ..color = const Color(0xFFEF4444)
+          ..strokeWidth = 3
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round;
+
+        for (int i = 0; i < readings.length; i++) {
+          final x = padding.left + (chartWidth / (readings.length - 1)) * i;
+          final y = safeValue(
+            padding.top + chartHeight -
+            ((readings[i].systolic - minSystolic + 10) / systolicRange) * chartHeight
+          );
+
+          if (i == 0) {
+            systolicPath.moveTo(x, y);
+          } else {
+            systolicPath.lineTo(x, y);
+          }
         }
-      }
+        canvas.drawPath(systolicPath, systolicPaint);
 
-      canvas.drawPath(systolicPath, systolicPaint);
+        // Draw diastolic line
+        final diastolicPath = Path();
+        final diastolicPaint = Paint()
+          ..color = const Color(0xFF3B82F6)
+          ..strokeWidth = 3
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round;
 
-      // Draw diastolic line
-      final diastolicPaint = Paint()
-        ..color = const Color(0xFF3B82F6)
-        ..strokeWidth = 3
-        ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round;
+        for (int i = 0; i < readings.length; i++) {
+          final x = padding.left + (chartWidth / (readings.length - 1)) * i;
+          final y = safeValue(
+            padding.top + chartHeight -
+            ((readings[i].diastolic - minDiastolic + 10) / diastolicRange) * chartHeight
+          );
 
-      final diastolicPath = Path();
-
-      for (int i = 0; i < readings.length; i++) {
-        final x = padding.left + (chartWidth / (readings.length - 1)) * i;
-        final y = padding.top +
-            chartHeight -
-            ((readings[i].diastolic - minDiastolic + 10) / diastolicRange) *
-                chartHeight;
-
-        if (i == 0) {
-          diastolicPath.moveTo(x, y);
-        } else {
-          diastolicPath.lineTo(x, y);
+          if (i == 0) {
+            diastolicPath.moveTo(x, y);
+          } else {
+            diastolicPath.lineTo(x, y);
+          }
         }
-      }
+        canvas.drawPath(diastolicPath, diastolicPaint);
 
-      canvas.drawPath(diastolicPath, diastolicPaint);
+        // Draw pulse line
+        final pulsePath = Path();
+        final pulsePaint = Paint()
+          ..color = const Color(0xFF10B981)
+          ..strokeWidth = 2
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round;
 
-      // Draw data points
-      for (int i = 0; i < readings.length; i++) {
-        final x = padding.left + (chartWidth / (readings.length - 1)) * i;
+        for (int i = 0; i < readings.length; i++) {
+          final x = padding.left + (chartWidth / (readings.length - 1)) * i;
+          // Normalize pulse to fit in the chart (assuming 40-120 bpm range)
+          final pulseRange = 80;
+          final minPulse = 40;
+          final y = safeValue(
+            padding.top + chartHeight -
+            ((readings[i].heartRate - minPulse) / pulseRange) * chartHeight
+          );
 
-        // Systolic point
-        final systolicY = padding.top +
-            chartHeight -
-            ((readings[i].systolic - minSystolic + 10) / systolicRange) *
-                chartHeight;
-        canvas.drawCircle(Offset(x, systolicY), 4, systolicPaint);
+          if (i == 0) {
+            pulsePath.moveTo(x, y);
+          } else {
+            pulsePath.lineTo(x, y);
+          }
+        }
+        canvas.drawPath(pulsePath, pulsePaint);
 
-        // Diastolic point
-        final diastolicY = padding.top +
-            chartHeight -
-            ((readings[i].diastolic - minDiastolic + 10) / diastolicRange) *
-                chartHeight;
-        canvas.drawCircle(Offset(x, diastolicY), 4, diastolicPaint);
+        // Draw points and values for each reading
+        for (int i = 0; i < readings.length; i++) {
+          final x = padding.left + (chartWidth / (readings.length - 1)) * i;
+          final systolicY = safeValue(
+            padding.top + chartHeight -
+            ((readings[i].systolic - minSystolic + 10) / systolicRange) * chartHeight
+          );
+          final diastolicY = safeValue(
+            padding.top + chartHeight -
+            ((readings[i].diastolic - minDiastolic + 10) / diastolicRange) * chartHeight
+          );
+
+          // Draw systolic point
+          final systolicPointPaint = Paint()
+            ..color = const Color(0xFFEF4444)
+            ..style = PaintingStyle.fill;
+          canvas.drawCircle(Offset(x, systolicY), 4, systolicPointPaint);
+
+          // Draw diastolic point
+          final diastolicPointPaint = Paint()
+            ..color = const Color(0xFF3B82F6)
+            ..style = PaintingStyle.fill;
+          canvas.drawCircle(Offset(x, diastolicY), 4, diastolicPointPaint);
+
+          // Draw pulse point
+          final pulseRange = 80;
+          final minPulse = 40;
+          final pulseY = safeValue(
+            padding.top + chartHeight -
+            ((readings[i].heartRate - minPulse) / pulseRange) * chartHeight
+          );
+          final pulsePointPaint = Paint()
+            ..color = const Color(0xFF10B981)
+            ..style = PaintingStyle.fill;
+          canvas.drawCircle(Offset(x, pulseY), 3, pulsePointPaint);
+
+          // Show values for first and last points
+          if (i == 0 || i == readings.length - 1) {
+            _drawText(
+              canvas,
+              '${readings[i].systolic}',
+              x,
+              systolicY - 15,
+              const Color(0xFFEF4444)
+            );
+            _drawText(
+              canvas,
+              '${readings[i].diastolic}',
+              x,
+              diastolicY + 15,
+              const Color(0xFF3B82F6)
+            );
+            _drawText(
+              canvas,
+              '${readings[i].heartRate}',
+              x,
+              pulseY - 10,
+              const Color(0xFF10B981)
+            );
+          }
+        }
       }
     }
 
     // Draw legend
     final legendY = padding.top;
+    final legendX = size.width - 120;
 
     // Systolic legend
-    final systolicLegendPaint = Paint()
-      ..color = const Color(0xFFEF4444)
-      ..strokeWidth = 3;
-
-    canvas.drawCircle(
-        Offset(size.width - 120, legendY), 4, systolicLegendPaint);
-    _drawText(canvas, 'Systolic', size.width - 100, legendY - 6,
+    final systolicPaint = Paint()
+      ..color = const Color(0xFFEF4444);
+    canvas.drawCircle(Offset(legendX, legendY + 6), 6, systolicPaint);
+    _drawText(canvas, 'Systolic', legendX + 12, legendY,
         const Color(0xFF6B7280));
 
     // Diastolic legend
-    final diastolicLegendPaint = Paint()
-      ..color = const Color(0xFF3B82F6)
-      ..strokeWidth = 3;
+    final diastolicPaint = Paint()
+      ..color = const Color(0xFF3B82F6);
+    canvas.drawCircle(Offset(legendX, legendY + 24), 6, diastolicPaint);
+    _drawText(canvas, 'Diastolic', legendX + 12, legendY + 18,
+        const Color(0xFF6B7280));
 
-    canvas.drawCircle(
-        Offset(size.width - 120, legendY + 20), 4, diastolicLegendPaint);
-    _drawText(canvas, 'Diastolic', size.width - 100, legendY + 14,
+    // Pulse legend
+    final pulsePaint = Paint()
+      ..color = const Color(0xFF10B981);
+    canvas.drawCircle(Offset(legendX, legendY + 42), 5, pulsePaint);
+    _drawText(canvas, 'Pulse', legendX + 12, legendY + 36,
         const Color(0xFF6B7280));
   }
 

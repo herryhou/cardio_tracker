@@ -86,6 +86,287 @@ class ClinicalZones {
   }
 }
 
+/// Custom painter for Vertical Bar Distribution Chart
+class ClinicalBarDistributionPainter extends CustomPainter {
+  final List<BloodPressureReading> readings;
+  final BloodPressureReading? selectedReading;
+
+  const ClinicalBarDistributionPainter({
+    required this.readings,
+    this.selectedReading,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (readings.isEmpty) return;
+
+    // Set up drawing area with padding
+    const padding = 50.0;
+    const leftPadding = 70.0; // Extra space for Y-axis labels
+    const bottomPadding = 70.0; // Extra space for X-axis labels
+    final drawArea = Rect.fromLTWH(
+        leftPadding,
+        padding,
+        size.width - leftPadding - padding,
+        size.height - padding - bottomPadding);
+
+    // Draw background
+    _drawBackground(canvas, drawArea);
+
+    // Draw clinical zones as horizontal bands
+    _drawClinicalZoneBands(canvas, drawArea);
+
+    // Draw grid lines
+    _drawGridLines(canvas, drawArea);
+
+    // Draw axes and labels
+    _drawAxes(canvas, drawArea);
+
+    // Draw vertical bars
+    _drawVerticalBars(canvas, drawArea);
+
+    // Draw selection highlight
+    if (selectedReading != null) {
+      _drawSelectionHighlight(canvas, drawArea, selectedReading!);
+    }
+  }
+
+  void _drawBackground(Canvas canvas, Rect drawArea) {
+    final bgPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    canvas.drawRect(drawArea, bgPaint);
+  }
+
+  void _drawClinicalZoneBands(Canvas canvas, Rect drawArea) {
+    // Draw clinical zones as horizontal bands
+    final zones = [
+      {'name': 'Normal', 'min': 50.0, 'max': 80.0, 'color': Color.fromARGB(255, 185, 255, 203)},
+      {'name': 'Elevated', 'min': 80.0, 'max': 80.0, 'color': Color.fromARGB(255, 255, 248, 167)},
+      {'name': 'Stage 1', 'min': 80.0, 'max': 90.0, 'color': Color.fromARGB(255, 255, 207, 156)},
+      {'name': 'Stage 2', 'min': 90.0, 'max': 120.0, 'color': Color.fromARGB(255, 255, 165, 165)},
+    ];
+
+    for (final zone in zones) {
+      final topY = drawArea.bottom - (((zone['max'] as double) - 50) / 70) * drawArea.height;
+      final bottomY = drawArea.bottom - (((zone['min'] as double) - 50) / 70) * drawArea.height;
+
+      final zoneRect = Rect.fromLTWH(drawArea.left, topY, drawArea.width, bottomY - topY);
+
+      final zonePaint = Paint()
+        ..color = (zone['color'] as Color).withOpacity(0.3)
+        ..style = PaintingStyle.fill;
+
+      canvas.drawRect(zoneRect, zonePaint);
+    }
+  }
+
+  void _drawGridLines(Canvas canvas, Rect drawArea) {
+    final gridPaint = Paint()
+      ..color = Colors.grey.withOpacity(0.2)
+      ..strokeWidth = 0.5;
+
+    // Vertical grid lines (time)
+    if (readings.isNotEmpty) {
+      for (int i = 0; i < readings.length; i++) {
+        final x = drawArea.left + (i * drawArea.width / (readings.length - 1));
+        canvas.drawLine(
+          Offset(x, drawArea.top),
+          Offset(x, drawArea.bottom),
+          gridPaint,
+        );
+      }
+    }
+
+    // Horizontal grid lines (diastolic)
+    for (int i = 0; i <= 7; i++) {
+      final y = drawArea.top + (i * drawArea.height / 7);
+      canvas.drawLine(
+        Offset(drawArea.left, y),
+        Offset(drawArea.right, y),
+        gridPaint,
+      );
+    }
+  }
+
+  void _drawAxes(Canvas canvas, Rect drawArea) {
+    final axisPaint = Paint()
+      ..color = Colors.black87
+      ..strokeWidth = 2.0;
+
+    // X-axis (time)
+    canvas.drawLine(
+      Offset(drawArea.left, drawArea.bottom),
+      Offset(drawArea.right, drawArea.bottom),
+      axisPaint,
+    );
+
+    // Y-axis (pressure)
+    canvas.drawLine(
+      Offset(drawArea.left, drawArea.top),
+      Offset(drawArea.left, drawArea.bottom),
+      axisPaint,
+    );
+
+    // Axis labels
+    _drawAxisLabels(canvas, drawArea);
+  }
+
+  void _drawAxisLabels(Canvas canvas, Rect drawArea) {
+    const textStyle = TextStyle(
+      color: Colors.black87,
+      fontSize: 11,
+      fontWeight: FontWeight.w500,
+    );
+
+    // Y-axis labels (pressure)
+    for (int i = 0; i <= 7; i++) {
+      final value = 50 + (i * 10);
+      final x = drawArea.left - 10;
+      final y = drawArea.bottom - (i * drawArea.height / 7);
+
+      _drawText(canvas, value.toString(), Offset(x, y), textStyle,
+          align: TextAlign.right);
+    }
+
+    // Axis titles
+    final titleStyle = textStyle.copyWith(
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+      color: Colors.black,
+    );
+
+    _drawText(canvas, 'Time (Readings)',
+        Offset(drawArea.center.dx, drawArea.bottom + 45), titleStyle,
+        align: TextAlign.center);
+
+    _drawText(canvas, 'Pressure (mmHg)',
+        Offset(drawArea.left - 55, drawArea.center.dy), titleStyle,
+        align: TextAlign.center, isVertical: true);
+  }
+
+  void _drawVerticalBars(Canvas canvas, Rect drawArea) {
+    if (readings.isEmpty) return;
+
+    final barWidth = drawArea.width / readings.length * 0.7;
+
+    for (int i = 0; i < readings.length; i++) {
+      final reading = readings[i];
+      final x = drawArea.left + (i * drawArea.width / (readings.length - 1)) - barWidth / 2;
+
+      // Calculate Y positions (inverted for chart coordinates)
+      final systolicY = drawArea.bottom - ((reading.systolic - 50) / 70) * drawArea.height;
+      final diastolicY = drawArea.bottom - ((reading.diastolic - 50) / 70) * drawArea.height;
+
+      // Determine color based on category
+      Color barColor;
+      switch (reading.category) {
+        case BloodPressureCategory.normal:
+          barColor = const Color(0xFF10B981);
+          break;
+        case BloodPressureCategory.elevated:
+          barColor = const Color(0xFFF59E0B);
+          break;
+        case BloodPressureCategory.stage1:
+          barColor = const Color(0xFFF97316);
+          break;
+        case BloodPressureCategory.stage2:
+          barColor = const Color(0xFFEF4444);
+          break;
+        default:
+          barColor = Colors.grey;
+      }
+
+      // Draw gradient bar from diastolic to systolic
+      final gradientPaint = Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            barColor.withOpacity(0.8), // Systolic (top)
+            barColor.withOpacity(0.3), // Diastolic (bottom)
+          ],
+        ).createShader(Rect.fromLTWH(x, systolicY, barWidth, diastolicY - systolicY));
+
+      final barRect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(x, systolicY, barWidth, diastolicY - systolicY),
+        const Radius.circular(3),
+      );
+
+      canvas.drawRRect(barRect, gradientPaint);
+
+      // Highlight selected bar
+      if (reading == selectedReading) {
+        final highlightPaint = Paint()
+          ..color = barColor
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2;
+        canvas.drawRRect(barRect, highlightPaint);
+      }
+    }
+  }
+
+  void _drawSelectionHighlight(
+      Canvas canvas, Rect drawArea, BloodPressureReading reading) {
+    // Find the bar index
+    final index = readings.indexOf(reading);
+    if (index == -1) return;
+
+    final barWidth = drawArea.width / readings.length * 0.7;
+    final x = drawArea.left + (index * drawArea.width / (readings.length - 1)) - barWidth / 2;
+    final systolicY = drawArea.bottom - ((reading.systolic - 50) / 70) * drawArea.height;
+    final diastolicY = drawArea.bottom - ((reading.diastolic - 50) / 70) * drawArea.height;
+
+    // Draw selection indicator
+    final selectionPaint = Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+
+    final selectionRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(x - 5, systolicY - 5, barWidth + 10, diastolicY - systolicY + 10),
+      const Radius.circular(5),
+    );
+
+    canvas.drawRRect(selectionRect, selectionPaint);
+  }
+
+  void _drawText(Canvas canvas, String text, Offset position, TextStyle style,
+      {TextAlign align = TextAlign.left, bool isVertical = false}) {
+    final textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+      textAlign: align,
+    );
+
+    textPainter.layout();
+
+    if (!isVertical) {
+      final offset = align == TextAlign.center
+          ? Offset(position.dx - textPainter.width / 2, position.dy)
+          : align == TextAlign.right
+              ? Offset(position.dx - textPainter.width, position.dy)
+              : position;
+      textPainter.paint(canvas, offset);
+    } else {
+      canvas.save();
+      canvas.translate(position.dx, position.dy);
+      canvas.rotate(-math.pi / 2);
+      textPainter.paint(canvas, Offset.zero);
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(ClinicalBarDistributionPainter oldDelegate) {
+    if (readings.length != oldDelegate.readings.length) return true;
+    if (selectedReading != oldDelegate.selectedReading) return true;
+    return false;
+  }
+}
+
 /// Custom painter for Clinical Scatter Plot
 class ClinicalScatterPainter extends CustomPainter {
   final List<BloodPressureReading> readings;

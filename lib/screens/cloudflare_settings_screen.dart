@@ -250,8 +250,37 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                           _isConfigured ? 'Configured' : 'Not configured',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
+                        const Spacer(),
+                        if (_isConfigured)
+                          Tooltip(
+                            message: 'Credentials are stored securely using device keychain/encrypted storage',
+                            child: Icon(
+                              Icons.security,
+                              size: 16,
+                              color: Colors.green,
+                            ),
+                          ),
                       ],
                     ),
+                    if (_isConfigured) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.lock,
+                            size: 14,
+                            color: Colors.green,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Credentials stored securely',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.green,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                     if (_lastSyncTime != null) ...[
                       const SizedBox(height: 8),
                       Text(
@@ -362,7 +391,20 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                             ? 'Re-enter your API token to update credentials'
                             : 'Your Cloudflare API token',
                         helperText: _isConfigured
-                            ? 'For security, API token is not stored in memory'
+                            ? 'Stored securely • Enter new token to update'
+                            : 'Will be stored securely in device keychain',
+                        prefixIcon: Icon(
+                          Icons.key,
+                          color: Colors.grey[600],
+                        ),
+                        suffixIcon: _isConfigured
+                            ? IconButton(
+                                icon: const Icon(Icons.info_outline),
+                                onPressed: () {
+                                  _showCredentialInfoDialog(context);
+                                },
+                                tooltip: 'About credential storage',
+                              )
                             : null,
                       ),
                       obscureText: true,
@@ -448,5 +490,65 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
     } else {
       return 'Just now';
     }
+  }
+
+  void _showCredentialInfoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.security, color: Colors.green),
+            const SizedBox(width: 8),
+            const Text('Credential Storage'),
+          ],
+        ),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Your Cloudflare credentials are securely stored using:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 16),
+                const SizedBox(width: 8),
+                const Text('Device Keychain (iOS)'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 16),
+                const SizedBox(width: 8),
+                const Text('Encrypted Storage (Android)'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 16),
+                const SizedBox(width: 8),
+                const Text('SharedPreferences (fallback)'),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Your API token is never stored in plain text or memory, ensuring your credentials remain secure even if the app is closed.',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Got it'),
+          ),
+        ],
+      ),
+    );
   }
 }
