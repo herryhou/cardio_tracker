@@ -63,97 +63,108 @@ class _DashboardScreenState extends State<DashboardScreen> {
               }
 
               if (snapshot.hasData && snapshot.data == true) {
-                return IconButton(
-                  icon: Icon(
-                    Icons.cloud_sync_outlined,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.7),
+                return Container(
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.cloud_sync_outlined,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const CloudflareSettingsScreen(),
+                        ),
+                      );
+                    },
+                    tooltip: 'Cloudflare Sync',
+                    padding: EdgeInsets.zero,
                   ),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const CloudflareSettingsScreen(),
-                      ),
-                    );
-                  },
-                  tooltip: 'Cloudflare Sync',
                 );
               }
               return const SizedBox.shrink();
             },
           ),
-          IconButton(
-            icon: Icon(
-              Icons.file_download_outlined,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+          Container(
+            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+            child: IconButton(
+              icon: Icon(
+                Icons.file_download_outlined,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
+              onPressed: () async {
+                try {
+                  final provider = context.read<BloodPressureProvider>();
+                  await CsvExportService.exportToCsv(provider.readings);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('CSV exported successfully')),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to export CSV: $e')),
+                  );
+                }
+              },
+              padding: EdgeInsets.zero,
             ),
-            onPressed: () async {
-              try {
-                final provider = context.read<BloodPressureProvider>();
-                await CsvExportService.exportToCsv(provider.readings);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('CSV exported successfully')),
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to export CSV: $e')),
-                );
-              }
-            },
           ),
-          PopupMenuButton<String>(
-            icon: Icon(
-              AppIcons.more,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-            ),
-            onSelected: (value) {
-              _handleMenuAction(context, value);
-            },
+          Container(
+            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+            child: PopupMenuButton<String>(
+              icon: Icon(
+                AppIcons.more,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
+              onSelected: (value) {
+                _handleMenuAction(context, value);
+              },
             itemBuilder: (context) => [
-              PopupMenuItem<String>(
-                value: 'settings',
-                child: Row(
-                  children: [
-                    const Icon(Icons.settings, size: 18),
-                    SizedBox(width: AppSpacing.cardsGap),
-                    const Text('Settings'),
-                  ],
+                PopupMenuItem<String>(
+                  value: 'settings',
+                  child: Row(
+                    children: [
+                      const Icon(Icons.settings, size: 18),
+                      SizedBox(width: AppSpacing.cardsGap),
+                      const Text('Settings'),
+                    ],
+                  ),
                 ),
-              ),
-              const PopupMenuDivider(),
-              PopupMenuItem<String>(
-                value: 'export_csv',
-                child: Row(
-                  children: [
-                    Icon(AppIcons.export, size: 18),
-                    SizedBox(width: AppSpacing.cardsGap),
-                    const Text('Export All Data'),
-                  ],
+                const PopupMenuDivider(),
+                PopupMenuItem<String>(
+                  value: 'export_csv',
+                  child: Row(
+                    children: [
+                      Icon(AppIcons.export, size: 18),
+                      SizedBox(width: AppSpacing.cardsGap),
+                      const Text('Export All Data'),
+                    ],
+                  ),
                 ),
-              ),
-              PopupMenuItem<String>(
-                value: 'export_summary',
-                child: Row(
-                  children: [
-                    Icon(AppIcons.analytics, size: 18),
-                    SizedBox(width: AppSpacing.cardsGap),
-                    const Text('Export Summary'),
-                  ],
+                PopupMenuItem<String>(
+                  value: 'export_summary',
+                  child: Row(
+                    children: [
+                      Icon(AppIcons.analytics, size: 18),
+                      SizedBox(width: AppSpacing.cardsGap),
+                      const Text('Export Summary'),
+                    ],
+                  ),
                 ),
-              ),
-              PopupMenuItem<String>(
-                value: 'export_month',
-                child: Row(
-                  children: [
-                    Icon(Icons.today, size: 18),
-                    SizedBox(width: AppSpacing.cardsGap),
-                    const Text('Export This Month'),
-                  ],
+                PopupMenuItem<String>(
+                  value: 'export_month',
+                  child: Row(
+                    children: [
+                      Icon(Icons.today, size: 18),
+                      SizedBox(width: AppSpacing.cardsGap),
+                      const Text('Export This Month'),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -210,15 +221,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          _showAddReadingModal(context);
-        },
-        icon: const Icon(AppIcons.add),
-        label: const Text('New'),
-        elevation: 4,
-        backgroundColor: const Color(0xFF8B5CF6),
-        foregroundColor: Colors.white,
+      floatingActionButton: Container(
+        constraints: const BoxConstraints(
+          minWidth: 56,
+          minHeight: 56,
+        ),
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            _showAddReadingModal(context);
+          },
+          icon: const Icon(AppIcons.add),
+          label: const Text('New'),
+          elevation: 4,
+          backgroundColor: const Color(0xFF8B5CF6),
+          foregroundColor: Colors.white,
+        ),
       ),
     );
   }

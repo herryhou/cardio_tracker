@@ -81,22 +81,24 @@ class ReadingSummaryCard extends StatelessWidget {
                   // Actions
                   if (showActions) ...[
                     SizedBox(width: AppSpacing.sm),
-                    PopupMenuButton<String>(
-                      icon: Icon(
-                        Icons.more_vert,
-                        size: 20,
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                      onSelected: (value) {
-                        switch (value) {
-                          case 'edit':
-                            onEdit?.call();
-                            break;
-                          case 'delete':
-                            onDelete?.call();
-                            break;
-                        }
-                      },
+                    Container(
+                      constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                      child: PopupMenuButton<String>(
+                        icon: Icon(
+                          Icons.more_vert,
+                          size: 20,
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                        onSelected: (value) {
+                          switch (value) {
+                            case 'edit':
+                              onEdit?.call();
+                              break;
+                            case 'delete':
+                              onDelete?.call();
+                              break;
+                          }
+                        },
                       itemBuilder: (context) => [
                         PopupMenuItem(
                           value: 'edit',
@@ -120,8 +122,9 @@ class ReadingSummaryCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ],
-                ],
+                  ),
+              ],
+            ],
               ),
               SizedBox(height: AppSpacing.md),
 

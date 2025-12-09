@@ -36,19 +36,26 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.close, size: 24),
-          onPressed: () => Navigator.pop(context),
+        leading: Container(
+          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+          child: IconButton(
+            icon: const Icon(Icons.close, size: 24),
+            onPressed: () => Navigator.pop(context),
+            padding: EdgeInsets.zero,
+          ),
         ),
         actions: [
-          TextButton(
-            onPressed: _isLoading ? null : _saveReading,
-            child: Text(
-              'Save',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: _isLoading ? Colors.grey : const Color(0xFF000000),
+          Container(
+            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+            child: TextButton(
+              onPressed: _isLoading ? null : _saveReading,
+              child: Text(
+                'Save',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: _isLoading ? Colors.grey : const Color(0xFF000000),
+                ),
               ),
             ),
           ),
@@ -199,27 +206,30 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w300,
-            letterSpacing: -1,
-          ),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
+        Container(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: TextFormField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            style: const TextStyle(
               fontSize: 24,
-              fontWeight: FontWeight.w200,
-              color: Colors.grey[300],
+              fontWeight: FontWeight.w300,
               letterSpacing: -1,
             ),
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.zero,
-            isDense: true,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w200,
+                color: Colors.grey[300],
+                letterSpacing: -1,
+              ),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(vertical: 10),
+              isDense: false,
+            ),
+            validator: validator,
           ),
-          validator: validator,
         ),
         const SizedBox(height: 8),
         Container(
@@ -231,53 +241,56 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
   }
 
   Widget _buildDateTimeSelector() {
-    return InkWell(
-      onTap: _selectDateTime,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey[300]!),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.calendar_today_outlined,
-              size: 18,
-              color: Colors.grey[600],
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _formatDate(_selectedDateTime),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  Text(
-                    _formatTime(_selectedDateTime),
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
+    return Container(
+      constraints: const BoxConstraints(minHeight: 44),
+      child: InkWell(
+        onTap: _selectDateTime,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.calendar_today_outlined,
+                size: 18,
+                color: Colors.grey[600],
               ),
-            ),
-            Icon(
-              Icons.chevron_right,
-              color: Colors.grey[400],
-              size: 20,
-            ),
-          ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _formatDate(_selectedDateTime),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    Text(
+                      _formatTime(_selectedDateTime),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: Colors.grey[400],
+                size: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -297,31 +310,34 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        TextFormField(
-          controller: _notesController,
-          maxLines: 3,
-          maxLength: 150,
-          style: const TextStyle(fontSize: 15),
-          decoration: InputDecoration(
-            hintText: 'Add notes about this reading...',
-            hintStyle: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 15,
+        Container(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: TextFormField(
+            controller: _notesController,
+            maxLines: 3,
+            maxLength: 150,
+            style: const TextStyle(fontSize: 15),
+            decoration: InputDecoration(
+              hintText: 'Add notes about this reading...',
+              hintStyle: TextStyle(
+                color: Colors.grey[400],
+                fontSize: 15,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.grey),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.grey),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.black, width: 1.5),
+              ),
+              contentPadding: const EdgeInsets.all(16),
+              counterText: '',
             ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.grey),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.grey),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.black, width: 1.5),
-            ),
-            contentPadding: const EdgeInsets.all(16),
-            counterText: '',
           ),
         ),
       ],
@@ -669,27 +685,30 @@ class _AddReadingContentState extends State<AddReadingContent> {
           ),
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w300,
-          ),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
+        Container(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: TextFormField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            style: const TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.w200,
-              color: Colors.grey[300],
+              fontWeight: FontWeight.w300,
             ),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 12.0),
-            isDense: false,
-            filled: true,
-            fillColor: Colors.grey[100],
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w200,
+                color: Colors.grey[300],
+              ),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 12.0),
+              isDense: false,
+              filled: true,
+              fillColor: Colors.grey[100],
+            ),
+            validator: validator,
           ),
-          validator: validator,
         ),
       ],
     );
@@ -709,16 +728,18 @@ class _AddReadingContentState extends State<AddReadingContent> {
           ),
         ),
         const SizedBox(height: 8),
-        InkWell(
-          onTap: _selectDateTime,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[300]!),
-            ),
+        Container(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: InkWell(
+            onTap: _selectDateTime,
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey[300]!),
+              ),
             child: Row(
               children: [
                 Icon(
@@ -757,6 +778,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
               ],
             ),
           ),
+        ),
         ),
       ],
     );
