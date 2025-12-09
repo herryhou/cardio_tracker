@@ -47,8 +47,8 @@ const double _shadowAlpha = 0.1;
 const double _shadowBlurRadius = 8.0;
 
 // Padding
-const EdgeInsets _chartPadding = EdgeInsets.all(16);
-const double _labelTopPadding = 8.0;
+const EdgeInsets _chartPadding = EdgeInsets.all(AppSpacing.md);
+const double _labelTopPadding = AppSpacing.sm;
 
 /// Time Series Chart Widget using fl_chart with clean, maintainable architecture.
 class FlTimeSeriesChart extends StatefulWidget {
@@ -213,7 +213,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     }
 
     return Container(
-      padding: const EdgeInsets.all(22),
+      padding: EdgeInsets.all(AppSpacing.md + AppSpacing.xs),
       decoration: _buildContainerDecoration(),
       child: Column(
         children: [
@@ -261,7 +261,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.show_chart, size: 48, color: Colors.grey[400]),
-          const SizedBox(height: 16),
+          SizedBox(height: AppSpacing.md),
           Text(
             'No data available',
             style: AppTheme.headerStyle.copyWith(
@@ -269,7 +269,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
                   fontSize: 16, // Override for this context
                 ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: AppSpacing.sm),
           Text(
             'Start recording blood pressure to see trends here',
             style: AppTheme.bodyStyle.copyWith(
@@ -503,7 +503,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       final formattedDate = DateFormat(rangeInfo.getDateFormat()).format(date);
 
       return Padding(
-        padding: const EdgeInsets.only(top: _labelTopPadding),
+        padding: EdgeInsets.only(top: _labelTopPadding),
         child: Transform.rotate(
           angle: _labelRotationAngle,
           child: Text(

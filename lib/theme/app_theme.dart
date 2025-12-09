@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 /// Modern Blood Pressure Tracker Theme with AHA Medical Colors
 /// Based on Material Design 3 with medical color standards
 class AppTheme {
+  /// Spacing System Constants
+  /// All spacing follows an 8dp grid system for consistency
+  static const AppSpacing spacing = AppSpacing._();
+
   // AHA Medical Color Standards (WCAG AA Compliant)
   static const Color _normalColor = Color(0xFF2E7D32);     // Darker Green for better contrast
   static const Color _elevatedColor = Color(0xFFBF360C);   // Dark Brown-Orange for WCAG AA compliance
@@ -99,7 +103,7 @@ class AppTheme {
         ),
         color: _surfaceLight,
         surfaceTintColor: Colors.transparent,
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        margin: AppSpacing.cardMargins,
       ),
 
       // Elevated Button Theme
@@ -296,7 +300,7 @@ class AppTheme {
         ),
         color: _surfaceDark,
         surfaceTintColor: Colors.transparent,
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        margin: AppSpacing.cardMargins,
       ),
 
       // Elevated Button Theme
@@ -520,4 +524,34 @@ class AppTheme {
       ),
     );
   }
+}
+
+/// Spacing System for the Cardio Tracker App
+/// Follows an 8dp grid system with specific requirements for medical UI
+class AppSpacing {
+  const AppSpacing._();
+
+  // Base grid unit (8dp)
+  static const double gridUnit = 8.0;
+
+  // Standard spacing values based on 8dp grid
+  static const double xs = 4.0;    // 0.5 * gridUnit
+  static const double sm = 8.0;    // 1 * gridUnit
+  static const double md = 16.0;   // 2 * gridUnit
+  static const double lg = 24.0;   // 3 * gridUnit
+  static const double xl = 32.0;   // 4 * gridUnit
+  static const double xxl = 48.0;  // 6 * gridUnit
+
+  // Specific spacing requirements
+  static const double screenMargin = 16.0;  // Screen edge margins
+  static const double cardPadding = 20.0;   // Card padding
+  static const double cardsGap = 12.0;      // Space between cards
+  static const double sectionGap = 24.0;    // Minimum vertical space between sections
+
+  // Convenience methods for common EdgeInsets
+  static EdgeInsets get screenMargins => const EdgeInsets.symmetric(horizontal: screenMargin);
+  static EdgeInsets get cardPaddingInsets => const EdgeInsets.all(cardPadding);
+  static EdgeInsets get cardMargins => const EdgeInsets.symmetric(vertical: cardsGap, horizontal: screenMargin);
+  static EdgeInsets get sectionGapVertical => const EdgeInsets.symmetric(vertical: sectionGap);
+  static EdgeInsets get sectionGapHorizontal => const EdgeInsets.symmetric(horizontal: sectionGap);
 }

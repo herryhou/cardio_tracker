@@ -5,6 +5,7 @@ import '../providers/dual_chart_provider.dart';
 import '../widgets/dual_chart_container.dart';
 import '../models/chart_types.dart';
 import '../models/blood_pressure_reading.dart';
+import '../theme/app_theme.dart';
 
 class DistributionScreen extends StatefulWidget {
   const DistributionScreen({super.key});
@@ -108,7 +109,7 @@ class _DistributionScreenState extends State<DistributionScreen> {
           if (provider.error != null) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(AppSpacing.md),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -117,18 +118,18 @@ class _DistributionScreenState extends State<DistributionScreen> {
                       size: 64,
                       color: Theme.of(context).colorScheme.error,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppSpacing.md),
                     Text(
                       'Error loading data',
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: AppSpacing.sm),
                     Text(
                       provider.error!,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppSpacing.md),
                     ElevatedButton(
                       onPressed: () => provider.loadReadings(),
                       child: const Text('Retry'),
@@ -190,7 +191,7 @@ class _DistributionScreenState extends State<DistributionScreen> {
     return Center(
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(32.0),
+          padding: EdgeInsets.all(AppSpacing.lg + AppSpacing.md),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

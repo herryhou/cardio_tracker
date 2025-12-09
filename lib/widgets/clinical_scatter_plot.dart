@@ -911,7 +911,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
           border: Border.all(color: color.withValues(alpha: 0.3), width: 2),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(AppSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -926,7 +926,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: AppSpacing.sm),
                   Text(
                     'Blood Pressure Reading',
                     style: AppTheme.bodyStyle.copyWith(
@@ -936,19 +936,19 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: AppSpacing.cardsGap),
               _buildDetailRow('Systolic:', '${reading.systolic} mmHg'),
               _buildDetailRow('Diastolic:', '${reading.diastolic} mmHg'),
               _buildDetailRow('Heart Rate:', '${reading.heartRate} bpm'),
               _buildDetailRow('Category:',
                   ClinicalZones.getCategoryDescription(reading.category)),
-              const SizedBox(height: 8),
+              SizedBox(height: AppSpacing.sm),
               _buildDetailRow('Date & Time:', formattedDate,
                   style: const TextStyle(fontWeight: FontWeight.w600)),
               if (reading.notes?.isNotEmpty ?? false) ...[
-                const SizedBox(height: 8),
+                SizedBox(height: AppSpacing.sm),
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(AppSpacing.sm),
                   decoration: BoxDecoration(
                     color: Colors.grey.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -1065,7 +1065,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
           elevation: 4,
           borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(AppSpacing.cardsGap),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -1076,13 +1076,13 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: AppSpacing.sm),
                 _buildDetailRow('Systolic:', '${reading.systolic} mmHg'),
                 _buildDetailRow('Diastolic:', '${reading.diastolic} mmHg'),
                 _buildDetailRow('Heart Rate:', '${reading.heartRate} bpm'),
                 _buildDetailRow('Category:',
                     ClinicalZones.getCategoryDescription(reading.category)),
-                const SizedBox(height: 4),
+                SizedBox(height: AppSpacing.xs),
                 _buildDetailRow('Date:', formattedDate),
               ],
             ),
@@ -1107,7 +1107,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
 
   Widget _buildDetailRow(String label, String value, {TextStyle? style}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.xs/2),
       child: RichText(
         text: TextSpan(
           children: [
@@ -1168,7 +1168,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: AppSpacing.md + AppSpacing.xs),
           // Legend
           _buildLegend(),
         ],
@@ -1178,7 +1178,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
 
   Widget _buildLegend() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: Colors.grey[20],
         borderRadius: BorderRadius.circular(12),
@@ -1213,7 +1213,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
           Container(
             width: 16,
             height: 16,
-            margin: const EdgeInsets.only(top: 2),
+            margin: EdgeInsets.only(top: AppSpacing.xs/2),
             decoration: BoxDecoration(
               color: zone.color,
               borderRadius: BorderRadius.circular(4),
@@ -1238,7 +1238,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                     color: _getZoneTextColor(zone.category),
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: AppSpacing.xs/2),
                 Text(
                   zone.description,
                   style: TextStyle(

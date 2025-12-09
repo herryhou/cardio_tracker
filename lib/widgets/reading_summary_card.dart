@@ -34,7 +34,7 @@ class ReadingSummaryCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(AppSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -64,7 +64,7 @@ class ReadingSummaryCard extends StatelessWidget {
 
                   // Category badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.cardsGap, vertical: AppSpacing.xs - 2),
                     decoration: BoxDecoration(
                       color: categoryColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
@@ -80,7 +80,7 @@ class ReadingSummaryCard extends StatelessWidget {
 
                   // Actions
                   if (showActions) ...[
-                    const SizedBox(width: 8),
+                    SizedBox(width: AppSpacing.sm),
                     PopupMenuButton<String>(
                       icon: Icon(
                         Icons.more_vert,
@@ -103,7 +103,7 @@ class ReadingSummaryCard extends StatelessWidget {
                           child: Row(
                             children: [
                               Icon(Icons.edit, size: 16, color: theme.colorScheme.onSurface),
-                              const SizedBox(width: 8),
+                              SizedBox(width: AppSpacing.sm),
                               const Text('Edit'),
                             ],
                           ),
@@ -113,7 +113,7 @@ class ReadingSummaryCard extends StatelessWidget {
                           child: Row(
                             children: [
                               Icon(Icons.delete, size: 16, color: theme.colorScheme.error),
-                              const SizedBox(width: 8),
+                              SizedBox(width: AppSpacing.sm),
                               const Text('Delete'),
                             ],
                           ),
@@ -123,7 +123,7 @@ class ReadingSummaryCard extends StatelessWidget {
                   ],
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AppSpacing.md),
 
               // Main readings display
               Row(
@@ -140,7 +140,7 @@ class ReadingSummaryCard extends StatelessWidget {
                       height: 50,
                       color: theme.colorScheme.outline.withOpacity(0.2),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: AppSpacing.md),
                   ],
 
                   // Pulse
@@ -150,9 +150,9 @@ class ReadingSummaryCard extends StatelessWidget {
 
               // Notes (if available)
               if (reading.notes != null && reading.notes!.isNotEmpty) ...[
-                const SizedBox(height: 12),
+                SizedBox(height: AppSpacing.cardsGap),
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(AppSpacing.cardsGap),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
@@ -164,7 +164,7 @@ class ReadingSummaryCard extends StatelessWidget {
                         size: 16,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
                           reading.notes!,
@@ -357,7 +357,7 @@ class CompactReadingCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.cardsGap),
           child: Row(
             children: [
               // Date
