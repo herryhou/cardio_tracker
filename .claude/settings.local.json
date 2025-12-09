@@ -51,6 +51,10 @@
       "Bash(ls:*)",
       "Bash(adb:*)",
       "Bash(q:*)",
+<<<<<<< Updated upstream
+=======
+      "Bash(git push:*)",
+>>>>>>> Stashed changes
       "Bash(git stash:*)"
     ],
     "deny": [],

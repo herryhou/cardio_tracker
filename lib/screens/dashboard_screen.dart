@@ -358,7 +358,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       Text(
                         reading.heartRate.toString(),
-                        const TextStyle(
+                        style: const TextStyle(
                           fontSize: 32, // Increased from 20
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1F2937),
