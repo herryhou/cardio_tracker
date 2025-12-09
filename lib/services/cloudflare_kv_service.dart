@@ -98,34 +98,50 @@ class CloudflareKVService {
         print('CloudflareKVService: Retrieved from keychain - Account ID: ${accountId != null ? 'found' : 'not found'}');
       } catch (e) {
         print('CloudflareKVService: Keychain read failed, trying fallback: ${e.toString()}');
-        // Fallback to SharedPreferences
+        // Fallback to SharedPreferences if keychain fails
         final prefs = await SharedPreferences.getInstance();
         accountId = prefs.getString(_accountIdKey);
         namespaceId = prefs.getString(_namespaceIdKey);
         apiToken = prefs.getString(_apiTokenKey);
         print('CloudflareKVService: Retrieved from SharedPreferences fallback');
+        return _validateAndReturnCredentials(accountId, namespaceId, apiToken);
       }
 
-      print('CloudflareKVService: Retrieved - Account ID: ${accountId != null ? 'found' : 'not found'}');
-      print('CloudflareKVService: Retrieved - Namespace ID: ${namespaceId != null ? 'found' : 'not found'}');
-      print('CloudflareKVService: Retrieved - API Token: ${apiToken != null ? 'found' : 'not found'}');
-
+      // If keychain returned null for any credential, also try fallback
       if (accountId == null || namespaceId == null || apiToken == null) {
-        print('CloudflareKVService: One or more credentials are missing');
-        return null;
+        print('CloudflareKVService: Some credentials missing from keychain, trying fallback');
+        final prefs = await SharedPreferences.getInstance();
+        accountId = accountId ?? prefs.getString(_accountIdKey);
+        namespaceId = namespaceId ?? prefs.getString(_namespaceIdKey);
+        apiToken = apiToken ?? prefs.getString(_apiTokenKey);
+        print('CloudflareKVService: Retrieved from SharedPreferences fallback');
       }
 
-      print('CloudflareKVService: All credentials retrieved successfully');
-      return {
-        'accountId': accountId,
-        'namespaceId': namespaceId,
-        'apiToken': apiToken,
-      };
+      return _validateAndReturnCredentials(accountId, namespaceId, apiToken);
     } catch (e, stackTrace) {
       print('CloudflareKVService: Error retrieving credentials: ${e.toString()}');
       print('CloudflareKVService: Stack trace: $stackTrace');
       return null;
     }
+  }
+
+  // Helper method to validate and return credentials
+  Map<String, String>? _validateAndReturnCredentials(String? accountId, String? namespaceId, String? apiToken) {
+    print('CloudflareKVService: Retrieved - Account ID: ${accountId != null ? 'found' : 'not found'}');
+    print('CloudflareKVService: Retrieved - Namespace ID: ${namespaceId != null ? 'found' : 'not found'}');
+    print('CloudflareKVService: Retrieved - API Token: ${apiToken != null ? 'found' : 'not found'}');
+
+    if (accountId == null || namespaceId == null || apiToken == null) {
+      print('CloudflareKVService: One or more credentials are missing');
+      return null;
+    }
+
+    print('CloudflareKVService: All credentials retrieved successfully');
+    return {
+      'accountId': accountId,
+      'namespaceId': namespaceId,
+      'apiToken': apiToken,
+    };
   }
 
   // Clear credentials
