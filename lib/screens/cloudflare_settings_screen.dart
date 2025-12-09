@@ -220,14 +220,38 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    // Wrap with error boundary to catch rendering errors
+    return ErrorWidget.builder(
+      error: (FlutterErrorDetails details, {bool retry = false}) {
+        print('CloudflareSettingsScreen build error: ${details.exception}');
+        print('Stack trace: ${details.stack}');
+        return MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(title: const Text('Error')),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  const Text('An error occurred'),
+                  const SizedBox(height: 8),
+                  Text(details.exception.toString()),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      child: Scaffold(
       appBar: AppBar(
         title: const Text('Cloudflare Sync'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Status section
             Card(
@@ -306,8 +330,7 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
             const SizedBox(height: 24),
 
             // Configuration form
-            Expanded(
-              child: Form(
+            Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,12 +344,9 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
 
                     TextFormField(
                       controller: _accountIdController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Account ID',
                         hintText: 'Your Cloudflare account ID',
-                        suffixIcon: _accountIdController.text.isNotEmpty
-                            ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
-                            : null,
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -340,12 +360,9 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
 
                     TextFormField(
                       controller: _namespaceIdController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Namespace ID',
                         hintText: 'Your KV namespace ID',
-                        suffixIcon: _namespaceIdController.text.isNotEmpty
-                            ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
-                            : null,
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -399,7 +416,6 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                     ),
                   ],
                 ),
-              ),
             ),
           ],
         ),
