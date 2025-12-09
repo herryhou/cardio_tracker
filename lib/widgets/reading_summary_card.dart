@@ -48,13 +48,13 @@ class ReadingSummaryCard extends StatelessWidget {
                       children: [
                         Text(
                           _formatDate(reading.timestamp),
-                          style: theme.textTheme.labelLarge?.copyWith(
+                          style: AppTheme.bodyStyle.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         Text(
                           _formatTime(reading.timestamp),
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: AppTheme.bodyStyle.copyWith(
                             color: theme.colorScheme.onSurface.withOpacity(0.6),
                           ),
                         ),
@@ -70,8 +70,8 @@ class ReadingSummaryCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      reading.category.toString().split('.').last.toUpperCase(),
-                      style: theme.textTheme.labelSmall?.copyWith(
+                      reading.category.toString().split('.').last,
+                      style: AppTheme.bodyStyle.copyWith(
                         color: categoryColor,
                         fontWeight: FontWeight.w600,
                       ),
@@ -168,7 +168,7 @@ class ReadingSummaryCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           reading.notes!,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: AppTheme.bodyStyle.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
                           maxLines: 2,
@@ -198,14 +198,14 @@ class ReadingSummaryCard extends StatelessWidget {
           children: [
             Text(
               reading.systolic.toString(),
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: AppTheme.displayStyle.copyWith(
+                fontSize: 24, // Override for card context
                 color: categoryColor,
               ),
             ),
             Text(
               'Systolic',
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: AppTheme.bodyStyle.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
@@ -227,14 +227,14 @@ class ReadingSummaryCard extends StatelessWidget {
           children: [
             Text(
               reading.diastolic.toString(),
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: AppTheme.displayStyle.copyWith(
+                fontSize: 24, // Override for card context
                 color: categoryColor,
               ),
             ),
             Text(
               'Diastolic',
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: AppTheme.bodyStyle.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
@@ -243,7 +243,7 @@ class ReadingSummaryCard extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           'mmHg',
-          style: theme.textTheme.labelSmall?.copyWith(
+          style: AppTheme.bodyStyle.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.6),
           ),
         ),
@@ -267,14 +267,14 @@ class ReadingSummaryCard extends StatelessWidget {
           children: [
             Text(
               reading.heartRate.toString(),
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: AppTheme.displayStyle.copyWith(
+                fontSize: 24, // Override for card context
                 color: theme.colorScheme.primary,
               ),
             ),
             Text(
               'BPM',
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: AppTheme.bodyStyle.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
             ),

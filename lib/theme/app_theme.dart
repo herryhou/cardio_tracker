@@ -26,6 +26,34 @@ class AppTheme {
   // Typography Scale (Material Design 3)
   static const String _fontFamily = 'SF Pro Display'; // Fallback to system
 
+  // Typography System Constants
+  static const double displaySize = 48.0;  // Latest reading numbers (122/88)
+  static const double headerSize = 20.0;   // Section headers, metric labels
+  static const double bodySize = 14.0;     // Supporting text, descriptions, timestamps
+  static const double headerLetterSpacing = 4.0 / 100; // 4dp letter spacing for headers
+
+  // Typography System Styles
+  static TextStyle get displayStyle => const TextStyle(
+    fontSize: displaySize,
+    fontWeight: FontWeight.bold,
+    fontFamily: _fontFamily,
+    letterSpacing: null, // No letter spacing for display text
+  );
+
+  static TextStyle get headerStyle => const TextStyle(
+    fontSize: headerSize,
+    fontWeight: FontWeight.bold,
+    fontFamily: _fontFamily,
+    letterSpacing: headerLetterSpacing,
+  );
+
+  static TextStyle get bodyStyle => const TextStyle(
+    fontSize: bodySize,
+    fontWeight: FontWeight.normal,
+    fontFamily: _fontFamily,
+    letterSpacing: null,
+  );
+
   // Light Theme Data
   static ThemeData get lightTheme {
     return ThemeData(

@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../models/blood_pressure_reading.dart';
 import '../models/chart_types.dart';
+import '../theme/app_theme.dart';
 
 // ============================================================================
 // CONSTANTS
@@ -268,14 +269,15 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
           const SizedBox(height: 16),
           Text(
             'No data available',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: AppTheme.headerStyle.copyWith(
                   color: Colors.grey[600],
+                  fontSize: 16, // Override for this context
                 ),
           ),
           const SizedBox(height: 8),
           Text(
             'Start recording blood pressure to see trends here',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: AppTheme.bodyStyle.copyWith(
                   color: Colors.grey[500],
                 ),
             textAlign: TextAlign.center,
@@ -428,10 +430,10 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
           reservedSize: _yAxisReservedSize,
           getTitlesWidget: (value, meta) => _buildYAxisLabel(value),
         ),
-        axisNameWidget: const Text(
+        axisNameWidget: Text(
           'Sys/Dia',
-          style: TextStyle(
-            fontSize: 13,
+          style: AppTheme.bodyStyle.copyWith(
+            fontSize: 13, // Override for axis label
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
@@ -460,10 +462,10 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
           reservedSize: _yAxisReservedSize,
           getTitlesWidget: (value, meta) => _buildYAxisLabel(value),
         ),
-        axisNameWidget: const Text(
+        axisNameWidget: Text(
           'Sys/Dia',
-          style: TextStyle(
-            fontSize: 13,
+          style: AppTheme.bodyStyle.copyWith(
+            fontSize: 13, // Override for axis label
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
@@ -486,7 +488,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
   Text _buildYAxisLabel(double value) {
     return Text(
       value.toInt().toString(),
-      style: const TextStyle(
+      style: AppTheme.bodyStyle.copyWith(
         fontSize: _yAxisLabelFontSize,
         fontWeight: FontWeight.w500,
         color: Colors.black87,
@@ -672,10 +674,10 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
             reservedSize: _yAxisReservedSize,
             getTitlesWidget: (value, meta) => _buildYAxisLabel(value),
           ),
-          axisNameWidget: const Text(
+          axisNameWidget: Text(
             'Sys/Dia',
-            style: TextStyle(
-              fontSize: 13,
+            style: AppTheme.bodyStyle.copyWith(
+              fontSize: 13, // Override for axis label
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
@@ -705,10 +707,10 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
             reservedSize: _yAxisReservedSize,
             getTitlesWidget: (value, meta) => _buildYAxisLabel(value),
           ),
-          axisNameWidget: const Text(
+          axisNameWidget: Text(
             'Sys/Dia',
-            style: TextStyle(
-              fontSize: 13,
+            style: AppTheme.bodyStyle.copyWith(
+              fontSize: 13, // Override for axis label
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),

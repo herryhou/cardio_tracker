@@ -288,20 +288,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     Text(
                       reading.systolic.toString(),
-                      style: TextStyle(
-                        fontSize: 72, // Increased from 48
-                        fontWeight: FontWeight.bold,
+                      style: AppTheme.displayStyle.copyWith(
+                        fontSize: 48, // Override display size for this specific context
                         color: categoryColor,
                         height: 1.0,
                       ),
                     ),
-                    const Text(
-                      'SYSTOLIC',
-                      style: TextStyle(
-                        fontSize: 16, // Increased from 12
+                    Text(
+                      'Systolic',
+                      style: AppTheme.bodyStyle.copyWith(
+                        color: const Color(0xFF6B7280),
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF6B7280),
-                        letterSpacing: 1.0,
                       ),
                     ),
                   ],
@@ -315,20 +312,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     Text(
                       reading.diastolic.toString(),
-                      style: TextStyle(
-                        fontSize: 72, // Increased from 48
-                        fontWeight: FontWeight.bold,
+                      style: AppTheme.displayStyle.copyWith(
+                        fontSize: 48, // Override display size for this specific context
                         color: categoryColor,
                         height: 1.0,
                       ),
                     ),
-                    const Text(
-                      'DIASTOLIC',
-                      style: TextStyle(
-                        fontSize: 16, // Increased from 12
+                    Text(
+                      'Diastolic',
+                      style: AppTheme.bodyStyle.copyWith(
+                        color: const Color(0xFF6B7280),
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF6B7280),
-                        letterSpacing: 1.0,
                       ),
                     ),
                   ],
@@ -364,19 +358,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       Text(
                         reading.heartRate.toString(),
-                        style: const TextStyle(
+                        const TextStyle(
                           fontSize: 32, // Increased from 20
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1F2937),
                         ),
                       ),
-                      const Text(
-                        'PULSE',
-                        style: TextStyle(
-                          fontSize: 14, // Increased from 10
+                      Text(
+                        'Pulse',
+                        style: AppTheme.bodyStyle.copyWith(
+                          color: const Color(0xFF6B7280),
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF6B7280),
-                          letterSpacing: 0.5,
                         ),
                       ),
                     ],
@@ -395,12 +387,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   borderRadius: BorderRadius.circular(16), // Increased radius
                 ),
                 child: Text(
-                  _getCategoryText(reading.category).toUpperCase(),
-                  style: TextStyle(
+                  _getCategoryText(reading.category),
+                  style: AppTheme.headerStyle.copyWith(
                     color: categoryColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16, // Increased from 12
-                    letterSpacing: 0.5,
+                    fontSize: 16, // Override header size for this context
                   ),
                 ),
               ),
@@ -481,12 +471,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Overview',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1F2937),
+          style: AppTheme.headerStyle.copyWith(
+            color: const Color(0xFF1F2937),
           ),
         ),
         const SizedBox(height: 16),
@@ -687,12 +675,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Historical',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1F2937),
+            style: AppTheme.headerStyle.copyWith(
+              color: const Color(0xFF1F2937),
+              fontSize: 18, // Override header size for this context
             ),
           ),
           const SizedBox(height: 20),
@@ -846,12 +833,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Recent Readings',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1F2937),
+          style: AppTheme.headerStyle.copyWith(
+            color: const Color(0xFF1F2937),
           ),
         ),
         const SizedBox(height: 16),

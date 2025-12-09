@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/blood_pressure_reading.dart';
+import '../theme/app_theme.dart';
 
 // Default height for the clinical scatter chart when not constrained by parent
 const double kClinicalScatterChartHeight =
@@ -928,9 +929,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                   const SizedBox(width: 8),
                   Text(
                     'Blood Pressure Reading',
-                    style: TextStyle(
+                    style: AppTheme.bodyStyle.copyWith(
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
                       color: color,
                     ),
                   ),
@@ -1070,11 +1070,10 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   'Blood Pressure Reading',
-                  style: TextStyle(
+                  style: AppTheme.bodyStyle.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -1114,16 +1113,14 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
           children: [
             TextSpan(
               text: '$label ',
-              style: style ?? const TextStyle(
+              style: style ?? AppTheme.bodyStyle.copyWith(
                 fontWeight: FontWeight.w600,
-                fontSize: 12,
                 color: Colors.black87,
               ),
             ),
             TextSpan(
               text: value,
-              style: const TextStyle(
-                fontSize: 12,
+              style: AppTheme.bodyStyle.copyWith(
                 color: Colors.black87,
               ),
             ),
