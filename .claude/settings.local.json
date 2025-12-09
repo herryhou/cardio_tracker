@@ -26,7 +26,8 @@
       "Skill(systematic-debugging)",
       "Bash(git rm:*)",
       "Bash(find:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(git worktree list:*)"
     ],
     "deny": [],
     "ask": []
