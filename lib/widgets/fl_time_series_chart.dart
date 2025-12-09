@@ -247,9 +247,8 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
   Widget _buildChart() {
     return SizedBox(
       height: 450,
-      child: LineChart(
-        _buildLineChartData(),
-        duration: const Duration(milliseconds: 250),
+      child: BarChart(
+        _buildBarChartData(),
       ),
     );
   }
@@ -290,11 +289,37 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
   // CHART DATA BUILDING
   // ============================================================================
 
-  LineChartData _buildLineChartData() {
-    if (_timeSeriesData.isEmpty) return _buildEmptyChartData();
+  BarChartData _buildBarChartData() {
+    if (_timeSeriesData.isEmpty) return _buildEmptyBarChartData();
 
-    final systolicSpots = _buildSpots((d) => d.systolic.toDouble());
-    final diastolicSpots = _buildSpots((d) => d.diastolic.toDouble());
+    final barGroups = <BarChartGroupData>[];
+
+    // Build bar groups for each reading
+    for (int i = 0; i < _timeSeriesData.length; i++) {
+      final data = _timeSeriesData[i];
+      final reading = data.originalReadings.isNotEmpty ? data.originalReadings.first : null;
+
+      // Get category color
+      Color categoryColor = _getCategoryColor(reading?.category ?? BloodPressureCategory.normal);
+
+      // Create a vertical line segment from diastolic to systolic
+      // We'll use the fromY and toY properties to create a range
+      barGroups.add(
+        BarChartGroupData(
+          x: i, // Use index as x position for proper spacing
+          barRods: [
+            // Single rod that represents the range from diastolic to systolic
+            BarChartRodData(
+              fromY: data.diastolic, // Bottom of the bar (diastolic)
+              toY: data.systolic, // Top of the bar (systolic)
+              color: categoryColor.withValues(alpha: 0.7),
+              width: 5, // 5 pixel width as requested
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
+            ),
+          ],
+        ),
+      );
+    }
 
     final rangeInfo = _TimeRangeInfo(
       timeRange: _currentTimeRange,
@@ -305,20 +330,33 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     final rangeStart = rangeInfo.rangeStart.millisecondsSinceEpoch.toDouble();
     final rangeEnd = rangeInfo.rangeEnd.millisecondsSinceEpoch.toDouble();
 
-    return LineChartData(
-      lineBarsData: [
-        _buildSystolicLine(systolicSpots),
-        _buildDiastolicLine(diastolicSpots),
-      ],
-      titlesData: _buildTitlesData(rangeInfo),
+    return BarChartData(
+      barGroups: barGroups,
+      titlesData: _buildBarTitlesData(rangeInfo),
       gridData: _buildGridData(),
       borderData: _buildBorderData(),
-      minX: rangeStart,
-      maxX: rangeEnd,
       minY: _minY,
       maxY: _maxY,
-      lineTouchData: _buildTouchData(),
+      barTouchData: _buildBarTouchData(),
+      alignment: BarChartAlignment.spaceAround,
     );
+  }
+
+  Color _getCategoryColor(BloodPressureCategory category) {
+    switch (category) {
+      case BloodPressureCategory.low:
+        return const Color(0xFF3B82F6); // Blue
+      case BloodPressureCategory.normal:
+        return const Color(0xFF10B981); // Green
+      case BloodPressureCategory.elevated:
+        return const Color(0xFFF59E0B); // Yellow/Amber
+      case BloodPressureCategory.stage1:
+        return const Color(0xFFF97316); // Orange
+      case BloodPressureCategory.stage2:
+        return const Color(0xFFEF4444); // Red
+      case BloodPressureCategory.crisis:
+        return const Color(0xFF991B1B); // Dark Red
+    }
   }
 
   List<FlSpot> _buildSpots(double Function(TimeSeriesData) accessor) {
@@ -413,6 +451,38 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     );
   }
 
+  FlTitlesData _buildBarTitlesData(_TimeRangeInfo rangeInfo) {
+    return FlTitlesData(
+      leftTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          interval: _yAxisInterval,
+          reservedSize: _yAxisReservedSize,
+          getTitlesWidget: (value, meta) => _buildYAxisLabel(value),
+        ),
+        axisNameWidget: const Text(
+          'Sys/Dia',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        axisNameSize: 20,
+      ),
+      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      bottomTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          reservedSize: _xAxisReservedSize,
+          interval: 1, // Show every reading
+          getTitlesWidget: (value, meta) => _buildBarXAxisLabel(value.toInt()),
+        ),
+      ),
+    );
+  }
+
   Text _buildYAxisLabel(double value) {
     return Text(
       value.toInt().toString(),
@@ -422,6 +492,27 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
         color: Colors.black87,
       ),
       textAlign: TextAlign.right,
+    );
+  }
+
+  Widget _buildBarXAxisLabel(int index) {
+    if (index < 0 || index >= _timeSeriesData.length) {
+      return const SizedBox.shrink();
+    }
+
+    final data = _timeSeriesData[index];
+    final formattedDate = DateFormat('MM/dd').format(data.timestamp);
+
+    return Transform.rotate(
+      angle: _labelRotationAngle,
+      child: Text(
+        formattedDate,
+        style: const TextStyle(
+          fontSize: _xAxisLabelFontSize,
+          fontWeight: FontWeight.w500,
+          color: Colors.black87,
+        ),
+      ),
     );
   }
 
@@ -476,15 +567,15 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     );
   }
 
-  LineTouchData _buildTouchData() {
-    return LineTouchData(
-      touchTooltipData: LineTouchTooltipData(
+  BarTouchData _buildBarTouchData() {
+    return BarTouchData(
+      touchTooltipData: BarTouchTooltipData(
         getTooltipColor: (group) => Colors.white,
         tooltipBorder:
             BorderSide(color: Colors.grey.withValues(alpha: _gridAlpha)),
-        getTooltipItems: _buildTooltipItems,
+        getTooltipItem: _buildBarTooltipItem,
       ),
-      touchCallback: _handleTouchEvent,
+      touchCallback: _handleBarTouchEvent,
       handleBuiltInTouches: true,
     );
   }
@@ -512,6 +603,44 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     }).toList();
   }
 
+  BarTooltipItem? _buildBarTooltipItem(group, int groupIndex, BarChartRodData rod, int rodIndex) {
+    // Find the reading associated with this bar
+    if (groupIndex >= _timeSeriesData.length) return null;
+
+    final data = _timeSeriesData[groupIndex];
+    final reading = data.originalReadings.isNotEmpty ? data.originalReadings.first : null;
+    final category = reading?.category?.name ?? 'Normal';
+
+    return BarTooltipItem(
+      'Systolic: ${data.systolic}\nDiastolic: ${data.diastolic}\n$category\n${DateFormat('MMM dd, HH:mm').format(data.timestamp)}',
+      TextStyle(
+        color: _getCategoryColor(reading?.category ?? BloodPressureCategory.normal),
+        fontWeight: FontWeight.bold,
+        fontSize: 12,
+      ),
+    );
+  }
+
+  void _handleBarTouchEvent(FlTouchEvent event, BarTouchResponse? touchResponse) {
+    if (event is! FlTapUpEvent || touchResponse == null) return;
+
+    final touchedGroup = touchResponse.spot?.touchedBarGroup;
+    if (touchedGroup == null) {
+      widget.onReadingSelected?.call(null);
+      return;
+    }
+
+    // Use the x value directly as the reading index
+    final readingIndex = touchedGroup.x;
+
+    if (readingIndex >= 0 && readingIndex < _timeSeriesData.length) {
+      final reading = _timeSeriesData[readingIndex].originalReadings.isNotEmpty
+          ? _timeSeriesData[readingIndex].originalReadings.first
+          : null;
+      widget.onReadingSelected?.call(reading);
+    }
+  }
+
   void _handleTouchEvent(FlTouchEvent event, LineTouchResponse? touchResponse) {
     if (event is! FlTapUpEvent || touchResponse == null) return;
 
@@ -530,6 +659,39 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
           : null;
       widget.onReadingSelected?.call(reading);
     }
+  }
+
+  BarChartData _buildEmptyBarChartData() {
+    return BarChartData(
+      barGroups: [],
+      titlesData: FlTitlesData(
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            interval: _yAxisInterval,
+            reservedSize: _yAxisReservedSize,
+            getTitlesWidget: (value, meta) => _buildYAxisLabel(value),
+          ),
+          axisNameWidget: const Text(
+            'Sys/Dia',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          axisNameSize: 20,
+        ),
+        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        bottomTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: true, reservedSize: 30)),
+      ),
+      gridData: FlGridData(show: false),
+      borderData: _buildBorderData(),
+      minY: _minY,
+      maxY: _maxY,
+    );
   }
 
   LineChartData _buildEmptyChartData() {
