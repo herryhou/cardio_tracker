@@ -14,7 +14,7 @@ Each recorded blood pressure reading object should minimally contain:
 * `diastolic`: Integer mmHg value
 * `heartRate` (Optional): Integer bpm value
 * `notes` (Optional): String text (medication, exercise, stress, etc.)
-* `clinicalCategory`: (Computed by backend/app logic) Enum: `Normal`, `Elevated`, `Stage1`, `Stage2`, `HypertensiveCrisis`
+* `clinicalCategory`: (Computed by backend/app logic) Enum: `Normal`, `Elevated`, `Stage1`, `Stage2`
 
 ---
 
@@ -31,8 +31,8 @@ The UI will feature two primary charts, optimally displayed in a vertical stack 
 
 * **Type:** 2D Scatter Plot
 * **Axes:**
-    * **X-Axis:** Systolic Pressure (Range: e.g., 80 - 200 mmHg)
-    * **Y-Axis:** Diastolic Pressure (Range: e.g., 40 - 120 mmHg)
+    * **X-Axis:** Systolic Pressure (Range: e.g., 70 - 170 mmHg)
+    * **Y-Axis:** Diastolic Pressure (Range: e.g., 50 - 120 mmHg)
 * **Background Zones (Critical):**
     * Implement **Plot Bands / Range Annotations** to create distinct, color-filled rectangular zones on the chart background. These zones must precisely match the clinical definitions.
     * **Colors:** Use distinct, high-contrast colors for each zone (e.g., Green for Normal, Yellow for Elevated, Orange for Stage 1, Red for Stage 2/Crisis).
