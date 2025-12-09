@@ -25,42 +25,50 @@ class ClinicalZone {
 }
 
 /// AHA Clinical Zones following medical guidelines
-/// X-axis: Systolic (70-170 mmHg), Y-axis: Diastolic (50-120 mmHg)
+/// SWAPPED: X-axis: Diastolic (50-120 mmHg), Y-axis: Systolic (70-170 mmHg)
 /// Note: Zones are drawn from largest area to smallest for proper layering
 class ClinicalZones {
   static const List<ClinicalZone> zones = [
     // Normal: < 120 systolic AND < 80 diastolic
+    // SWAPPED: X: 50-80 (diastolic), Y: 70-120 (systolic)
     ClinicalZone(
       name: 'Normal',
-      bounds: Rect.fromLTWH(70, 50, 50, 30), // 70-120 systolic, 50-80 diastolic
+      bounds: Rect.fromLTWH(50, 70, 30, 50), // 50-80 diastolic, 70-120 systolic
       color: Color.fromARGB(255, 185, 255, 203), // Green-500
       description: '<120/<80',
       category: BloodPressureCategory.normal,
     ),
 
-    // Stage 1: 130-139 systolic OR 80-89 diastolic
-    ClinicalZone(
-      name: 'Stage 1 Hypertension',
-      bounds: Rect.fromLTWH(70, 50, 69, 40), // 70-139 systolic, 50-90 diastolic
-      color: Color.fromARGB(255, 255, 207, 156), // Orange-600
-      description: '130-139/80-89',
-      category: BloodPressureCategory.stage1,
-    ),
-
     // Elevated: 120-129 systolic AND < 80 diastolic
+    // SWAPPED: X: 50-80 (diastolic), Y: 120-129 (systolic)
     ClinicalZone(
       name: 'Elevated',
-      bounds: Rect.fromLTWH(70, 50, 59, 30), // 70-129 systolic, 50-80 diastolic
+      bounds: Rect.fromLTWH(50, 120, 30, 9), // 50-80 diastolic, 120-129 systolic
       color: Color.fromARGB(255, 255, 248, 167), // Amber-500
       description: '120-129/<80',
       category: BloodPressureCategory.elevated,
     ),
 
+    // Stage 1: 130-139 systolic OR 80-89 diastolic
+    // SWAPPED: This is a complex L-shaped zone
+    // We'll split it into two rectangles for simplicity
+    // Rectangle 1: X: 50-120, Y: 130-139 (systolic range)
+    // Rectangle 2: X: 80-120, Y: 70-170 (diastolic range)
+    // For now, we'll use a bounding box
+    ClinicalZone(
+      name: 'Stage 1 Hypertension',
+      bounds: Rect.fromLTWH(50, 70, 70, 69), // 50-120 diastolic, 70-139 systolic
+      color: Color.fromARGB(255, 255, 207, 156), // Orange-600
+      description: '130-139/80-89',
+      category: BloodPressureCategory.stage1,
+    ),
+
     // Stage 2: >=140 systolic OR >=90 diastolic
+    // SWAPPED: X: 50-120, Y: 140-170 (full range for high readings)
     ClinicalZone(
       name: 'Stage 2 Hypertension',
       bounds:
-          Rect.fromLTWH(70, 50, 100, 70), // 70-170 systolic, 50-120 diastolic
+          Rect.fromLTWH(50, 70, 70, 100), // 50-120 diastolic, 70-170 systolic
       color: Color.fromARGB(255, 255, 165, 165), // Red-600
       description: '≥140/≥90',
       category: BloodPressureCategory.stage2,
@@ -378,6 +386,9 @@ class ClinicalScatterPainter extends CustomPainter {
   // Performance optimization: Lazy loading with viewport culling
   static const int _maxVisiblePoints = 1000;
 
+  // Grid line color following medical standards
+  static const Color gridLineColor = Color(0xFFE0E0E0);
+
   const ClinicalScatterPainter({
     required this.readings,
     this.selectedReading,
@@ -456,8 +467,8 @@ class ClinicalScatterPainter extends CustomPainter {
     ];
 
     for (final zone in orderedZones) {
-      // Scale zone bounds to drawing area
-      final scaledBounds = _scaleRectToDrawingArea(zone.bounds, drawArea);
+      // Scale zone bounds to drawing area with swapped axes
+      final scaledBounds = _scaleRectToDrawingAreaSwapped(zone.bounds, drawArea);
 
       final zonePaint = Paint()
         ..color = zone.color.withValues(alpha: 0.9)
@@ -467,7 +478,7 @@ class ClinicalScatterPainter extends CustomPainter {
 
       // Draw zone border only for the outermost edges
       if (zone.name != 'Normal') {
-        // Skip border for Nrmal zone as it's overlapped
+        // Skip border for Normal zone as it's overlapped
         final borderPaint = Paint()
           ..color = zone.color.withValues(alpha: 1.0)
           ..style = PaintingStyle.stroke
@@ -480,12 +491,13 @@ class ClinicalScatterPainter extends CustomPainter {
 
   void _drawGridLines(Canvas canvas, Rect drawArea) {
     final gridPaint = Paint()
-      ..color = Colors.grey.withValues(alpha: 0.2)
+      ..color = gridLineColor
       ..strokeWidth = 0.5;
 
-    // Vertical grid lines (systolic)
-    for (int i = 0; i <= 10; i++) {
-      final x = drawArea.left + (i * drawArea.width / 10);
+    // Vertical grid lines (diastolic - now on X-axis) - every 10 mmHg
+    // Range: 50-120 mmHg = 70 units = 7 intervals of 10
+    for (int i = 0; i <= 7; i++) {
+      final x = drawArea.left + (i * drawArea.width / 7);
       canvas.drawLine(
         Offset(x, drawArea.top),
         Offset(x, drawArea.bottom),
@@ -493,9 +505,10 @@ class ClinicalScatterPainter extends CustomPainter {
       );
     }
 
-    // Horizontal grid lines (diastolic)
-    for (int i = 0; i <= 7; i++) {
-      final y = drawArea.top + (i * drawArea.height / 7);
+    // Horizontal grid lines (systolic - now on Y-axis) - every 10 mmHg
+    // Range: 70-170 mmHg = 100 units = 10 intervals of 10
+    for (int i = 0; i <= 10; i++) {
+      final y = drawArea.top + (i * drawArea.height / 10);
       canvas.drawLine(
         Offset(drawArea.left, y),
         Offset(drawArea.right, y),
@@ -534,38 +547,42 @@ class ClinicalScatterPainter extends CustomPainter {
       fontWeight: FontWeight.w500,
     );
 
-    // X-axis labels (systolic)
-    for (int i = 0; i <= 10; i++) {
-      final value = 70 + (i * 10);
-      final x = drawArea.left + (i * drawArea.width / 10);
+    // X-axis labels (diastolic - now on X-axis)
+    // Range: 50-120 mmHg
+    for (int i = 0; i <= 7; i++) {
+      final value = 50 + (i * 10);
+      final x = drawArea.left + (i * drawArea.width / 7);
       final y = drawArea.bottom + 20;
 
       _drawText(canvas, value.toString(), Offset(x, y), textStyle,
           align: TextAlign.center);
     }
 
-    // Y-axis labels (diastolic)
-    for (int i = 0; i <= 7; i++) {
-      final value = 50 + (i * 10);
+    // Y-axis labels (systolic - now on Y-axis)
+    // Range: 70-170 mmHg
+    for (int i = 0; i <= 10; i++) {
+      final value = 70 + (i * 10);
       final x = drawArea.left - 10;
-      final y = drawArea.bottom - (i * drawArea.height / 7);
+      final y = drawArea.bottom - (i * drawArea.height / 10);
 
       _drawText(canvas, value.toString(), Offset(x, y), textStyle,
           align: TextAlign.right);
     }
 
-    // Axis titles
+    // Axis titles - SWAPPED for medical standards
     final titleStyle = textStyle.copyWith(
       fontSize: 13,
       fontWeight: FontWeight.bold,
       color: Colors.black,
     );
 
-    _drawText(canvas, 'Systolic (mmHg)',
+    // X-axis title (now Diastolic)
+    _drawText(canvas, 'Diastolic (mmHg)',
         Offset(drawArea.center.dx, drawArea.bottom + 45), titleStyle,
         align: TextAlign.center);
 
-    _drawText(canvas, 'Diastolic (mmHg)',
+    // Y-axis title (now Systolic)
+    _drawText(canvas, 'Systolic (mmHg)',
         Offset(drawArea.left - 55, drawArea.center.dy), titleStyle,
         align: TextAlign.center, isVertical: true);
   }
@@ -586,8 +603,9 @@ class ClinicalScatterPainter extends CustomPainter {
     final Map<BloodPressureCategory, Color> colorCache = {};
 
     for (final reading in visibleReadings) {
-      final point = _scalePointToDrawingArea(
-          Offset(reading.systolic.toDouble(), reading.diastolic.toDouble()),
+      // SWAPPED axes: diastolic on X-axis, systolic on Y-axis
+      final point = _scalePointToDrawingAreaSwapped(
+          Offset(reading.diastolic.toDouble(), reading.systolic.toDouble()),
           drawArea);
 
       // Skip points outside viewport
@@ -607,46 +625,47 @@ class ClinicalScatterPainter extends CustomPainter {
       // Darken the color for solid circles
       final darkerColor = _darkenColor(color);
 
-      // Main solid point
+      // Main solid point - increased to 22px radius (44×44 dp total)
       final pointPaint = Paint()
         ..color = darkerColor
         ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(point, 3, pointPaint);
+      canvas.drawCircle(point, 22, pointPaint);
     }
   }
 
   void _drawSelectionHighlight(
       Canvas canvas, Rect drawArea, BloodPressureReading reading) {
-    final point = _scalePointToDrawingArea(
-        Offset(reading.systolic.toDouble(), reading.diastolic.toDouble()),
+    // SWAPPED axes: diastolic on X-axis, systolic on Y-axis
+    final point = _scalePointToDrawingAreaSwapped(
+        Offset(reading.diastolic.toDouble(), reading.systolic.toDouble()),
         drawArea);
 
     final color = ClinicalZones.getCategoryColor(reading.category);
     final darkerColor = _darkenColor(color);
 
-    // Outer glow
+    // Outer glow - larger for 44×44 dp points
     final glowPaint = Paint()
       ..color = darkerColor.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15);
 
-    canvas.drawCircle(point, 12, glowPaint);
+    canvas.drawCircle(point, 35, glowPaint);
 
     // Selection ring
     final ringPaint = Paint()
       ..color = darkerColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5;
+      ..strokeWidth = 3;
 
-    canvas.drawCircle(point, 10, ringPaint);
+    canvas.drawCircle(point, 28, ringPaint);
 
     // Center solid point
     final centerPaint = Paint()
       ..color = darkerColor
       ..style = PaintingStyle.fill;
 
-    canvas.drawCircle(point, 5, centerPaint);
+    canvas.drawCircle(point, 22, centerPaint);
   }
 
   Offset _scalePointToDrawingArea(Offset dataPoint, Rect drawArea) {
@@ -655,6 +674,15 @@ class ClinicalScatterPainter extends CustomPainter {
         drawArea.left + ((dataPoint.dx - 70) / (170 - 70)) * drawArea.width;
     final y =
         drawArea.bottom - ((dataPoint.dy - 50) / (120 - 50)) * drawArea.height;
+    return Offset(x, y);
+  }
+
+  Offset _scalePointToDrawingAreaSwapped(Offset dataPoint, Rect drawArea) {
+    // SWAPPED: Scale data point (diastolic: 50-120 on X, systolic: 70-170 on Y) to drawing area
+    final x =
+        drawArea.left + ((dataPoint.dx - 50) / (120 - 50)) * drawArea.width;
+    final y =
+        drawArea.bottom - ((dataPoint.dy - 70) / (170 - 70)) * drawArea.height;
     return Offset(x, y);
   }
 
@@ -682,6 +710,19 @@ class ClinicalScatterPainter extends CustomPainter {
         drawArea.left + ((dataRect.right - 70) / (170 - 70)) * drawArea.width;
     final bottom = drawArea.bottom -
         ((dataRect.bottom - 50) / (120 - 50)) * drawArea.height;
+    return Rect.fromLTRB(left, top, right, bottom);
+  }
+
+  Rect _scaleRectToDrawingAreaSwapped(Rect dataRect, Rect drawArea) {
+    // SWAPPED: Scale data rectangle (diastolic: 50-120 on X, systolic: 70-170 on Y) to drawing area
+    final left =
+        drawArea.left + ((dataRect.left - 50) / (120 - 50)) * drawArea.width;
+    final top =
+        drawArea.bottom - ((dataRect.top - 70) / (170 - 70)) * drawArea.height;
+    final right =
+        drawArea.left + ((dataRect.right - 50) / (120 - 50)) * drawArea.width;
+    final bottom = drawArea.bottom -
+        ((dataRect.bottom - 70) / (170 - 70)) * drawArea.height;
     return Rect.fromLTRB(left, top, right, bottom);
   }
 
@@ -845,6 +886,21 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
       {required bool isDetailed}) {
     final color = ClinicalZones.getCategoryColor(reading.category);
 
+    // Format date/time for display
+    final dateFormat = DateTime.now().year == reading.timestamp.year
+        ? 'EEEE, MMMM d, y • h:mm a'
+        : 'EEEE, MMMM d, y • h:mm a';
+    final formattedDate = dateFormat
+        .replaceAll('EEEE', _getFullDayName(reading.timestamp.weekday))
+        .replaceAll('MMMM', _getFullMonthName(reading.timestamp.month))
+        .replaceAll('d', reading.timestamp.day.toString())
+        .replaceAll('y', reading.timestamp.year.toString())
+        .replaceAll('h', reading.timestamp.hour > 12
+            ? (reading.timestamp.hour - 12).toString()
+            : (reading.timestamp.hour == 0 ? '12' : reading.timestamp.hour.toString()))
+        .replaceAll('mm', reading.timestamp.minute.toString().padLeft(2, '0'))
+        .replaceAll('a', reading.timestamp.hour >= 12 ? 'PM' : 'AM');
+
     return Material(
       elevation: 8,
       borderRadius: BorderRadius.circular(12),
@@ -886,6 +942,9 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               _buildDetailRow('Heart Rate:', '${reading.heartRate} bpm'),
               _buildDetailRow('Category:',
                   ClinicalZones.getCategoryDescription(reading.category)),
+              const SizedBox(height: 8),
+              _buildDetailRow('Date & Time:', formattedDate,
+                  style: const TextStyle(fontWeight: FontWeight.w600)),
               if (reading.notes?.isNotEmpty ?? false) ...[
                 const SizedBox(height: 8),
                 Container(
@@ -910,26 +969,45 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     );
   }
 
+  String _getFullDayName(int weekday) {
+    const days = [
+      'Monday', 'Tuesday', 'Wednesday', 'Thursday',
+      'Friday', 'Saturday', 'Sunday'
+    ];
+    return days[weekday - 1];
+  }
+
+  String _getFullMonthName(int month) {
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return months[month - 1];
+  }
+
   BloodPressureReading? _findReadingAtPosition(Offset position, Size size) {
     const padding = 50.0;
     const leftPadding = 70.0;
     final drawArea = Rect.fromLTWH(leftPadding, padding,
         size.width - leftPadding - padding, size.height - 2 * padding);
 
-    // Reverse calculate data coordinates from tap position
-    final systolicValue =
-        60 + ((position.dx - drawArea.left) / drawArea.width) * (200 - 60);
+    // SWAPPED: Reverse calculate data coordinates from tap position
+    // X-axis is now diastolic (50-120), Y-axis is now systolic (70-170)
     final diastolicValue =
-        130 - ((position.dy - drawArea.top) / drawArea.height) * (130 - 40);
+        50 + ((position.dx - drawArea.left) / drawArea.width) * (120 - 50);
+    final systolicValue =
+        170 - ((position.dy - drawArea.top) / drawArea.height) * (170 - 70);
 
-    final tolerance = 20.0;
+    // Increased tolerance for 44×44 dp points
+    final tolerance = 30.0;
 
     BloodPressureReading? closestReading;
     double minDistance = double.infinity;
 
     for (final reading in widget.readings) {
-      final readingPoint = _scalePointToDrawingAreaForHitTesting(
-          Offset(reading.systolic.toDouble(), reading.diastolic.toDouble()),
+      // SWAPPED axes: diastolic on X, systolic on Y
+      final readingPoint = _scalePointToDrawingAreaForHitTestingSwapped(
+          Offset(reading.diastolic.toDouble(), reading.systolic.toDouble()),
           drawArea);
 
       final distance = (position - readingPoint).distance;
@@ -951,8 +1029,32 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     return Offset(x, y);
   }
 
+  Offset _scalePointToDrawingAreaForHitTestingSwapped(
+      Offset dataPoint, Rect drawArea) {
+    // SWAPPED: diastolic on X-axis (50-120), systolic on Y-axis (70-170)
+    final x =
+        drawArea.left + ((dataPoint.dx - 50) / (120 - 50)) * drawArea.width;
+    final y =
+        drawArea.bottom - ((dataPoint.dy - 70) / (170 - 70)) * drawArea.height;
+    return Offset(x, y);
+  }
+
   void _showTooltip(BloodPressureReading reading, Offset globalPosition) {
     _tooltipEntry?.remove();
+
+    // Format date/time for display
+    final dateFormat = DateTime.now().year == reading.timestamp.year
+        ? 'MMM d, h:mm a'
+        : 'MMM d, y, h:mm a';
+    final formattedDate = dateFormat
+        .replaceAll('MMM', _getMonthAbbreviation(reading.timestamp.month))
+        .replaceAll('d', reading.timestamp.day.toString())
+        .replaceAll('y', reading.timestamp.year.toString())
+        .replaceAll('h', reading.timestamp.hour > 12
+            ? (reading.timestamp.hour - 12).toString()
+            : (reading.timestamp.hour == 0 ? '12' : reading.timestamp.hour.toString()))
+        .replaceAll('mm', reading.timestamp.minute.toString().padLeft(2, '0'))
+        .replaceAll('a', reading.timestamp.hour >= 12 ? 'PM' : 'AM');
 
     final overlay = Overlay.of(context);
     _tooltipEntry = OverlayEntry(
@@ -970,7 +1072,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               children: [
                 const Text(
                   'Blood Pressure Reading',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
@@ -981,6 +1083,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                 _buildDetailRow('Heart Rate:', '${reading.heartRate} bpm'),
                 _buildDetailRow('Category:',
                     ClinicalZones.getCategoryDescription(reading.category)),
+                const SizedBox(height: 4),
+                _buildDetailRow('Date:', formattedDate),
               ],
             ),
           ),
@@ -994,7 +1098,15 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     });
   }
 
-  Widget _buildDetailRow(String label, String value) {
+  String _getMonthAbbreviation(int month) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return months[month - 1];
+  }
+
+  Widget _buildDetailRow(String label, String value, {TextStyle? style}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: RichText(
@@ -1002,7 +1114,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
           children: [
             TextSpan(
               text: '$label ',
-              style: const TextStyle(
+              style: style ?? const TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
                 color: Colors.black87,
