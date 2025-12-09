@@ -65,7 +65,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 return IconButton(
                   icon: Icon(
                     Icons.cloud_sync_outlined,
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
                   ),
                   onPressed: () {
                     Navigator.of(context).push(
@@ -930,74 +933,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 16),
-                        child: Row(
-                          children: [
-                            // DateTime
-                            SizedBox(
-                              width: 100,
-                              child: Text(
-                                '${reading.timestamp.month.toString().padLeft(2, '0')}/${reading.timestamp.day.toString().padLeft(2, '0')} ${reading.timestamp.hour.toString().padLeft(2, '0')}:${reading.timestamp.minute.toString().padLeft(2, '0')}',
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF1F2937),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            // Responsive layout based on available width
+                            final isNarrow = constraints.maxWidth < 360;
+                            final isVeryNarrow = constraints.maxWidth < 300;
 
-                            // BP Values
-                            SizedBox(
-                              width: 50,
-                              child: Text(
-                                '${reading.systolic}/${reading.diastolic}',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: _getCategoryColor(
-                                      context, reading.category),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-
-                            // Pulse
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Icon(
-                                    Icons.favorite,
-                                    size: 16,
-                                    color: const Color(0xFFEF4444),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${reading.heartRate}',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFFEF4444),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Category indicator
-                            const SizedBox(width: 8),
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: _getCategoryColor(
-                                    context, reading.category),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                          ],
+                            if (isVeryNarrow) {
+                              // Very narrow screens - stack everything vertically
+                              return _buildVeryNarrowReadingRow(context, reading);
+                            } else if (isNarrow) {
+                              // Narrow screens - compact 2-row layout
+                              return _buildNarrowReadingRow(context, reading);
+                            } else {
+                              // Normal screens - improved horizontal layout
+                              return _buildNormalReadingRow(context, reading);
+                            }
+                          },
                         ),
                       ),
                       if (!isLast)
@@ -1015,6 +967,302 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
       ],
     );
+  }
+
+  // Very narrow layout (< 300px) - everything stacked vertically
+  Widget _buildVeryNarrowReadingRow(BuildContext context, BloodPressureReading reading) {
+    final categoryColor = _getCategoryColor(context, reading.category);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Top row: Date and category indicator
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                _formatCompactDate(reading.timestamp),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1F2937),
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Container(
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: categoryColor,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+
+        // BP values - large and prominent
+        Center(
+          child: Text(
+            '${reading.systolic}/${reading.diastolic}',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: categoryColor,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        // Bottom row: Pulse and time
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.favorite,
+                  size: 14,
+                  color: const Color(0xFFEF4444),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '${reading.heartRate}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFFEF4444),
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              _formatTime(reading.timestamp),
+              style: const TextStyle(
+                fontSize: 11,
+                color: Color(0xFF6B7280),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Narrow layout (300-360px) - 2-row compact layout
+  Widget _buildNarrowReadingRow(BuildContext context, BloodPressureReading reading) {
+    final categoryColor = _getCategoryColor(context, reading.category);
+
+    return Column(
+      children: [
+        // First row: Date, BP values, and category
+        Row(
+          children: [
+            // Date - flexible width
+            Expanded(
+              flex: 2,
+              child: Text(
+                _formatCompactDate(reading.timestamp),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1F2937),
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+
+            // BP values - centered, more prominent
+            Expanded(
+              flex: 3,
+              child: Text(
+                '${reading.systolic}/${reading.diastolic}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: categoryColor,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+
+            // Category indicator
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: categoryColor,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
+
+        const SizedBox(height: 8),
+
+        // Second row: Pulse and time
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.favorite,
+                  size: 14,
+                  color: const Color(0xFFEF4444),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '${reading.heartRate}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFFEF4444),
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              _formatTime(reading.timestamp),
+              style: const TextStyle(
+                fontSize: 11,
+                color: Color(0xFF6B7280),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Normal layout (> 360px) - improved horizontal layout
+  Widget _buildNormalReadingRow(BuildContext context, BloodPressureReading reading) {
+    final categoryColor = _getCategoryColor(context, reading.category);
+
+    return Row(
+      children: [
+        // Date and time column - flexible width
+        Expanded(
+          flex: 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _formatCompactDate(reading.timestamp),
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1F2937),
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                _formatTime(reading.timestamp),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: Color(0xFF6B7280),
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(width: 12),
+
+        // BP values - prominent and centered
+        Expanded(
+          flex: 4,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: categoryColor.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '${reading.systolic}/${reading.diastolic}',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: categoryColor,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 12),
+
+        // Pulse row - right aligned
+        Expanded(
+          flex: 2,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Icon(
+                Icons.favorite,
+                size: 14,
+                color: const Color(0xFFEF4444),
+              ),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  '${reading.heartRate}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFFEF4444),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(width: 8),
+
+        // Category indicator
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: categoryColor,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Helper method for compact date formatting
+  String _formatCompactDate(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inDays == 0) {
+      return 'Today';
+    } else if (difference.inDays == 1) {
+      return 'Yesterday';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else if (timestamp.year == now.year) {
+      return '${timestamp.month}/${timestamp.day}';
+    } else {
+      return '${timestamp.month}/${timestamp.day}/${timestamp.year % 100}';
+    }
+  }
+
+  // Helper method for time formatting
+  String _formatTime(DateTime timestamp) {
+    return '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
   }
 
   void _handleMenuAction(BuildContext context, String action) async {
