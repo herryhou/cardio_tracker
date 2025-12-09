@@ -9,6 +9,7 @@ import '../screens/add_reading_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/cloudflare_settings_screen.dart';
 import '../widgets/app_icon.dart';
+import '../widgets/recent_reading_item.dart';
 import 'dart:math' as math;
 
 class DashboardScreen extends StatefulWidget {
@@ -50,7 +51,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   width: 24,
                   height: 24,
                   child: Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(AppSpacing.sm),
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                 );
@@ -116,7 +117,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Row(
                   children: [
                     const Icon(Icons.settings, size: 18),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.cardsGap),
                     const Text('Settings'),
                   ],
                 ),
@@ -127,7 +128,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Row(
                   children: [
                     Icon(AppIcons.export, size: 18),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.cardsGap),
                     const Text('Export All Data'),
                   ],
                 ),
@@ -137,7 +138,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Row(
                   children: [
                     Icon(AppIcons.analytics, size: 18),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.cardsGap),
                     const Text('Export Summary'),
                   ],
                 ),
@@ -147,7 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Row(
                   children: [
                     Icon(Icons.today, size: 18),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.cardsGap),
                     const Text('Export This Month'),
                   ],
                 ),
@@ -184,14 +185,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           BorderRadius.vertical(top: Radius.circular(24)),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: AppSpacing.cardPaddingInsets,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Historical Chart Section - full-width
                           if (provider.readings.isNotEmpty) ...[
                             _buildHistoricalChart(context, provider),
-                            const SizedBox(height: 24),
+                            SizedBox(height: AppSpacing.sectionGap),
 
                             // Recent Readings Section
                             _buildSimpleRecentReadingsList(
@@ -240,7 +241,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: AppSpacing.cardPaddingInsets,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -250,7 +251,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ] else ...[
                 _buildEmptyMainCard(context),
               ],
-              const SizedBox(height: 20),
+              SizedBox(height: AppSpacing.md + AppSpacing.xs),
             ],
           ),
         ),
@@ -263,7 +264,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(40), // Increased padding for larger card
+      padding: EdgeInsets.all(5 * AppSpacing.gridUnit), // Increased padding for larger card
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -304,7 +305,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
               ),
-              const SizedBox(width: 30), // Increased spacing
+              SizedBox(width: AppSpacing.lg + AppSpacing.xs), // Increased spacing
               // Diastolic
               Expanded(
                 child: Column(
@@ -331,7 +332,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           ),
 
-          const SizedBox(height: 40), // Increased spacing
+          SizedBox(height: AppSpacing.xl + AppSpacing.md), // Increased spacing
 
           // Mini 7-day sparkline trend
           Container(
@@ -339,7 +340,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: _buildMiniSparkline(context, reading),
           ),
 
-          const SizedBox(height: 30), // Increased spacing
+          SizedBox(height: AppSpacing.lg + AppSpacing.sm), // Increased spacing
 
           // Pulse and Status Row - enlarged
           Row(
@@ -352,7 +353,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     color: Color(0xFFEF4444),
                     size: 28, // Increased from 20
                   ),
-                  const SizedBox(width: 12), // Increased spacing
+                  SizedBox(width: AppSpacing.cardsGap), // Increased spacing
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -381,7 +382,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               // Status Badge - enlarged
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Increased padding
+                    EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + AppSpacing.xs), // Increased padding
                 decoration: BoxDecoration(
                   color: categoryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16), // Increased radius
@@ -404,7 +405,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildEmptyMainCard(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(60), // Increased padding for larger empty card
+      padding: EdgeInsets.all(AppSpacing.xl + AppSpacing.md), // Increased padding for larger empty card
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -423,7 +424,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             size: 96, // Increased size
             color: Color(0xFFD1D5DB),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: AppSpacing.sectionGap),
           const Text(
             'No readings yet',
             style: TextStyle(
@@ -432,7 +433,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               color: Color(0xFF6B7280),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: AppSpacing.cardsGap),
           const Text(
             'Add your first blood pressure reading',
             style: TextStyle(
@@ -477,7 +478,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             color: const Color(0xFF1F2937),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppSpacing.md),
         LayoutBuilder(
           builder: (context, constraints) {
             // Calculate available width per card (accounting for spacing)
@@ -504,7 +505,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Icons.arrow_upward,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.cardsGap),
                     SizedBox(
                       width: cardWidth,
                       height: cardHeight,
@@ -519,7 +520,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: AppSpacing.cardsGap),
                 // Second row
                 Row(
                   children: [
@@ -535,7 +536,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Icons.favorite,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.cardsGap),
                     SizedBox(
                       width: cardWidth,
                       height: cardHeight,
@@ -569,7 +570,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       width: double.infinity, // Fill the allocated width
       height: double.infinity, // Fill the allocated height
-      padding: const EdgeInsets.all(6), // Minimal padding
+      padding: EdgeInsets.all(AppSpacing.xs + AppSpacing.xs/2), // Minimal padding
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -588,7 +589,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(3), // Minimal icon padding
+                padding: EdgeInsets.all(AppSpacing.xs/2), // Minimal icon padding
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(4),
@@ -607,7 +608,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 2), // Minimal spacing
+          SizedBox(height: AppSpacing.xs/2), // Minimal spacing
 
           // Value and unit row with flexible space
           Expanded(
@@ -627,7 +628,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
                 if (unit != null) ...[
-                  const SizedBox(width: 2),
+                  SizedBox(width: AppSpacing.xs/2),
                   Text(
                     unit,
                     style: const TextStyle(
@@ -660,7 +661,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildHistoricalChart(
       BuildContext context, BloodPressureProvider provider) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.cardPaddingInsets,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -682,7 +683,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               fontSize: 18, // Override header size for this context
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: AppSpacing.md + AppSpacing.xs),
 
           // Simple chart visualization (placeholder for actual chart)
           Container(
@@ -720,12 +721,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildErrorState(BuildContext context, String error) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32.0),
+        padding: EdgeInsets.all(AppSpacing.lg + AppSpacing.md),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: AppSpacing.cardPaddingInsets,
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.errorContainer,
                 borderRadius: BorderRadius.circular(16),
@@ -736,14 +737,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 color: Theme.of(context).colorScheme.error,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AppSpacing.sectionGap),
             Text(
               'Unable to load data',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: AppSpacing.cardsGap),
             Text(
               error,
               textAlign: TextAlign.center,
@@ -754,7 +755,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         .withOpacity(0.7),
                   ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AppSpacing.sectionGap),
             FilledButton.icon(
               onPressed: () =>
                   context.read<BloodPressureProvider>().loadReadings(),
@@ -769,7 +770,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildEmptyState(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(40),
+      padding: EdgeInsets.all(AppSpacing.xl + AppSpacing.md),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -788,7 +789,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             size: 64,
             color: Color(0xFFD1D5DB),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppSpacing.md),
           const Text(
             'No data yet',
             style: TextStyle(
@@ -797,7 +798,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               color: Color(0xFF6B7280),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: AppSpacing.sm),
           const Text(
             'Add some readings to see your metrics and history',
             style: TextStyle(
@@ -839,10 +840,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             color: const Color(0xFF1F2937),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: AppSpacing.md),
         if (recentReadings.isEmpty)
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: AppSpacing.cardPaddingInsets,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -887,61 +888,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
             child: Column(
-              children:
-                  recentReadings.take(10).toList().asMap().entries.map((entry) {
+              children: recentReadings.take(10).toList().asMap().entries.map((entry) {
                 final index = entry.key;
                 final reading = entry.value;
                 final isLast = index == recentReadings.length - 1 || index == 9;
 
-                return Dismissible(
-                  key: ValueKey(reading.id),
-                  direction: DismissDirection.endToStart,
-                  onDismissed: (direction) {
-                    _deleteReading(reading);
-                  },
-                  background: Container(
-                    color: const Color(0xFFEF4444),
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 20),
-                    child: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.white,
-                      size: 24,
+                return Column(
+                  children: [
+                    RecentReadingItem(
+                      reading: reading,
+                      onDelete: () => _deleteReading(reading),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 16),
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            // Responsive layout based on available width
-                            final isNarrow = constraints.maxWidth < 360;
-                            final isVeryNarrow = constraints.maxWidth < 300;
-
-                            if (isVeryNarrow) {
-                              // Very narrow screens - stack everything vertically
-                              return _buildVeryNarrowReadingRow(context, reading);
-                            } else if (isNarrow) {
-                              // Narrow screens - compact 2-row layout
-                              return _buildNarrowReadingRow(context, reading);
-                            } else {
-                              // Normal screens - improved horizontal layout
-                              return _buildNormalReadingRow(context, reading);
-                            }
-                          },
-                        ),
+                    if (!isLast)
+                      const Divider(
+                        height: 1,
+                        color: Color(0xFFE5E7EB),
+                        indent: 20,
+                        endIndent: 20,
                       ),
-                      if (!isLast)
-                        const Divider(
-                          height: 1,
-                          color: Color(0xFFE5E7EB),
-                          indent: 20,
-                          endIndent: 20,
-                        ),
-                    ],
-                  ),
+                  ],
                 );
               }).toList(),
             ),
@@ -950,279 +915,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // Very narrow layout (< 300px) - everything stacked vertically
-  Widget _buildVeryNarrowReadingRow(BuildContext context, BloodPressureReading reading) {
-    final categoryColor = _getCategoryColor(context, reading.category);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Top row: Date and category indicator
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                _formatCompactDate(reading.timestamp),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF1F2937),
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Container(
-              width: 6,
-              height: 6,
-              decoration: BoxDecoration(
-                color: categoryColor,
-                borderRadius: BorderRadius.circular(3),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-
-        // BP values - large and prominent
-        Center(
-          child: Text(
-            '${reading.systolic}/${reading.diastolic}',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: categoryColor,
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-
-        // Bottom row: Pulse and time
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.favorite,
-                  size: 14,
-                  color: const Color(0xFFEF4444),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '${reading.heartRate}',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFFEF4444),
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              _formatTime(reading.timestamp),
-              style: const TextStyle(
-                fontSize: 11,
-                color: Color(0xFF6B7280),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  // Narrow layout (300-360px) - 2-row compact layout
-  Widget _buildNarrowReadingRow(BuildContext context, BloodPressureReading reading) {
-    final categoryColor = _getCategoryColor(context, reading.category);
-
-    return Column(
-      children: [
-        // First row: Date, BP values, and category
-        Row(
-          children: [
-            // Date - flexible width
-            Expanded(
-              flex: 2,
-              child: Text(
-                _formatCompactDate(reading.timestamp),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF1F2937),
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-
-            // BP values - centered, more prominent
-            Expanded(
-              flex: 3,
-              child: Text(
-                '${reading.systolic}/${reading.diastolic}',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: categoryColor,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-
-            // Category indicator
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: categoryColor,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-            const SizedBox(width: 8),
-          ],
-        ),
-
-        const SizedBox(height: 8),
-
-        // Second row: Pulse and time
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.favorite,
-                  size: 14,
-                  color: const Color(0xFFEF4444),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '${reading.heartRate}',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFFEF4444),
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              _formatTime(reading.timestamp),
-              style: const TextStyle(
-                fontSize: 11,
-                color: Color(0xFF6B7280),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  // Normal layout (> 360px) - improved horizontal layout
-  Widget _buildNormalReadingRow(BuildContext context, BloodPressureReading reading) {
-    final categoryColor = _getCategoryColor(context, reading.category);
-
-    return Row(
-      children: [
-        // Date and time column - flexible width
-        Expanded(
-          flex: 3,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _formatCompactDate(reading.timestamp),
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF1F2937),
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 2),
-              Text(
-                _formatTime(reading.timestamp),
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: Color(0xFF6B7280),
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(width: 12),
-
-        // BP values - prominent and centered
-        Expanded(
-          flex: 4,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: categoryColor.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              '${reading.systolic}/${reading.diastolic}',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: categoryColor,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
-
-        const SizedBox(width: 12),
-
-        // Pulse row - right aligned
-        Expanded(
-          flex: 2,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Icon(
-                Icons.favorite,
-                size: 14,
-                color: const Color(0xFFEF4444),
-              ),
-              const SizedBox(width: 4),
-              Flexible(
-                child: Text(
-                  '${reading.heartRate}',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFFEF4444),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(width: 8),
-
-        // Category indicator
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: categoryColor,
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-      ],
-    );
-  }
-
+  
   // Helper method for compact date formatting
   String _formatCompactDate(DateTime timestamp) {
     final now = DateTime.now();
@@ -1374,7 +1067,7 @@ class _BPChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     if (readings.isEmpty) return;
 
-    final padding = const EdgeInsets.all(20);
+    final padding = AppSpacing.cardPaddingInsets;
     final chartWidth = size.width - padding.left - padding.right;
     final chartHeight = size.height - padding.top - padding.bottom;
 
@@ -1669,7 +1362,7 @@ class AddReadingModalSheet extends StatelessWidget {
       ),
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(AppSpacing.lg + AppSpacing.sm),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -1686,13 +1379,13 @@ class AddReadingModalSheet extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: AppSpacing.sectionGap),
 
               // Header
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(AppSpacing.md),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(12),
@@ -1703,7 +1396,7 @@ class AddReadingModalSheet extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1734,13 +1427,13 @@ class AddReadingModalSheet extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: AppSpacing.sectionGap),
 
               // Add Reading Screen content
               const AddReadingContent(
                 isInModal: true,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: AppSpacing.md),
             ],
           ),
         ),
