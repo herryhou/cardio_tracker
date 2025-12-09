@@ -365,10 +365,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               // Pulse
               Row(
                 children: [
-                  const Icon(
-                    Icons.favorite,
-                    color: Color(0xFFEF4444),
+                  HeartIcon(
                     size: 28, // Increased from 20
+                    color: const Color(0xFFEF4444),
                   ),
                   SizedBox(width: AppSpacing.cardsGap), // Increased spacing
                   Column(
@@ -550,7 +549,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         provider.averageHeartRate.round().toString(),
                         'bpm',
                         const Color(0xFFEF4444),
-                        Icons.favorite,
+                        null, // Passing null to use custom HeartIcon in the widget
                       ),
                     ),
                     SizedBox(width: AppSpacing.cardsGap),
@@ -582,7 +581,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     String value,
     String? unit,
     Color color,
-    IconData icon,
+    IconData? icon,
   ) {
     return Container(
       width: double.infinity, // Fill the allocated width
@@ -611,11 +610,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: Icon(
-                  icon,
-                  size: 12, // Very small icon
-                  color: color,
-                ),
+                child: icon == null
+                    ? HeartIcon(
+                        size: 12,
+                        color: color,
+                      )
+                    : Icon(
+                        icon,
+                        size: 12, // Very small icon
+                        color: color,
+                      ),
               ),
               const Spacer(),
               Icon(
@@ -1407,8 +1411,7 @@ class AddReadingModalSheet extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
-                      Icons.favorite,
+                    child: HeartIcon(
                       size: 24,
                       color: Theme.of(context).colorScheme.primary,
                     ),

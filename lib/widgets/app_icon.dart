@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 /// Professional medical app icons and indicators
 /// Production-ready SVG-style icons with consistent design
@@ -221,5 +222,139 @@ class AppLogo extends StatelessWidget {
         size: size * 0.6,
       ),
     );
+  }
+}
+
+/// Custom heart icon widget using CustomPainter
+/// Provides a professional vector heart icon for the app
+class HeartIcon extends StatelessWidget {
+  final double size;
+  final Color color;
+  final double strokeWidth;
+  final bool filled;
+
+  const HeartIcon({
+    super.key,
+    this.size = 24.0,
+    this.color = Colors.red,
+    this.strokeWidth = 2.0,
+    this.filled = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: CustomPaint(
+        painter: _HeartIconPainter(
+          color: color,
+          strokeWidth: strokeWidth,
+          filled: filled,
+        ),
+      ),
+    );
+  }
+}
+
+/// Custom painter for drawing a heart shape
+class _HeartIconPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final bool filled;
+
+  _HeartIconPainter({
+    required this.color,
+    required this.strokeWidth,
+    required this.filled,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    if (filled) {
+      paint.style = PaintingStyle.fill;
+    } else {
+      paint.style = PaintingStyle.stroke;
+    }
+
+    final path = Path();
+    final width = size.width;
+    final height = size.height;
+
+    // Calculate control points for the heart shape
+    final centerX = width / 2;
+    final centerY = height / 2;
+    final heartWidth = width * 0.8;
+    final heartHeight = height * 0.7;
+
+    // Start from the top center of the heart
+    final topX = centerX;
+    final topY = centerY - heartHeight * 0.3;
+
+    // Left curve control points
+    final leftControlX1 = centerX - heartWidth * 0.5;
+    final leftControlY1 = centerY - heartHeight * 0.5;
+    final leftControlX2 = centerX - heartWidth * 0.6;
+    final leftControlY2 = centerY - heartHeight * 0.1;
+
+    // Right curve control points
+    final rightControlX1 = centerX + heartWidth * 0.5;
+    final rightControlY1 = centerY - heartHeight * 0.5;
+    final rightControlX2 = centerX + heartWidth * 0.6;
+    final rightControlY2 = centerY - heartHeight * 0.1;
+
+    // Bottom point of the heart
+    final bottomX = centerX;
+    final bottomY = centerY + heartHeight * 0.5;
+
+    // Draw the heart shape
+    path.moveTo(topX, topY);
+
+    // Left curve
+    path.cubicTo(
+      leftControlX1, leftControlY1,
+      leftControlX2, leftControlY2,
+      centerX - heartWidth * 0.3, centerY,
+    );
+
+    // Bottom left curve
+    path.cubicTo(
+      centerX - heartWidth * 0.3, centerY + heartHeight * 0.2,
+      centerX - heartWidth * 0.1, centerY + heartHeight * 0.3,
+      bottomX, bottomY,
+    );
+
+    // Bottom right curve
+    path.cubicTo(
+      centerX + heartWidth * 0.1, centerY + heartHeight * 0.3,
+      centerX + heartWidth * 0.3, centerY + heartHeight * 0.2,
+      centerX + heartWidth * 0.3, centerY,
+    );
+
+    // Right curve
+    path.cubicTo(
+      rightControlX2, rightControlY2,
+      rightControlX1, rightControlY1,
+      topX, topY,
+    );
+
+    path.close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    if (oldDelegate is _HeartIconPainter) {
+      return oldDelegate.color != color ||
+          oldDelegate.strokeWidth != strokeWidth ||
+          oldDelegate.filled != filled;
+    }
+    return true;
   }
 }
