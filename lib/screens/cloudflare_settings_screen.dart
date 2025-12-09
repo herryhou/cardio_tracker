@@ -220,30 +220,9 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Wrap with error boundary to catch rendering errors
-    return ErrorWidget.builder(
-      error: (FlutterErrorDetails details, {bool retry = false}) {
-        print('CloudflareSettingsScreen build error: ${details.exception}');
-        print('Stack trace: ${details.stack}');
-        return MaterialApp(
-          home: Scaffold(
-            appBar: AppBar(title: const Text('Error')),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                  const SizedBox(height: 16),
-                  const Text('An error occurred'),
-                  const SizedBox(height: 8),
-                  Text(details.exception.toString()),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-      child: Scaffold(
+    // Use a simple try-catch for error handling
+    try {
+      return Scaffold(
       appBar: AppBar(
         title: const Text('Cloudflare Sync'),
       ),
@@ -420,7 +399,39 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
           ],
         ),
       ),
-    );
+      );
+    } catch (e, stackTrace) {
+      print('CloudflareSettingsScreen build error: $e');
+      print('Stack trace: $stackTrace');
+      // Return a simple error screen
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Cloudflare Sync'),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const SizedBox(height: 16),
+                const Text(
+                  'An error occurred while loading the settings',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  e.toString(),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   String _formatDateTime(DateTime dateTime) {
