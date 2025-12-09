@@ -50,7 +50,8 @@
       "Bash(dart compile:*)",
       "Bash(ls:*)",
       "Bash(adb:*)",
-      "Bash(q:*)"
+      "Bash(q:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "ask": []
