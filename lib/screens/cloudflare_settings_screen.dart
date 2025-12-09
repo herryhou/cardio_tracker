@@ -313,6 +313,7 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       'Cloudflare KV Configuration',
@@ -373,26 +374,26 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                       },
                     ),
 
-                    const Spacer(),
+                    const SizedBox(height: 24),
 
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: _isLoading ? null : _saveConfiguration,
-                            child: Text(_isConfigured ? 'Update' : 'Save'),
-                          ),
-                        ),
-
-                        if (_isConfigured) ...[
-                          const SizedBox(width: 12),
-                          OutlinedButton(
-                            onPressed: _isLoading ? null : _clearConfiguration,
-                            child: const Text('Clear'),
-                          ),
-                        ],
-                      ],
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _saveConfiguration,
+                        child: Text(_isConfigured ? 'Update' : 'Save'),
+                      ),
                     ),
+
+                    if (_isConfigured) ...[
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: _isLoading ? null : _clearConfiguration,
+                          child: const Text('Clear'),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
             ),
