@@ -188,12 +188,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Metrics Grid
+                          // Historical Chart Section - full-width
                           if (provider.readings.isNotEmpty) ...[
-                            _buildMetricsGrid(context, provider),
-                            const SizedBox(height: 24),
-
-                            // Historical Chart Section
                             _buildHistoricalChart(context, provider),
                             const SizedBox(height: 24),
 
@@ -226,17 +222,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // New gradient header method
+  // New gradient header method - simplified without greeting
   Widget _buildGradientHeader(
       BuildContext context, BloodPressureReading? latestReading) {
-    final hour = DateTime.now().hour;
-    String greeting = 'Good morning';
-    if (hour >= 12 && hour < 17) {
-      greeting = 'Good afternoon';
-    } else if (hour >= 17) {
-      greeting = 'Good evening';
-    }
-
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -256,28 +244,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Greeting Section
-              Row(
-                children: [
-                  const Icon(
-                    Icons.wb_sunny_outlined,
-                    color: Colors.white70,
-                    size: 24,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    greeting,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // Main Blood Pressure Card
+              // Main Blood Pressure Card - enlarged (2x height)
               if (latestReading != null) ...[
                 _buildMainBPCard(context, latestReading),
               ] else ...[
@@ -296,7 +263,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(40), // Increased padding for larger card
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -311,7 +278,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Blood Pressure Values
+          // Blood Pressure Values - enlarged
           Row(
             children: [
               // Systolic
@@ -322,7 +289,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Text(
                       reading.systolic.toString(),
                       style: TextStyle(
-                        fontSize: 48,
+                        fontSize: 72, // Increased from 48
                         fontWeight: FontWeight.bold,
                         color: categoryColor,
                         height: 1.0,
@@ -331,7 +298,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const Text(
                       'SYSTOLIC',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 16, // Increased from 12
                         fontWeight: FontWeight.w500,
                         color: Color(0xFF6B7280),
                         letterSpacing: 1.0,
@@ -340,7 +307,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
               ),
-              const SizedBox(width: 20),
+              const SizedBox(width: 30), // Increased spacing
               // Diastolic
               Expanded(
                 child: Column(
@@ -349,7 +316,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Text(
                       reading.diastolic.toString(),
                       style: TextStyle(
-                        fontSize: 48,
+                        fontSize: 72, // Increased from 48
                         fontWeight: FontWeight.bold,
                         color: categoryColor,
                         height: 1.0,
@@ -358,7 +325,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const Text(
                       'DIASTOLIC',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 16, // Increased from 12
                         fontWeight: FontWeight.w500,
                         color: Color(0xFF6B7280),
                         letterSpacing: 1.0,
@@ -370,9 +337,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 40), // Increased spacing
 
-          // Pulse and Status Row
+          // Mini 7-day sparkline trend
+          Container(
+            height: 60, // Small height for sparkline
+            child: _buildMiniSparkline(context, reading),
+          ),
+
+          const SizedBox(height: 30), // Increased spacing
+
+          // Pulse and Status Row - enlarged
           Row(
             children: [
               // Pulse
@@ -381,16 +356,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const Icon(
                     Icons.favorite,
                     color: Color(0xFFEF4444),
-                    size: 20,
+                    size: 28, // Increased from 20
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 12), // Increased spacing
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         reading.heartRate.toString(),
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: 32, // Increased from 20
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1F2937),
                         ),
@@ -398,7 +373,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       const Text(
                         'PULSE',
                         style: TextStyle(
-                          fontSize: 10,
+                          fontSize: 14, // Increased from 10
                           fontWeight: FontWeight.w500,
                           color: Color(0xFF6B7280),
                           letterSpacing: 0.5,
@@ -411,20 +386,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               const Spacer(),
 
-              // Status Badge
+              // Status Badge - enlarged
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Increased padding
                 decoration: BoxDecoration(
                   color: categoryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16), // Increased radius
                 ),
                 child: Text(
                   _getCategoryText(reading.category).toUpperCase(),
                   style: TextStyle(
                     color: categoryColor,
                     fontWeight: FontWeight.w600,
-                    fontSize: 12,
+                    fontSize: 16, // Increased from 12
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -439,7 +414,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildEmptyMainCard(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(60), // Increased padding for larger empty card
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -455,27 +430,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
         children: [
           const Icon(
             Icons.favorite_border,
-            size: 64,
+            size: 96, // Increased size
             color: Color(0xFFD1D5DB),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           const Text(
             'No readings yet',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 28, // Increased size
               fontWeight: FontWeight.w600,
               color: Color(0xFF6B7280),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           const Text(
             'Add your first blood pressure reading',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 18, // Increased size
               color: Color(0xFF9CA3AF),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Mini 7-day sparkline trend widget
+  Widget _buildMiniSparkline(BuildContext context, BloodPressureReading reading) {
+    // For now, return a placeholder - this would show the last 7 readings as a sparkline
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(
+        child: Text(
+          '7-day trend',
+          style: TextStyle(
+            color: const Color(0xFF6B7280),
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
     );
   }
