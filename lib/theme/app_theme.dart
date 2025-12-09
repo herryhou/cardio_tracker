@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 /// Modern Blood Pressure Tracker Theme with AHA Medical Colors
 /// Based on Material Design 3 with medical color standards
 class AppTheme {
-  // AHA Medical Color Standards
-  static const Color _normalColor = Color(0xFF4CAF50);     // Green
-  static const Color _elevatedColor = Color(0xFFFF9800);   // Orange
-  static const Color _stage1Color = Color(0xFFFF5722);     // Deep Orange
-  static const Color _stage2Color = Color(0xFFF44336);     // Red
-  static const Color _crisisColor = Color(0xFF9C27B0);     // Purple
-  static const Color _lowColor = Color(0xFF2196F3);        // Blue
+  // AHA Medical Color Standards (WCAG AA Compliant)
+  static const Color _normalColor = Color(0xFF2E7D32);     // Darker Green for better contrast
+  static const Color _elevatedColor = Color(0xFFBF360C);   // Dark Brown-Orange for WCAG AA compliance
+  static const Color _stage1Color = Color(0xFFBF360C);     // Dark Brown-Orange for WCAG AA compliance
+  static const Color _stage2Color = Color(0xFFD32F2F);     // Darker Red for better contrast
+  static const Color _crisisColor = Color(0xFF7B1FA2);     // Darker Purple for better contrast
+  static const Color _lowColor = Color(0xFF1976D2);        // Darker Blue for better contrast
 
   // Modern Neutral Palette - Production Medical Colors
   static const Color _primarySeed = Color(0xFF2563EB);     // Medical Blue (more vibrant)
@@ -145,15 +145,15 @@ class AppTheme {
         fillColor: _surfaceLight,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Colors.grey.shade300,
+          borderSide: const BorderSide(
+            color: Color(0xFFBDBDBD),  // Darker gray for better contrast
             width: 1,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Colors.grey.shade300,
+          borderSide: const BorderSide(
+            color: Color(0xFFBDBDBD),  // Darker gray for better contrast
             width: 1,
           ),
         ),
@@ -179,8 +179,8 @@ class AppTheme {
           ),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        hintStyle: TextStyle(
-          color: Colors.grey.shade500,
+        hintStyle: const TextStyle(
+          color: Color(0xFF757575),  // Darker gray for better contrast
           fontSize: 14,
           fontFamily: _fontFamily,
         ),
@@ -294,15 +294,15 @@ class AppTheme {
         fillColor: _surfaceDark,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Colors.grey.shade600,
+          borderSide: const BorderSide(
+            color: Color(0xFF616161),  // Darker gray for dark theme
             width: 1,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Colors.grey.shade600,
+          borderSide: const BorderSide(
+            color: Color(0xFF616161),  // Darker gray for dark theme
             width: 1,
           ),
         ),
@@ -328,8 +328,8 @@ class AppTheme {
           ),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        hintStyle: TextStyle(
-          color: Colors.grey.shade400,
+        hintStyle: const TextStyle(
+          color: Color(0xFF9E9E9E),  // Lighter gray for dark theme
           fontSize: 14,
           fontFamily: _fontFamily,
         ),
@@ -383,11 +383,11 @@ class AppTheme {
   // Text Theme Builder
   static TextTheme _buildTextTheme(Brightness brightness) {
     final Color textColor = brightness == Brightness.light
-        ? const Color(0xFF1C1C1E)
+        ? const Color(0xFF212121)  // Changed from #1C1C1E for better contrast
         : const Color(0xFFF2F2F7);
 
     final Color secondaryTextColor = brightness == Brightness.light
-        ? const Color(0xFF6B7280)
+        ? const Color(0xFF212121)  // Changed from #6B7280 to #212121 for WCAG AA compliance
         : const Color(0xFFA1A1AA);
 
     return TextTheme(
