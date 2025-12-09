@@ -27,26 +27,40 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadConfiguration();
+    // Use WidgetsBinding to ensure the widget is fully initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadConfiguration();
+    });
   }
 
   Future<void> _loadConfiguration() async {
-    final configured = await _kvService.isConfigured();
-    if (configured) {
-      final credentials = await _kvService.getCredentials();
-      if (credentials != null) {
+    if (!mounted) return;
+
+    try {
+      final configured = await _kvService.isConfigured();
+      if (configured) {
+        final credentials = await _kvService.getCredentials();
+        if (credentials != null && mounted) {
+          setState(() {
+            _isConfigured = configured;
+            _accountIdController.text = credentials['accountId'] ?? '';
+            _namespaceIdController.text = credentials['namespaceId'] ?? '';
+            // For security, don't pre-populate the API token
+            _apiTokenController.clear();
+          });
+        }
+      } else if (mounted) {
         setState(() {
           _isConfigured = configured;
-          _accountIdController.text = credentials['accountId'] ?? '';
-          _namespaceIdController.text = credentials['namespaceId'] ?? '';
-          // For security, don't pre-populate the API token
-          _apiTokenController.clear();
         });
       }
-    } else {
-      setState(() {
-        _isConfigured = configured;
-      });
+    } catch (e) {
+      print('CloudflareSettingsScreen: Error loading configuration: ${e.toString()}');
+      if (mounted) {
+        setState(() {
+          _isConfigured = false;
+        });
+      }
     }
   }
 

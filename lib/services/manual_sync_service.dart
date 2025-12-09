@@ -1,5 +1,6 @@
 import '../services/database_service.dart';
 import '../services/cloudflare_kv_service.dart';
+import 'package:flutter/foundation.dart';
 
 class SyncResult {
   final int pushed;
@@ -21,8 +22,11 @@ class ManualSyncService {
 
   Future<SyncResult> performSync() async {
     try {
+      debugPrint('SyncService: Starting sync...');
+
       // Check if Cloudflare KV is configured
       if (!await _kvService.isConfigured()) {
+        debugPrint('SyncService: Cloudflare KV not configured');
         return const SyncResult(error: 'Cloudflare KV not configured');
       }
 
@@ -42,38 +46,56 @@ class ManualSyncService {
 
       // Process local changes (push to remote)
       for (final localReading in localReadings) {
-        final remoteHas = remoteSet.contains(localReading.id);
+        try {
+          final remoteHas = remoteSet.contains(localReading.id);
 
-        if (localReading.isDeleted) {
-          // Local deletion - push to remote
-          if (remoteHas) {
-            await _kvService.deleteReading(localReading.id);
-            deleted++;
-          }
-        } else if (!remoteHas) {
-          // New reading - push to remote
-          await _kvService.storeReading(localReading);
-          pushed++;
-        } else {
-          // Check if local is newer
-          final remoteReading = await _kvService.retrieveReading(localReading.id);
-          if (remoteReading != null &&
-              localReading.lastModified.isAfter(remoteReading.lastModified)) {
+          if (localReading.isDeleted) {
+            // Local deletion - push to remote
+            if (remoteHas) {
+              await _kvService.deleteReading(localReading.id);
+              deleted++;
+            }
+          } else if (!remoteHas) {
+            // New reading - push to remote
             await _kvService.storeReading(localReading);
             pushed++;
+          } else {
+            // Check if local is newer
+            try {
+              final remoteReading = await _kvService.retrieveReading(localReading.id);
+              if (remoteReading != null &&
+                  localReading.lastModified.isAfter(remoteReading.lastModified)) {
+                await _kvService.storeReading(localReading);
+                pushed++;
+              }
+            } catch (e) {
+              print('SyncService: Error checking remote reading ${localReading.id}: $e');
+              // If we can't retrieve the remote version, we'll skip this reading
+              continue;
+            }
           }
+        } catch (e) {
+          print('SyncService: Error processing local reading ${localReading.id}: $e');
+          // Continue with next reading
+          continue;
         }
       }
 
       // Process remote changes (pull to local)
       for (final readingId in remoteKeys.keys) {
-        if (!localMap.containsKey(readingId)) {
-          // Reading exists remotely but not locally
-          final remoteReading = await _kvService.retrieveReading(readingId);
-          if (remoteReading != null && !remoteReading.isDeleted) {
-            await _databaseService.insertReading(remoteReading);
-            pulled++;
+        try {
+          if (!localMap.containsKey(readingId)) {
+            // Reading exists remotely but not locally
+            final remoteReading = await _kvService.retrieveReading(readingId);
+            if (remoteReading != null && !remoteReading.isDeleted) {
+              await _databaseService.insertReading(remoteReading);
+              pulled++;
+            }
           }
+        } catch (e) {
+          print('SyncService: Error processing remote reading $readingId: $e');
+          // Continue with next reading
+          continue;
         }
       }
 
