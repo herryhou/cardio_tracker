@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../providers/blood_pressure_provider.dart';
 import '../providers/dual_chart_provider.dart';
 import '../widgets/dual_chart_container.dart';
+import '../models/chart_types.dart';
+import '../models/blood_pressure_reading.dart';
 
 class DistributionScreen extends StatefulWidget {
   const DistributionScreen({super.key});
@@ -12,6 +14,10 @@ class DistributionScreen extends StatefulWidget {
 }
 
 class _DistributionScreenState extends State<DistributionScreen> {
+  ExtendedTimeRange _currentTimeRange = ExtendedTimeRange.month;
+  DateTime? _startDate;
+  DateTime? _endDate;
+  List<BloodPressureReading> _filteredReadings = [];
 
   @override
   void initState() {
@@ -20,6 +26,68 @@ class _DistributionScreenState extends State<DistributionScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<BloodPressureProvider>().loadReadings();
     });
+  }
+
+  List<BloodPressureReading> _filterReadingsByTimeRange(List<BloodPressureReading> allReadings) {
+    if (allReadings.isEmpty) {
+      return [];
+    }
+
+    DateTime rangeStart;
+    DateTime rangeEnd;
+
+    if (_startDate != null && _endDate != null) {
+      rangeStart = _startDate!;
+      rangeEnd = _endDate!;
+    } else {
+      // Calculate based on predefined time range
+      final now = DateTime.now();
+      switch (_currentTimeRange) {
+        case ExtendedTimeRange.day:
+          rangeStart = DateTime(now.year, now.month, now.day);
+          rangeEnd = rangeStart.add(const Duration(days: 1));
+          break;
+        case ExtendedTimeRange.week:
+          rangeStart = DateTime(now.year, now.month, now.day)
+              .subtract(const Duration(days: 6));
+          rangeEnd = rangeStart.add(const Duration(days: 7));
+          break;
+        case ExtendedTimeRange.month:
+          rangeStart = DateTime(now.year, now.month, 1);
+          int nextMonth = now.month + 1;
+          int nextYear = now.year;
+          if (nextMonth > 12) {
+            nextMonth = 1;
+            nextYear += 1;
+          }
+          rangeEnd = DateTime(nextYear, nextMonth, 1);
+          break;
+        case ExtendedTimeRange.season:
+          rangeStart = now.subtract(const Duration(days: 90));
+          rangeEnd = now.add(const Duration(days: 1));
+          break;
+        case ExtendedTimeRange.year:
+          rangeStart = DateTime(now.year, 1, 1);
+          rangeEnd = DateTime(now.year + 1, 1, 1);
+          break;
+      }
+    }
+
+    return allReadings
+        .where((reading) =>
+            reading.timestamp.isAfter(rangeStart.subtract(const Duration(milliseconds: 1))) &&
+            reading.timestamp.isBefore(rangeEnd))
+        .toList();
+  }
+
+  void _updateFilteredReadings() {
+    if (mounted) {
+      final provider = context.read<BloodPressureProvider>();
+      final filtered = _filterReadingsByTimeRange(provider.readings);
+      setState(() {
+        _filteredReadings = filtered;
+      });
+    }
   }
 
   @override
@@ -75,20 +143,39 @@ class _DistributionScreenState extends State<DistributionScreen> {
             return _buildEmptyState();
           }
 
+          // Schedule filtering after build is complete
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _updateFilteredReadings();
+          });
+
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(create: (_) => DualChartProvider()),
             ],
             child: RefreshIndicator(
-              onRefresh: () => provider.loadReadings(),
+              onRefresh: () {
+                return provider.loadReadings().then((_) {
+                  // Filter again after refresh
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _updateFilteredReadings();
+                  });
+                });
+              },
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: EdgeInsets.zero,
                 child: DualChartContainer(
-                  readings: provider.readings,
+                  readings: _filteredReadings,
                   onTimeRangeChanged: (timeRange, startDate, endDate) {
-                    // Optional: Handle time range changes
-                    // Could filter provider.readings based on selected range
+                    setState(() {
+                      _currentTimeRange = timeRange;
+                      _startDate = startDate;
+                      _endDate = endDate;
+                    });
+                    // Schedule filtering after state update
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _updateFilteredReadings();
+                    });
                   },
                 ),
               ),
