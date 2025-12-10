@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/blood_pressure_provider.dart';
 import 'providers/settings_provider.dart';
+import 'providers/theme_provider.dart';
 import 'services/database_service.dart';
 import 'app.dart';
 import 'theme/app_theme.dart';
@@ -27,14 +28,21 @@ class CardioTrackerApp extends StatelessWidget {
             databaseService: DatabaseService.instance,
           ),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+        ),
       ],
-      child: MaterialApp(
-        title: 'Cardio Tracker',
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        debugShowCheckedModeBanner: false,
-        home: const App(),
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'Cardio Tracker',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
+            debugShowCheckedModeBanner: false,
+            home: const App(),
+          );
+        },
       ),
     );
   }

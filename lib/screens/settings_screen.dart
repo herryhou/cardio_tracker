@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/theme_provider.dart';
 import 'cloudflare_settings_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -14,13 +16,70 @@ class SettingsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+          // Appearance Section
+          Text(
+            'Appearance',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          Card(
+            child: Consumer<ThemeProvider>(
+              builder: (context, themeProvider, child) {
+                return Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(
+                        themeProvider.themeMode == ThemeMode.dark
+                            ? Icons.dark_mode
+                            : themeProvider.themeMode == ThemeMode.light
+                                ? Icons.light_mode
+                                : Icons.brightness_auto,
+                      ),
+                      title: const Text('Theme'),
+                      subtitle: Text(_getThemeSubtitle(themeProvider.themeMode)),
+                      trailing: SegmentedButton<ThemeMode>(
+                        selected: {themeProvider.themeMode},
+                        onSelectionChanged: (Set<ThemeMode> selection) {
+                          themeProvider.setThemeMode(selection.first);
+                        },
+                        segments: const [
+                          ButtonSegment<ThemeMode>(
+                            value: ThemeMode.system,
+                            label: Text('System'),
+                            icon: Icon(Icons.brightness_auto),
+                          ),
+                          ButtonSegment<ThemeMode>(
+                            value: ThemeMode.light,
+                            label: Text('Light'),
+                            icon: Icon(Icons.light_mode),
+                          ),
+                          ButtonSegment<ThemeMode>(
+                            value: ThemeMode.dark,
+                            label: Text('Dark'),
+                            icon: Icon(Icons.dark_mode),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 24),
+
           // Data Management Section
-          const Text(
+          Text(
             'Data Management',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1F2937),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
@@ -57,5 +116,16 @@ class SettingsScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _getThemeSubtitle(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.system:
+        return 'Follow system setting';
+      case ThemeMode.light:
+        return 'Always light mode';
+      case ThemeMode.dark:
+        return 'Always dark mode';
+    }
   }
 }
