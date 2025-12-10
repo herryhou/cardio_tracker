@@ -228,11 +228,13 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
 
   BoxDecoration _buildContainerDecoration() {
     return BoxDecoration(
-      color: Colors.white,
+      color: AppTheme.getChartBackground(context),
       borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withValues(alpha: _shadowAlpha),
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.black.withValues(alpha: 0.3)
+              : Colors.black.withValues(alpha: _shadowAlpha),
           blurRadius: _shadowBlurRadius,
           offset: const Offset(0, 2),
         ),
@@ -253,19 +255,23 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     return Container(
       padding: _chartPadding,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.getChartBackground(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.withValues(alpha: _gridAlpha)),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).colorScheme.outline.withOpacity(0.3)
+              : Colors.grey.withValues(alpha: _gridAlpha),
+        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.show_chart, size: 48, color: Colors.grey[400]),
+          Icon(Icons.show_chart, size: 48, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
           SizedBox(height: AppSpacing.md),
           Text(
             'No data available',
             style: AppTheme.headerStyle.copyWith(
-                  color: Colors.grey[600],
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                   fontSize: 16, // Override for this context
                 ),
           ),
@@ -273,7 +279,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
           Text(
             'Start recording blood pressure to see trends here',
             style: AppTheme.bodyStyle.copyWith(
-                  color: Colors.grey[500],
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                 ),
             textAlign: TextAlign.center,
           ),

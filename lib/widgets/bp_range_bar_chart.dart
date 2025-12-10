@@ -214,11 +214,13 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
 
   BoxDecoration _buildContainerDecoration() {
     return BoxDecoration(
-      color: Colors.white,
+      color: AppTheme.getChartBackground(context),
       borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withValues(alpha: _shadowAlpha),
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.black.withValues(alpha: 0.3)
+              : Colors.black.withValues(alpha: _shadowAlpha),
           blurRadius: _shadowBlurRadius,
           offset: const Offset(0, 2),
         ),
@@ -239,19 +241,23 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
     return Container(
       padding: _chartPadding,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.getChartBackground(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.withValues(alpha: _gridAlpha)),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).colorScheme.outline.withOpacity(0.3)
+              : Colors.grey.withValues(alpha: _gridAlpha),
+        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.bar_chart, size: 48, color: Colors.grey[400]),
+          Icon(Icons.bar_chart, size: 48, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
           SizedBox(height: AppSpacing.md),
           Text(
             'No data available',
             style: AppTheme.headerStyle.copyWith(
-                  color: Colors.grey[600],
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                   fontSize: 16, // Override for this context
                 ),
           ),
@@ -259,7 +265,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
           Text(
             'Start recording blood pressure to see ranges here',
             style: AppTheme.bodyStyle.copyWith(
-                  color: Colors.grey[500],
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                 ),
             textAlign: TextAlign.center,
           ),
@@ -295,7 +301,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
       borderData: _buildBorderData(),
       barTouchData: _buildBarTouchData(),
       alignment: BarChartAlignment.spaceAround,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       minY: _minY,
       maxY: _maxY,
     );
@@ -353,7 +359,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
           style: AppTheme.bodyStyle.copyWith(
             fontSize: 13,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         axisNameSize: 20,
@@ -380,7 +386,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
       style: AppTheme.bodyStyle.copyWith(
         fontSize: _yAxisLabelFontSize,
         fontWeight: FontWeight.w500,
-        color: Colors.black87,
+        color: Theme.of(context).colorScheme.onSurface,
       ),
       textAlign: TextAlign.right,
     );
@@ -403,10 +409,10 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
       angle: _labelRotationAngle,
       child: Text(
         formattedDate,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: _xAxisLabelFontSize,
           fontWeight: FontWeight.w500,
-          color: Colors.black87,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
     );
@@ -418,11 +424,11 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
       drawVerticalLine: true,
       horizontalInterval: _yAxisInterval,
       getDrawingHorizontalLine: (value) => FlLine(
-        color: Colors.grey.withValues(alpha: _gridAlpha),
+        color: AppTheme.getChartGridColor(context),
         strokeWidth: _gridLineWidth,
       ),
       getDrawingVerticalLine: (value) => FlLine(
-        color: Colors.grey.withValues(alpha: _gridAlpha),
+        color: AppTheme.getChartGridColor(context),
         strokeWidth: _gridLineWidth,
       ),
     );
@@ -432,7 +438,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
     return FlBorderData(
       show: true,
       border: Border.all(
-        color: Colors.black.withValues(alpha: _borderAlpha),
+        color: Theme.of(context).colorScheme.outline.withOpacity(_borderAlpha),
         width: _borderLineWidth,
       ),
     );
@@ -441,9 +447,9 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
   BarTouchData _buildBarTouchData() {
     return BarTouchData(
       touchTooltipData: BarTouchTooltipData(
-        getTooltipColor: (group) => Colors.white,
+        getTooltipColor: (group) => Theme.of(context).colorScheme.surfaceContainer,
         tooltipBorder:
-            BorderSide(color: Colors.grey.withValues(alpha: _gridAlpha)),
+            BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.3)),
         getTooltipItem: _buildTooltipItem,
       ),
       touchCallback: _handleBarTouchEvent,
@@ -498,7 +504,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
       titlesData: _buildTitlesData(),
       gridData: FlGridData(show: false),
       borderData: _buildBorderData(),
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       minY: _minY,
       maxY: _maxY,
     );

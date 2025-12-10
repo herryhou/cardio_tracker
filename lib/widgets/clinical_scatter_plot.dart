@@ -100,10 +100,18 @@ class ClinicalZones {
 class ClinicalBarDistributionPainter extends CustomPainter {
   final List<BloodPressureReading> readings;
   final BloodPressureReading? selectedReading;
+  final Color backgroundColor;
+  final Color textColor;
+  final Color gridColor;
+  final Color axisColor;
 
   const ClinicalBarDistributionPainter({
     required this.readings,
     this.selectedReading,
+    required this.backgroundColor,
+    required this.textColor,
+    required this.gridColor,
+    required this.axisColor,
   });
 
   @override
@@ -143,7 +151,7 @@ class ClinicalBarDistributionPainter extends CustomPainter {
 
   void _drawBackground(Canvas canvas, Rect drawArea) {
     final bgPaint = Paint()
-      ..color = Colors.white
+      ..color = backgroundColor
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(drawArea, bgPaint);
@@ -174,7 +182,7 @@ class ClinicalBarDistributionPainter extends CustomPainter {
 
   void _drawGridLines(Canvas canvas, Rect drawArea) {
     final gridPaint = Paint()
-      ..color = Colors.grey.withOpacity(0.2)
+      ..color = gridColor
       ..strokeWidth = 0.5;
 
     // Vertical grid lines (time)
@@ -202,7 +210,7 @@ class ClinicalBarDistributionPainter extends CustomPainter {
 
   void _drawAxes(Canvas canvas, Rect drawArea) {
     final axisPaint = Paint()
-      ..color = Colors.black87
+      ..color = axisColor
       ..strokeWidth = 2.0;
 
     // X-axis (time)
@@ -224,8 +232,8 @@ class ClinicalBarDistributionPainter extends CustomPainter {
   }
 
   void _drawAxisLabels(Canvas canvas, Rect drawArea) {
-    const textStyle = TextStyle(
-      color: Colors.black87,
+    final textStyle = TextStyle(
+      color: textColor,
       fontSize: 11,
       fontWeight: FontWeight.w500,
     );
@@ -373,6 +381,10 @@ class ClinicalBarDistributionPainter extends CustomPainter {
   bool shouldRepaint(ClinicalBarDistributionPainter oldDelegate) {
     if (readings.length != oldDelegate.readings.length) return true;
     if (selectedReading != oldDelegate.selectedReading) return true;
+    if (backgroundColor != oldDelegate.backgroundColor) return true;
+    if (textColor != oldDelegate.textColor) return true;
+    if (gridColor != oldDelegate.gridColor) return true;
+    if (axisColor != oldDelegate.axisColor) return true;
     return false;
   }
 }
@@ -384,12 +396,13 @@ class ClinicalScatterPainter extends CustomPainter {
   final double? zoomLevel;
   final Offset? panOffset;
   final bool showTrendLine;
+  final Color backgroundColor;
+  final Color textColor;
+  final Color gridColor;
+  final Color axisColor;
 
   // Performance optimization: Lazy loading with viewport culling
   static const int _maxVisiblePoints = 1000;
-
-  // Grid line color following medical standards
-  static const Color gridLineColor = Color(0xFFE0E0E0);
 
   const ClinicalScatterPainter({
     required this.readings,
@@ -397,6 +410,10 @@ class ClinicalScatterPainter extends CustomPainter {
     this.zoomLevel,
     this.panOffset,
     this.showTrendLine = true,
+    required this.backgroundColor,
+    required this.textColor,
+    required this.gridColor,
+    required this.axisColor,
   });
 
   @override
@@ -449,7 +466,7 @@ class ClinicalScatterPainter extends CustomPainter {
 
   void _drawBackground(Canvas canvas, Rect drawArea) {
     final bgPaint = Paint()
-      ..color = Colors.white
+      ..color = backgroundColor
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(drawArea, bgPaint);
@@ -493,7 +510,7 @@ class ClinicalScatterPainter extends CustomPainter {
 
   void _drawGridLines(Canvas canvas, Rect drawArea) {
     final gridPaint = Paint()
-      ..color = gridLineColor
+      ..color = gridColor
       ..strokeWidth = 0.5;
 
     // Vertical grid lines (diastolic - now on X-axis) - every 10 mmHg
@@ -521,7 +538,7 @@ class ClinicalScatterPainter extends CustomPainter {
 
   void _drawAxes(Canvas canvas, Rect drawArea) {
     final axisPaint = Paint()
-      ..color = Colors.black87
+      ..color = axisColor
       ..strokeWidth = 2.0;
 
     // X-axis (systolic)
@@ -543,8 +560,8 @@ class ClinicalScatterPainter extends CustomPainter {
   }
 
   void _drawAxisLabels(Canvas canvas, Rect drawArea) {
-    const textStyle = TextStyle(
-      color: Colors.black87,
+    final textStyle = TextStyle(
+      color: textColor,
       fontSize: 11,
       fontWeight: FontWeight.w500,
     );
@@ -575,7 +592,7 @@ class ClinicalScatterPainter extends CustomPainter {
     final titleStyle = textStyle.copyWith(
       fontSize: 13,
       fontWeight: FontWeight.bold,
-      color: Colors.black,
+      color: textColor,
     );
 
     // X-axis title (now Diastolic)
@@ -761,6 +778,10 @@ class ClinicalScatterPainter extends CustomPainter {
     if (zoomLevel != oldDelegate.zoomLevel ||
         panOffset != oldDelegate.panOffset) return true;
     if (showTrendLine != oldDelegate.showTrendLine) return true;
+    if (backgroundColor != oldDelegate.backgroundColor) return true;
+    if (textColor != oldDelegate.textColor) return true;
+    if (gridColor != oldDelegate.gridColor) return true;
+    if (axisColor != oldDelegate.axisColor) return true;
 
     return false;
   }
@@ -950,7 +971,9 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                 Container(
                   padding: EdgeInsets.all(AppSpacing.sm),
                   decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 0.1),
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Theme.of(context).colorScheme.surfaceContainerHighest
+                        : Colors.grey.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -1134,11 +1157,13 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     return Container(
       padding: EdgeInsets.zero,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.getChartBackground(context),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -1162,6 +1187,10 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                   zoomLevel: _zoomLevel,
                   panOffset: _panOffset,
                   showTrendLine: widget.showTrendLine,
+                  backgroundColor: AppTheme.getChartBackground(context),
+                  textColor: AppTheme.getChartTextColor(context),
+                  gridColor: AppTheme.getChartGridColor(context),
+                  axisColor: AppTheme.getChartAxisColor(context),
                 ),
                 child: Container(),
               ),
@@ -1179,9 +1208,15 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     return Container(
       padding: EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.grey[20],
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Theme.of(context).colorScheme.surfaceContainer
+            : Colors.grey[50],
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Theme.of(context).colorScheme.outline.withOpacity(0.3)
+              : Colors.grey[300]!,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

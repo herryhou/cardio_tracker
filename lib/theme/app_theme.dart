@@ -404,13 +404,69 @@ class AppTheme {
     );
   }
 
-  // Medical Color Accessors
-  static Color getNormalColor(BuildContext context) => _normalColor;
-  static Color getElevatedColor(BuildContext context) => _elevatedColor;
-  static Color getStage1Color(BuildContext context) => _stage1Color;
-  static Color getStage2Color(BuildContext context) => _stage2Color;
-  static Color getCrisisColor(BuildContext context) => _crisisColor;
-  static Color getLowColor(BuildContext context) => _lowColor;
+  // Medical Color Accessors - updated for better contrast
+  static Color getNormalColor(BuildContext context) {
+    // Use darker green for light mode, lighter green for dark mode
+    return Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFF10B981)  // Lighter green for dark mode
+        : const Color(0xFF047857);  // Darker green for light mode
+  }
+
+  static Color getElevatedColor(BuildContext context) {
+    // Use darker amber for light mode, lighter for dark mode
+    return Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFFF59E0B)  // Lighter amber for dark mode
+        : const Color(0xFFB45309);  // Darker amber for light mode
+  }
+
+  static Color getStage1Color(BuildContext context) {
+    // Use darker orange for light mode, lighter for dark mode
+    return Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFFF97316)  // Lighter orange for dark mode
+        : const Color(0xFFDC2626);  // Darker red-orange for light mode
+  }
+
+  static Color getStage2Color(BuildContext context) {
+    // Use darker red for light mode, lighter for dark mode
+    return Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFFEF4444)  // Lighter red for dark mode
+        : const Color(0xFFB91C1C);  // Even darker red for light mode
+  }
+
+  static Color getCrisisColor(BuildContext context) {
+    // Use darker purple for light mode, lighter for dark mode
+    return Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFFA855F7)  // Lighter purple for dark mode
+        : const Color(0xFF6D28D9);  // Dark purple for light mode
+  }
+
+  static Color getLowColor(BuildContext context) {
+    // Use darker blue for light mode, lighter blue for dark mode
+    return Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFF3B82F6)  // Lighter blue for dark mode
+        : const Color(0xFF1E40AF);  // Darker blue for light mode
+  }
+
+  // Chart-specific color helpers for dark mode support
+  static Color getChartBackground(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? Theme.of(context).colorScheme.surface
+        : Colors.white;
+  }
+
+  static Color getChartTextColor(BuildContext context) {
+    return Theme.of(context).colorScheme.onSurface;
+  }
+
+  static Color getChartGridColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? Colors.grey.withOpacity(0.2)
+        : Colors.grey.withOpacity(0.3);
+  }
+
+  static Color getChartAxisColor(BuildContext context) {
+    return Theme.of(context).colorScheme.onSurface.withOpacity(0.8);
+  }
 
   // Text Theme Builder
   static TextTheme _buildTextTheme(Brightness brightness) {
