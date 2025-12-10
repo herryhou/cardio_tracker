@@ -42,7 +42,7 @@ class _AppState extends State<App> {
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF8B5CF6),
+          selectedItemColor: const Color(0xFF6A1B9A),
           unselectedItemColor: Colors.grey,
           selectedLabelStyle: const TextStyle(
             fontSize: 12,
@@ -67,7 +67,7 @@ class _AppState extends State<App> {
                 child: const Icon(
                   Icons.home,
                   size: 24,
-                  color: Color(0xFF8B5CF6),
+                  color: Color(0xFF6A1B9A),
                 ),
               ),
               label: 'Home',
@@ -85,7 +85,7 @@ class _AppState extends State<App> {
                 child: const Icon(
                   Icons.show_chart,
                   size: 24,
-                  color: Color(0xFF8B5CF6),
+                  color: Color(0xFF6A1B9A),
                 ),
               ),
               label: 'Trends',

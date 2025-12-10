@@ -15,8 +15,11 @@ class AppTheme {
   static const Color _crisisColor = Color(0xFF7B1FA2);     // Darker Purple for better contrast
   static const Color _lowColor = Color(0xFF1976D2);        // Darker Blue for better contrast
 
-  // Modern Neutral Palette - Production Medical Colors
-  static const Color _primarySeed = Color(0xFF2563EB);     // Medical Blue (more vibrant)
+  // Material Design 3 Color Scheme - 2025 UI/UX Redesign Requirements
+  static const Color _primarySeed = Color(0xFF6A1B9A);     // Deep Purple (MD3 Primary)
+  static const Color _secondarySeed = Color(0xFFFF5252);   // Soft Red (MD3 Secondary)
+  static const Color _tertiarySeed = Color(0xFF4CAF50);    // Green (MD3 Tertiary - for normal readings)
+
   static const Color _backgroundLight = Color(0xFFF8FAFC); // Very light gray
   static const Color _surfaceLight = Color(0xFFFFFFFF);    // Pure white
   static const Color _errorLight = Color(0xFFE53935);      // Material Red
@@ -70,9 +73,16 @@ class AppTheme {
         surface: _surfaceLight,
         error: _errorLight,
       ).copyWith(
-        primary: const Color(0xFF1976D2),
-        secondary: const Color(0xFF03A9F4),
-        tertiary: const Color(0xFF00ACC1),
+        primary: const Color(0xFF6A1B9A),           // Deep Purple
+        onPrimary: const Color(0xFFFFFFFF),         // White text on primary
+        secondary: const Color(0xFFFF5252),         // Soft Red
+        onSecondary: const Color(0xFFFFFFFF),       // White text on secondary
+        tertiary: const Color(0xFF4CAF50),          // Green for normal readings
+        onTertiary: const Color(0xFFFFFFFF),        // White text on tertiary
+        surface: _surfaceLight,
+        onSurface: const Color(0xFF1C1B1F),         // High contrast text (7:1)
+        onSurfaceVariant: const Color(0xFF49454F),  // High contrast variant text
+        outline: const Color(0xFF79747E),           // High contrast outlines
       ),
 
       // Typography
@@ -84,12 +94,12 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Color(0xFF1976D2),
+        foregroundColor: Color(0xFF6A1B9A),
         centerTitle: true,
         titleTextStyle: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: Color(0xFF1976D2),
+          color: Color(0xFF6A1B9A),
           fontFamily: _fontFamily,
         ),
       ),
@@ -192,7 +202,7 @@ class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(
-            color: Color(0xFF1976D2),
+            color: Color(0xFF6A1B9A),
             width: 2,
           ),
         ),
@@ -227,7 +237,7 @@ class AppTheme {
         type: BottomNavigationBarType.fixed,
         elevation: 0,
         backgroundColor: _surfaceLight,
-        selectedItemColor: Color(0xFF1976D2),
+        selectedItemColor: Color(0xFF6A1B9A),
         unselectedItemColor: Color(0xFF9E9E9E),
         selectedLabelStyle: TextStyle(
           fontSize: 12,
@@ -267,9 +277,16 @@ class AppTheme {
         surface: _surfaceDark,
         error: _errorDark,
       ).copyWith(
-        primary: const Color(0xFF64B5F6),
-        secondary: const Color(0xFF4FC3F7),
-        tertiary: const Color(0xFF4DD0E1),
+        primary: const Color(0xFF581C87),           // Very dark purple for 7:1 contrast
+        onPrimary: const Color(0xFFFFFFFF),         // White text on primary
+        secondary: const Color(0xFFFF6B6B),         // Lighter Soft Red for dark mode
+        onSecondary: const Color(0xFF000000),       // Black text on secondary
+        tertiary: const Color(0xFF66BB6A),          // Lighter green for dark mode
+        onTertiary: const Color(0xFF000000),        // Black text on tertiary
+        surface: _surfaceDark,
+        onSurface: const Color(0xFFF2F2F7),         // High contrast text (7:1)
+        onSurfaceVariant: const Color(0xFFCAC4D0),  // High contrast variant text
+        outline: const Color(0xFF938F99),           // High contrast outlines
       ),
 
       // Typography
@@ -281,12 +298,12 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Color(0xFF64B5F6),
+        foregroundColor: Color(0xFF581C87),
         centerTitle: true,
         titleTextStyle: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: Color(0xFF64B5F6),
+          color: Color(0xFF581C87),
           fontFamily: _fontFamily,
         ),
       ),
@@ -341,7 +358,7 @@ class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(
-            color: Color(0xFF64B5F6),
+            color: Color(0xFF581C87),
             width: 2,
           ),
         ),
@@ -376,7 +393,7 @@ class AppTheme {
         type: BottomNavigationBarType.fixed,
         elevation: 0,
         backgroundColor: _surfaceDark,
-        selectedItemColor: Color(0xFF64B5F6),
+        selectedItemColor: Color(0xFF581C87),
         unselectedItemColor: Color(0xFF9E9E9E),
         selectedLabelStyle: TextStyle(
           fontSize: 12,
@@ -471,12 +488,12 @@ class AppTheme {
   // Text Theme Builder
   static TextTheme _buildTextTheme(Brightness brightness) {
     final Color textColor = brightness == Brightness.light
-        ? const Color(0xFF212121)  // Changed from #1C1C1E for better contrast
-        : const Color(0xFFF2F2F7);
+        ? const Color(0xFF1C1B1F)  // MD3 high contrast onSurface (7:1 ratio)
+        : const Color(0xFFF2F2F7); // MD3 high contrast onSurface for dark (7:1 ratio)
 
     final Color secondaryTextColor = brightness == Brightness.light
-        ? const Color(0xFF212121)  // Changed from #6B7280 to #212121 for WCAG AA compliance
-        : const Color(0xFFA1A1AA);
+        ? const Color(0xFF49454F)  // MD3 high contrast onSurfaceVariant
+        : const Color(0xFFCAC4D0); // MD3 high contrast onSurfaceVariant for dark
 
     return TextTheme(
       // Display Styles (rarely used)
