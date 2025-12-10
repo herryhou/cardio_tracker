@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/blood_pressure_provider.dart';
 import '../models/blood_pressure_reading.dart';
+import '../theme/app_theme.dart';
+import '../widgets/neumorphic_container.dart';
+import '../widgets/neumorphic_button.dart';
+import '../widgets/neumorphic_slider.dart';
 
 class AddReadingScreen extends StatefulWidget {
   const AddReadingScreen({super.key});
@@ -20,6 +25,11 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
   DateTime _selectedDateTime = DateTime.now();
   bool _isLoading = false;
 
+  // Slider values for visual input
+  double _systolicValue = 120.0;
+  double _diastolicValue = 80.0;
+  final double _heartRateValue = 72.0;
+
   @override
   void dispose() {
     _systolicController.dispose();
@@ -31,74 +41,155 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Container(
-          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-          child: IconButton(
-            icon: const Icon(Icons.close, size: 24),
-            onPressed: () => Navigator.pop(context),
-            padding: EdgeInsets.zero,
+        leading: NeumorphicButton(
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            Navigator.pop(context);
+          },
+          borderRadius: 20.0,
+          padding: const EdgeInsets.all(12),
+          child: Icon(
+            Icons.close,
+            color: Theme.of(context).colorScheme.onSurface,
+            size: 24,
           ),
         ),
+        title: Text(
+          'Add Reading',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        centerTitle: true,
         actions: [
-          Container(
-            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-            child: TextButton(
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: NeumorphicButton(
               onPressed: _isLoading ? null : _saveReading,
+              borderRadius: 20.0,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Text(
                 'Save',
-                style: TextStyle(
-                  fontSize: 16,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: _isLoading ? Colors.grey : const Color(0xFF000000),
+                  color: _isLoading
+                      ? Theme.of(context).colorScheme.onSurface.withOpacity(0.5)
+                      : Theme.of(context).colorScheme.primary,
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 8),
         ],
       ),
       body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
+        onTap: () {
+          HapticFeedback.lightImpact();
+          FocusScope.of(context).unfocus();
+        },
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.all(AppSpacing.screenMargin),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.lg),
 
-                // Title
-                const Text(
-                  'New Reading',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.5,
+                // Blood Pressure Input with Card Design
+                NeumorphicContainer(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.favorite,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 24,
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Text(
+                              'Blood Pressure',
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        _buildBloodPressureInput(),
+                      ],
+                    ),
                   ),
                 ),
 
-                const SizedBox(height: 40),
-                // Blood Pressure Input
-                _buildBloodPressureInput(),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xl),
+
                 // Heart Rate Input
-                _buildHeartRateInput(),
-                const SizedBox(height: 32),
+                NeumorphicContainer(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.monitor_heart,
+                              color: Theme.of(context).colorScheme.secondary,
+                              size: 24,
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Text(
+                              'Heart Rate',
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        _buildHeartRateInput(),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.xl),
+
                 // Date & Time
-                _buildDateTimeSelector(),
-                const SizedBox(height: 32),
+                NeumorphicContainer(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    child: _buildDateTimeSelector(),
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.xl),
+
                 // Notes
-                _buildNotesInput(),
-                const SizedBox(height: 26),
+                NeumorphicContainer(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    child: _buildNotesInput(),
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.xl),
+
                 // Reference Guide
                 _buildReferenceGuide(),
-                const SizedBox(height: 32),
+
+                const SizedBox(height: AppSpacing.xl * 2),
               ],
             ),
           ),
@@ -109,46 +200,58 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
 
   Widget _buildBloodPressureInput() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Text input fields
         Row(
           children: [
             Expanded(
-              child: _buildNumberField(
+              child: _buildModernNumberField(
                 controller: _systolicController,
-                label: 'SYS',
+                label: 'Systolic',
                 hint: '120',
+                value: _systolicValue,
+                min: 70,
+                max: 250,
+                unit: 'mmHg',
+                color: Theme.of(context).colorScheme.primary,
+                onChanged: (value) {
+                  setState(() {
+                    _systolicValue = value;
+                    _systolicController.text = value.round().toString();
+                  });
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) return null;
                   final systolic = int.tryParse(value);
                   if (systolic == null || systolic < 70 || systolic > 250) {
-                    return '';
+                    return 'Enter value between 70-250';
                   }
                   return null;
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                '/',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.grey[400],
-                ),
-              ),
-            ),
+            const SizedBox(width: AppSpacing.lg),
             Expanded(
-              child: _buildNumberField(
+              child: _buildModernNumberField(
                 controller: _diastolicController,
-                label: 'DIA',
+                label: 'Diastolic',
                 hint: '80',
+                value: _diastolicValue,
+                min: 40,
+                max: 150,
+                unit: 'mmHg',
+                color: Theme.of(context).colorScheme.secondary,
+                onChanged: (value) {
+                  setState(() {
+                    _diastolicValue = value;
+                    _diastolicController.text = value.round().toString();
+                  });
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) return null;
                   final diastolic = int.tryParse(value);
                   if (diastolic == null || diastolic < 40 || diastolic > 150) {
-                    return '';
+                    return 'Enter value between 40-150';
                   }
                   return null;
                 },
@@ -187,10 +290,16 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
     );
   }
 
-  Widget _buildNumberField({
+  Widget _buildModernNumberField({
     required TextEditingController controller,
     required String label,
     required String hint,
+    required double value,
+    required double min,
+    required double max,
+    required String unit,
+    required Color color,
+    required Function(double) onChanged,
     required String? Function(String?) validator,
   }) {
     return Column(
@@ -198,87 +307,141 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 11,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: Colors.grey[500],
-            letterSpacing: 1,
+            color: color,
           ),
         ),
-        const SizedBox(height: 8),
-        Container(
-          constraints: const BoxConstraints(minHeight: 44),
-          child: TextFormField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w300,
-              letterSpacing: -1,
-            ),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w200,
-                color: Colors.grey[300],
-                letterSpacing: -1,
+        const SizedBox(height: AppSpacing.md),
+        NeumorphicContainer(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    value.round().toString(),
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.w300,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Text(
+                    unit,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                    ),
+                  ),
+                ],
               ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 10),
-              isDense: false,
-            ),
-            validator: validator,
+              const SizedBox(height: AppSpacing.sm),
+              NeumorphicSlider(
+                value: (value - min) / (max - min),
+                min: 0.0,
+                max: 1.0,
+                onChanged: (newValue) {
+                  onChanged(min + newValue * (max - min));
+                },
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              TextFormField(
+                controller: controller,
+                keyboardType: TextInputType.number,
+                style: Theme.of(context).textTheme.bodyLarge,
+                decoration: InputDecoration(
+                  hintText: hint,
+                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: color,
+                      width: 2,
+                    ),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
+                  ),
+                ),
+                validator: validator,
+                onChanged: (text) {
+                  final newValue = double.tryParse(text);
+                  if (newValue != null && newValue >= min && newValue <= max) {
+                    onChanged(newValue);
+                  }
+                },
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          height: 1,
-          color: Colors.grey[300],
         ),
       ],
     );
   }
 
   Widget _buildDateTimeSelector() {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 44),
-      child: InkWell(
-        onTap: _selectDateTime,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey[300]!),
-          ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.schedule,
+              color: Theme.of(context).colorScheme.primary,
+              size: 24,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              'Date & Time',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        NeumorphicButton(
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            _selectDateTime();
+          },
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Row(
             children: [
               Icon(
-                Icons.calendar_today_outlined,
-                size: 18,
-                color: Colors.grey[600],
+                Icons.calendar_month,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                size: 24,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       _formatDate(_selectedDateTime),
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[600],
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     Text(
                       _formatTime(_selectedDateTime),
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[600],
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                       ),
                     ),
                   ],
@@ -286,13 +449,13 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
               ),
               Icon(
                 Icons.chevron_right,
-                color: Colors.grey[400],
-                size: 20,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                size: 24,
               ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 
@@ -300,42 +463,36 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Notes (Optional)',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[600],
-            letterSpacing: 0.5,
-          ),
+        Row(
+          children: [
+            Icon(
+              Icons.note_add,
+              color: Theme.of(context).colorScheme.primary,
+              size: 24,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              'Notes (Optional)',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
-        Container(
-          constraints: const BoxConstraints(minHeight: 44),
+        const SizedBox(height: AppSpacing.md),
+        NeumorphicContainer(
           child: TextFormField(
             controller: _notesController,
             maxLines: 3,
             maxLength: 150,
-            style: const TextStyle(fontSize: 15),
+            style: Theme.of(context).textTheme.bodyLarge,
             decoration: InputDecoration(
               hintText: 'Add notes about this reading...',
-              hintStyle: TextStyle(
-                color: Colors.grey[400],
-                fontSize: 15,
+              hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.outline,
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Colors.grey),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Colors.grey),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Colors.black, width: 1.5),
-              ),
-              contentPadding: const EdgeInsets.all(16),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.all(AppSpacing.md),
               counterText: '',
             ),
           ),
@@ -345,64 +502,97 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
   }
 
   Widget _buildReferenceGuide() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Reference',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
-              letterSpacing: 0.5,
+    return NeumorphicContainer(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 24,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  'BP Reference Guide',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 12),
-          _buildReferenceRow('Normal', '< 120/80', const Color(0xFF00C853)),
-          const SizedBox(height: 6),
-          _buildReferenceRow(
-              'Elevated', '120-129/<80', const Color(0xFFFFB300)),
-          const SizedBox(height: 6),
-          _buildReferenceRow('High', '≥ 130/80', const Color(0xFFD32F2F)),
-        ],
+            const SizedBox(height: AppSpacing.md),
+            _buildReferenceRow(
+              'Normal',
+              '< 120/80 mmHg',
+              Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _buildReferenceRow(
+              'Elevated',
+              '120-129/<80 mmHg',
+              Theme.of(context).colorScheme.secondary,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _buildReferenceRow(
+              'High Stage 1',
+              '130-139/80-89 mmHg',
+              Theme.of(context).colorScheme.tertiary,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _buildReferenceRow(
+              'High Stage 2',
+              '≥ 140/90 mmHg',
+              Theme.of(context).colorScheme.error,
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildReferenceRow(String label, String range, Color color) {
-    return Row(
-      children: [
-        Container(
-          width: 3,
-          height: 16,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(2),
-          ),
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withValues(alpha: 0.3),
+          width: 1,
         ),
-        const SizedBox(width: 12),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 24,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
-        ),
-        const Spacer(),
-        Text(
-          range,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+            ),
           ),
-        ),
-      ],
+          Text(
+            range,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -415,9 +605,8 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.black,
-            ),
+            colorScheme: Theme.of(context).colorScheme,
+            useMaterial3: true,
           ),
           child: child!,
         );
@@ -457,7 +646,7 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
   Future<void> _saveReading() async {
     if (_systolicController.text.isEmpty || _diastolicController.text.isEmpty) {
       _showSnackBar(
-          'Please enter blood pressure values', const Color(0xFFD32F2F));
+          'Please enter blood pressure values', Theme.of(context).colorScheme.error);
       return;
     }
 
@@ -489,12 +678,12 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
       await context.read<BloodPressureProvider>().addReading(reading);
 
       if (mounted) {
-        _showSnackBar('Reading saved', const Color(0xFF00C853));
+        _showSnackBar('Reading saved', Theme.of(context).colorScheme.primary);
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        _showSnackBar('Error: ${e.toString()}', const Color(0xFFD32F2F));
+        _showSnackBar('Error: ${e.toString()}', Theme.of(context).colorScheme.error);
       }
     } finally {
       if (mounted) {
@@ -509,9 +698,10 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
         content: Text(message),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: EdgeInsets.all(AppSpacing.screenMargin),
+        duration: const Duration(seconds: 3),
+        elevation: 4,
       ),
     );
   }
@@ -538,6 +728,54 @@ class _AddReadingScreenState extends State<AddReadingScreen> {
     final hour = dateTime.hour.toString().padLeft(2, '0');
     final minute = dateTime.minute.toString().padLeft(2, '0');
     return '$hour:$minute';
+  }
+
+  Widget _buildNumberField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required String? Function(String?) validator,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[500],
+            letterSpacing: 1,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: TextFormField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w300,
+            ),
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w200,
+                color: Colors.grey[300],
+              ),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.fromLTRB(8.0, 12.0, 8.0, 12.0),
+              isDense: false,
+              filled: true,
+              fillColor: Colors.grey[100],
+            ),
+            validator: validator,
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -832,33 +1070,43 @@ class _AddReadingContentState extends State<AddReadingContent> {
   }
 
   Widget _buildSaveButton() {
-    return ElevatedButton(
+    return NeumorphicButton(
       onPressed: _isLoading ? null : _saveReading,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 0,
-      ),
-      child: _isLoading
-          ? const SizedBox(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (_isLoading) ...[
+            SizedBox(
               height: 20,
               width: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            )
-          : const Text(
-              'Save Reading',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
             ),
+            const SizedBox(width: AppSpacing.sm),
+          ] else ...[
+            Icon(
+              Icons.save,
+              color: Theme.of(context).colorScheme.primary,
+              size: 20,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+          ],
+          Text(
+            'Save Reading',
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: _isLoading
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -871,9 +1119,8 @@ class _AddReadingContentState extends State<AddReadingContent> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.black,
-            ),
+            colorScheme: Theme.of(context).colorScheme,
+            useMaterial3: true,
           ),
           child: child!,
         );
@@ -913,7 +1160,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
   Future<void> _saveReading() async {
     if (_systolicController.text.isEmpty || _diastolicController.text.isEmpty) {
       _showSnackBar(
-          'Please enter blood pressure values', const Color(0xFFD32F2F));
+          'Please enter blood pressure values', Theme.of(context).colorScheme.error);
       return;
     }
 
@@ -945,7 +1192,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
       await context.read<BloodPressureProvider>().addReading(reading);
 
       if (mounted) {
-        _showSnackBar('Reading saved', const Color(0xFF00C853));
+        _showSnackBar('Reading saved', Theme.of(context).colorScheme.primary);
 
         if (widget.onSave != null) {
           widget.onSave!();
@@ -966,7 +1213,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
       }
     } catch (e) {
       if (mounted) {
-        _showSnackBar('Error: ${e.toString()}', const Color(0xFFD32F2F));
+        _showSnackBar('Error: ${e.toString()}', Theme.of(context).colorScheme.error);
       }
     } finally {
       if (mounted) {
@@ -981,9 +1228,10 @@ class _AddReadingContentState extends State<AddReadingContent> {
         content: Text(message),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: EdgeInsets.all(AppSpacing.screenMargin),
+        duration: const Duration(seconds: 3),
+        elevation: 4,
       ),
     );
   }
