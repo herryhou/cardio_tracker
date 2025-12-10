@@ -89,7 +89,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
             ),
-          );
+          ),
+        );  // RefreshIndicator
         },
       ),
       floatingActionButton: _buildNeumorphicFAB(context),

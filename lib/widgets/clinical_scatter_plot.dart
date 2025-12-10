@@ -45,7 +45,8 @@ class ClinicalZones {
     // SWAPPED: X: 50-80 (diastolic), Y: 120-129 (systolic)
     ClinicalZone(
       name: 'Elevated',
-      bounds: Rect.fromLTWH(50, 120, 30, 9), // 50-80 diastolic, 120-129 systolic
+      bounds:
+          Rect.fromLTWH(50, 120, 30, 9), // 50-80 diastolic, 120-129 systolic
       color: Color.fromARGB(255, 255, 248, 167), // Amber-500
       description: '120-129/<80',
       category: BloodPressureCategory.elevated,
@@ -59,7 +60,8 @@ class ClinicalZones {
     // For now, we'll use a bounding box
     ClinicalZone(
       name: 'Stage 1 Hypertension',
-      bounds: Rect.fromLTWH(50, 70, 70, 69), // 50-120 diastolic, 70-139 systolic
+      bounds:
+          Rect.fromLTWH(50, 70, 70, 69), // 50-120 diastolic, 70-139 systolic
       color: Color.fromARGB(255, 255, 207, 156), // Orange-600
       description: '130-139/80-89',
       category: BloodPressureCategory.stage1,
@@ -160,17 +162,40 @@ class ClinicalBarDistributionPainter extends CustomPainter {
   void _drawClinicalZoneBands(Canvas canvas, Rect drawArea) {
     // Draw clinical zones as horizontal bands
     final zones = [
-      {'name': 'Normal', 'min': 50.0, 'max': 80.0, 'color': Color.fromARGB(255, 185, 255, 203)},
-      {'name': 'Elevated', 'min': 80.0, 'max': 80.0, 'color': Color.fromARGB(255, 255, 248, 167)},
-      {'name': 'Stage 1', 'min': 80.0, 'max': 90.0, 'color': Color.fromARGB(255, 255, 207, 156)},
-      {'name': 'Stage 2', 'min': 90.0, 'max': 120.0, 'color': Color.fromARGB(255, 255, 165, 165)},
+      {
+        'name': 'Normal',
+        'min': 50.0,
+        'max': 80.0,
+        'color': Color.fromARGB(255, 185, 255, 203)
+      },
+      {
+        'name': 'Elevated',
+        'min': 80.0,
+        'max': 80.0,
+        'color': Color.fromARGB(255, 255, 248, 167)
+      },
+      {
+        'name': 'Stage 1',
+        'min': 80.0,
+        'max': 90.0,
+        'color': Color.fromARGB(255, 255, 207, 156)
+      },
+      {
+        'name': 'Stage 2',
+        'min': 90.0,
+        'max': 120.0,
+        'color': Color.fromARGB(255, 255, 165, 165)
+      },
     ];
 
     for (final zone in zones) {
-      final topY = drawArea.bottom - (((zone['max'] as double) - 50) / 70) * drawArea.height;
-      final bottomY = drawArea.bottom - (((zone['min'] as double) - 50) / 70) * drawArea.height;
+      final topY = drawArea.bottom -
+          (((zone['max'] as double) - 50) / 70) * drawArea.height;
+      final bottomY = drawArea.bottom -
+          (((zone['min'] as double) - 50) / 70) * drawArea.height;
 
-      final zoneRect = Rect.fromLTWH(drawArea.left, topY, drawArea.width, bottomY - topY);
+      final zoneRect =
+          Rect.fromLTWH(drawArea.left, topY, drawArea.width, bottomY - topY);
 
       final zonePaint = Paint()
         ..color = (zone['color'] as Color).withOpacity(0.3)
@@ -271,11 +296,15 @@ class ClinicalBarDistributionPainter extends CustomPainter {
 
     for (int i = 0; i < readings.length; i++) {
       final reading = readings[i];
-      final x = drawArea.left + (i * drawArea.width / (readings.length - 1)) - barWidth / 2;
+      final x = drawArea.left +
+          (i * drawArea.width / (readings.length - 1)) -
+          barWidth / 2;
 
       // Calculate Y positions (inverted for chart coordinates)
-      final systolicY = drawArea.bottom - ((reading.systolic - 50) / 70) * drawArea.height;
-      final diastolicY = drawArea.bottom - ((reading.diastolic - 50) / 70) * drawArea.height;
+      final systolicY =
+          drawArea.bottom - ((reading.systolic - 50) / 70) * drawArea.height;
+      final diastolicY =
+          drawArea.bottom - ((reading.diastolic - 50) / 70) * drawArea.height;
 
       // Determine color based on category
       Color barColor;
@@ -305,7 +334,8 @@ class ClinicalBarDistributionPainter extends CustomPainter {
             barColor.withOpacity(0.8), // Systolic (top)
             barColor.withOpacity(0.3), // Diastolic (bottom)
           ],
-        ).createShader(Rect.fromLTWH(x, systolicY, barWidth, diastolicY - systolicY));
+        ).createShader(
+            Rect.fromLTWH(x, systolicY, barWidth, diastolicY - systolicY));
 
       final barRect = RRect.fromRectAndRadius(
         Rect.fromLTWH(x, systolicY, barWidth, diastolicY - systolicY),
@@ -332,9 +362,13 @@ class ClinicalBarDistributionPainter extends CustomPainter {
     if (index == -1) return;
 
     final barWidth = drawArea.width / readings.length * 0.7;
-    final x = drawArea.left + (index * drawArea.width / (readings.length - 1)) - barWidth / 2;
-    final systolicY = drawArea.bottom - ((reading.systolic - 50) / 70) * drawArea.height;
-    final diastolicY = drawArea.bottom - ((reading.diastolic - 50) / 70) * drawArea.height;
+    final x = drawArea.left +
+        (index * drawArea.width / (readings.length - 1)) -
+        barWidth / 2;
+    final systolicY =
+        drawArea.bottom - ((reading.systolic - 50) / 70) * drawArea.height;
+    final diastolicY =
+        drawArea.bottom - ((reading.diastolic - 50) / 70) * drawArea.height;
 
     // Draw selection indicator
     final selectionPaint = Paint()
@@ -344,7 +378,8 @@ class ClinicalBarDistributionPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final selectionRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(x - 5, systolicY - 5, barWidth + 10, diastolicY - systolicY + 10),
+      Rect.fromLTWH(
+          x - 5, systolicY - 5, barWidth + 10, diastolicY - systolicY + 10),
       const Radius.circular(5),
     );
 
@@ -487,7 +522,8 @@ class ClinicalScatterPainter extends CustomPainter {
 
     for (final zone in orderedZones) {
       // Scale zone bounds to drawing area with swapped axes
-      final scaledBounds = _scaleRectToDrawingAreaSwapped(zone.bounds, drawArea);
+      final scaledBounds =
+          _scaleRectToDrawingAreaSwapped(zone.bounds, drawArea);
 
       final zonePaint = Paint()
         ..color = zone.color.withValues(alpha: 0.9)
@@ -644,12 +680,12 @@ class ClinicalScatterPainter extends CustomPainter {
       // Darken the color for solid circles
       final darkerColor = _darkenColor(color);
 
-      // Main solid point - increased to 22px radius (44×44 dp total)
+      // Main solid point - reduced to 5px diameter (2.5px radius)
       final pointPaint = Paint()
         ..color = darkerColor
         ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(point, 22, pointPaint);
+      canvas.drawCircle(point, 2.5, pointPaint);
     }
   }
 
@@ -663,28 +699,28 @@ class ClinicalScatterPainter extends CustomPainter {
     final color = ClinicalZones.getCategoryColor(reading.category);
     final darkerColor = _darkenColor(color);
 
-    // Outer glow - larger for 44×44 dp points
+    // Outer glow - scaled down for smaller points
     final glowPaint = Paint()
       ..color = darkerColor.withValues(alpha: 0.3)
       ..style = PaintingStyle.fill
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15);
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
 
-    canvas.drawCircle(point, 35, glowPaint);
+    canvas.drawCircle(point, 15, glowPaint);
 
     // Selection ring
     final ringPaint = Paint()
       ..color = darkerColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
+      ..strokeWidth = 2;
 
-    canvas.drawCircle(point, 28, ringPaint);
+    canvas.drawCircle(point, 10, ringPaint);
 
     // Center solid point
     final centerPaint = Paint()
       ..color = darkerColor
       ..style = PaintingStyle.fill;
 
-    canvas.drawCircle(point, 22, centerPaint);
+    canvas.drawCircle(point, 6, centerPaint);
   }
 
   Offset _scalePointToDrawingArea(Offset dataPoint, Rect drawArea) {
@@ -830,7 +866,8 @@ class ClinicalScatterPlot extends StatefulWidget {
 }
 
 class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
-  final TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController =
+      TransformationController();
   BloodPressureReading? _selectedReading;
   OverlayEntry? _tooltipEntry;
   bool _isDetailsVisible = false;
@@ -951,7 +988,9 @@ class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
               top: 16,
               right: 16,
               child: AnimatedOpacity(
-                opacity: _transformationController.value != Matrix4.identity() ? 1.0 : 0.0,
+                opacity: _transformationController.value != Matrix4.identity()
+                    ? 1.0
+                    : 0.0,
                 duration: const Duration(milliseconds: 200),
                 child: FloatingActionButton.small(
                   onPressed: _resetView,
@@ -1014,9 +1053,9 @@ class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
             Text(
               'Selected Reading',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
             ),
           ],
         ),
@@ -1155,9 +1194,13 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
         .replaceAll('MMMM', _getFullMonthName(reading.timestamp.month))
         .replaceAll('d', reading.timestamp.day.toString())
         .replaceAll('y', reading.timestamp.year.toString())
-        .replaceAll('h', reading.timestamp.hour > 12
-            ? (reading.timestamp.hour - 12).toString()
-            : (reading.timestamp.hour == 0 ? '12' : reading.timestamp.hour.toString()))
+        .replaceAll(
+            'h',
+            reading.timestamp.hour > 12
+                ? (reading.timestamp.hour - 12).toString()
+                : (reading.timestamp.hour == 0
+                    ? '12'
+                    : reading.timestamp.hour.toString()))
         .replaceAll('mm', reading.timestamp.minute.toString().padLeft(2, '0'))
         .replaceAll('a', reading.timestamp.hour >= 12 ? 'PM' : 'AM');
 
@@ -1196,7 +1239,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                 ],
               ),
               SizedBox(height: AppSpacing.cardsGap),
-              _buildDetailRow('Blood Pressure:', formatBloodPressure(reading.systolic, reading.diastolic)),
+              _buildDetailRow('Blood Pressure:',
+                  formatBloodPressure(reading.systolic, reading.diastolic)),
               _buildDetailRow('Heart Rate:', '${reading.heartRate} bpm'),
               _buildDetailRow('Category:',
                   ClinicalZones.getCategoryDescription(reading.category)),
@@ -1231,16 +1275,31 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
 
   String _getFullDayName(int weekday) {
     const days = [
-      'Monday', 'Tuesday', 'Wednesday', 'Thursday',
-      'Friday', 'Saturday', 'Sunday'
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
     ];
     return days[weekday - 1];
   }
 
   String _getFullMonthName(int month) {
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
     ];
     return months[month - 1];
   }
@@ -1258,8 +1317,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     final systolicValue =
         170 - ((position.dy - drawArea.top) / drawArea.height) * (170 - 70);
 
-    // Increased tolerance for 44×44 dp points
-    final tolerance = 30.0;
+    // Tolerance adjusted for 5px circles
+    final tolerance = 12.0;
 
     BloodPressureReading? closestReading;
     double minDistance = double.infinity;
@@ -1310,9 +1369,13 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
         .replaceAll('MMM', _getMonthAbbreviation(reading.timestamp.month))
         .replaceAll('d', reading.timestamp.day.toString())
         .replaceAll('y', reading.timestamp.year.toString())
-        .replaceAll('h', reading.timestamp.hour > 12
-            ? (reading.timestamp.hour - 12).toString()
-            : (reading.timestamp.hour == 0 ? '12' : reading.timestamp.hour.toString()))
+        .replaceAll(
+            'h',
+            reading.timestamp.hour > 12
+                ? (reading.timestamp.hour - 12).toString()
+                : (reading.timestamp.hour == 0
+                    ? '12'
+                    : reading.timestamp.hour.toString()))
         .replaceAll('mm', reading.timestamp.minute.toString().padLeft(2, '0'))
         .replaceAll('a', reading.timestamp.hour >= 12 ? 'PM' : 'AM');
 
@@ -1337,7 +1400,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                   ),
                 ),
                 SizedBox(height: AppSpacing.sm),
-                _buildDetailRow('Blood Pressure:', formatBloodPressure(reading.systolic, reading.diastolic)),
+                _buildDetailRow('Blood Pressure:',
+                    formatBloodPressure(reading.systolic, reading.diastolic)),
                 _buildDetailRow('Heart Rate:', '${reading.heartRate} bpm'),
                 _buildDetailRow('Category:',
                     ClinicalZones.getCategoryDescription(reading.category)),
@@ -1358,24 +1422,35 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
 
   String _getMonthAbbreviation(int month) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
     ];
     return months[month - 1];
   }
 
   Widget _buildDetailRow(String label, String value, {TextStyle? style}) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppSpacing.xs/2),
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.xs / 2),
       child: RichText(
         text: TextSpan(
           children: [
             TextSpan(
               text: '$label ',
-              style: style ?? AppTheme.bodyStyle.copyWith(
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
+              style: style ??
+                  AppTheme.bodyStyle.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
             ),
             TextSpan(
               text: value,
@@ -1484,7 +1559,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
           Container(
             width: 16,
             height: 16,
-            margin: EdgeInsets.only(top: AppSpacing.xs/2),
+            margin: EdgeInsets.only(top: AppSpacing.xs / 2),
             decoration: BoxDecoration(
               color: zone.color,
               borderRadius: BorderRadius.circular(4),
@@ -1509,7 +1584,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                     color: _getZoneTextColor(zone.category),
                   ),
                 ),
-                SizedBox(height: AppSpacing.xs/2),
+                SizedBox(height: AppSpacing.xs / 2),
                 Text(
                   zone.description,
                   style: TextStyle(
