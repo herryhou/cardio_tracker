@@ -296,6 +296,8 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
       barTouchData: _buildBarTouchData(),
       alignment: BarChartAlignment.spaceAround,
       backgroundColor: Colors.white,
+      minY: _minY,
+      maxY: _maxY,
     );
   }
 
@@ -497,6 +499,8 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
       gridData: FlGridData(show: false),
       borderData: _buildBorderData(),
       backgroundColor: Colors.white,
+      minY: _minY,
+      maxY: _maxY,
     );
   }
 }
