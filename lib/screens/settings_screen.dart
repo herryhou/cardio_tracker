@@ -42,7 +42,10 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       title: const Text('Theme'),
                       subtitle: Text(_getThemeSubtitle(themeProvider.themeMode)),
-                      trailing: SegmentedButton<ThemeMode>(
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: SegmentedButton<ThemeMode>(
                         selected: {themeProvider.themeMode},
                         onSelectionChanged: (Set<ThemeMode> selection) {
                           themeProvider.setThemeMode(selection.first);
