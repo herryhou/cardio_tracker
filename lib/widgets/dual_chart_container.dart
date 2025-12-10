@@ -6,6 +6,7 @@ import '../providers/dual_chart_provider.dart';
 import '../utils/bp_format.dart';
 import 'clinical_scatter_plot.dart';
 import 'bp_range_bar_chart.dart';
+import 'timeline_carousel.dart';
 
 /// Dual Chart Container with synchronized scatter plot and time series chart
 class DualChartContainer extends StatefulWidget {
@@ -164,16 +165,54 @@ class _DualChartContainerState extends State<DualChartContainer> {
                           ),
                           const SizedBox(height: 16),
                           Expanded(
-                            child: ClinicalScatterPlot(
+                            child: InteractiveScatterPlot(
                               readings: widget.readings,
                               selectedReading: chartProvider.selectedReading,
                               onReadingSelected: chartProvider.selectReading,
+                              showResetButton: true,
                             ),
                           ),
                         ],
                         ),
                     ),
                 ),
+
+                // Timeline Carousel
+                if (widget.readings.isNotEmpty) ...[
+                  SizedBox(height: spacing),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Blood Pressure Timeline',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TimelineCarousel(
+                          readings: widget.readings,
+                          startDate: widget.startDate,
+                          endDate: widget.endDate,
+                          onDateSelected: (selectedDate) {
+                            // Find the reading for the selected date
+                            final selectedReading = widget.readings.firstWhere(
+                              (reading) {
+                                final dateStr = '${reading.timestamp.month.toString().padLeft(2, '0')}/${reading.timestamp.day.toString().padLeft(2, '0')}';
+                                return dateStr == selectedDate;
+                              },
+                              orElse: () => widget.readings.first,
+                            );
+                            chartProvider.selectReading(selectedReading);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+
                 SizedBox(height: spacing * 2),
 
                 // Blood Pressure Range Bar Chart

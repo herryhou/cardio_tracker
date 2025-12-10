@@ -787,7 +787,30 @@ class ClinicalScatterPainter extends CustomPainter {
   }
 }
 
-/// Clinical Scatter Plot Widget
+/// Interactive Clinical Scatter Plot Widget with zoom and pan
+class InteractiveScatterPlot extends StatefulWidget {
+  const InteractiveScatterPlot({
+    super.key,
+    required this.readings,
+    this.selectedReading,
+    this.onReadingSelected,
+    this.showTrendLine = true,
+    this.showResetButton = true,
+    this.onInteractionUpdate,
+  });
+
+  final List<BloodPressureReading> readings;
+  final BloodPressureReading? selectedReading;
+  final Function(BloodPressureReading?)? onReadingSelected;
+  final bool showTrendLine;
+  final bool showResetButton;
+  final Function(ScaleUpdateDetails)? onInteractionUpdate;
+
+  @override
+  State<InteractiveScatterPlot> createState() => _InteractiveScatterPlotState();
+}
+
+/// Clinical Scatter Plot Widget (non-interactive version for backward compatibility)
 class ClinicalScatterPlot extends StatefulWidget {
   const ClinicalScatterPlot({
     super.key,
@@ -806,6 +829,215 @@ class ClinicalScatterPlot extends StatefulWidget {
   State<ClinicalScatterPlot> createState() => _ClinicalScatterPlotState();
 }
 
+class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
+  final TransformationController _transformationController = TransformationController();
+  BloodPressureReading? _selectedReading;
+  OverlayEntry? _tooltipEntry;
+  bool _isDetailsVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedReading = widget.selectedReading;
+  }
+
+  @override
+  void dispose() {
+    _tooltipEntry?.remove();
+    _transformationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(InteractiveScatterPlot oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedReading != oldWidget.selectedReading) {
+      _selectedReading = widget.selectedReading;
+      if (widget.selectedReading != null) {
+        _showDetailsAnimation();
+      }
+    }
+  }
+
+  void _resetView() {
+    _transformationController.value = Matrix4.identity();
+    HapticFeedback.lightImpact();
+  }
+
+  void _showDetailsAnimation() {
+    setState(() {
+      _isDetailsVisible = true;
+    });
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        setState(() {
+          _isDetailsVisible = false;
+        });
+      }
+    });
+  }
+
+  void _handleInteractionUpdate(ScaleUpdateDetails details) {
+    widget.onInteractionUpdate?.call(details);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: EdgeInsets.zero,
+      decoration: BoxDecoration(
+        color: AppTheme.getChartBackground(context),
+        borderRadius: BorderRadius.circular(16),
+        // Neumorphic design
+        boxShadow: isDark
+            ? [
+                // Dark theme neumorphic shadows
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  blurRadius: 15,
+                  offset: const Offset(5, 5),
+                ),
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  blurRadius: 15,
+                  offset: const Offset(-5, -5),
+                ),
+              ]
+            : [
+                // Light theme neumorphic shadows
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(4, 4),
+                ),
+                BoxShadow(
+                  color: Colors.white,
+                  blurRadius: 10,
+                  offset: const Offset(-4, -4),
+                ),
+              ],
+      ),
+      child: Stack(
+        children: [
+          // InteractiveViewer for zoom and pan
+          InteractiveViewer(
+            transformationController: _transformationController,
+            minScale: 1.0,
+            maxScale: 3.0,
+            boundaryMargin: const EdgeInsets.all(100),
+            onInteractionUpdate: _handleInteractionUpdate,
+            child: ClinicalScatterPlot(
+              readings: widget.readings,
+              selectedReading: _selectedReading,
+              onReadingSelected: (reading) {
+                setState(() {
+                  _selectedReading = reading;
+                });
+                widget.onReadingSelected?.call(reading);
+                if (reading != null) {
+                  _showDetailsAnimation();
+                }
+              },
+              showTrendLine: widget.showTrendLine,
+            ),
+          ),
+
+          // Reset button
+          if (widget.showResetButton)
+            Positioned(
+              top: 16,
+              right: 16,
+              child: AnimatedOpacity(
+                opacity: _transformationController.value != Matrix4.identity() ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 200),
+                child: FloatingActionButton.small(
+                  onPressed: _resetView,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  foregroundColor: Theme.of(context).colorScheme.onSurface,
+                  elevation: 4,
+                  child: const Icon(Icons.refresh),
+                ),
+              ),
+            ),
+
+          // Animated details container
+          if (_isDetailsVisible && _selectedReading != null)
+            Positioned(
+              bottom: 80,
+              left: 16,
+              right: 16,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: _buildDetailsCard(_selectedReading!),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailsCard(BloodPressureReading reading) {
+    final color = ClinicalZones.getCategoryColor(reading.category);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 12,
+              height: 12,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Selected Reading',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Blood Pressure: ${formatBloodPressure(reading.systolic, reading.diastolic)}',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        Text(
+          'Heart Rate: ${reading.heartRate} bpm',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        Text(
+          'Category: ${ClinicalZones.getCategoryDescription(reading.category)}',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ],
+    );
+  }
+}
+
 class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
   final double _zoomLevel = 1.0;
   final Offset _panOffset = Offset.zero;
@@ -820,7 +1052,10 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
 
   @override
   void dispose() {
-    _tooltipEntry?.remove();
+    if (_tooltipEntry != null && _tooltipEntry!.mounted) {
+      _tooltipEntry?.remove();
+    }
+    _tooltipEntry = null;
     super.dispose();
   }
 
@@ -869,7 +1104,9 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
   }
 
   void _hideTooltip() {
-    _tooltipEntry?.remove();
+    if (_tooltipEntry != null && _tooltipEntry!.mounted) {
+      _tooltipEntry?.remove();
+    }
     _tooltipEntry = null;
   }
 

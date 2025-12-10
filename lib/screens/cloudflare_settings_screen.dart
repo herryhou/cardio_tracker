@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../services/cloudflare_kv_service.dart';
 import '../services/manual_sync_service.dart';
+import '../widgets/neumorphic_container.dart';
+import '../widgets/neumorphic_button.dart';
+import '../widgets/neumorphic_tile.dart';
 
 class CloudflareSettingsScreen extends StatefulWidget {
   const CloudflareSettingsScreen({super.key});
@@ -65,8 +69,12 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
   }
 
   Future<void> _saveConfiguration() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      HapticFeedback.heavyImpact();
+      return;
+    }
 
+    HapticFeedback.mediumImpact();
     setState(() => _isLoading = true);
     _clearLastSyncStatus();
 
@@ -92,6 +100,7 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
       });
 
       if (mounted) {
+        HapticFeedback.lightImpact();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -150,6 +159,7 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
   }
 
   Future<void> _performSync() async {
+    HapticFeedback.mediumImpact();
     setState(() {
       _isLoading = true;
       _lastSyncStatus = null;
@@ -171,6 +181,11 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
       });
 
       if (mounted) {
+        if (result.error != null) {
+          HapticFeedback.heavyImpact();
+        } else {
+          HapticFeedback.lightImpact();
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(_lastSyncStatus ?? 'Sync complete')),
         );
@@ -220,228 +235,288 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     // Use a simple try-catch for error handling
     try {
       return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cloudflare Sync'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Status section
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          _isConfigured ? Icons.cloud_done : Icons.cloud_off,
-                          color: _isConfigured ? Colors.green : Colors.grey,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          _isConfigured ? 'Configured' : 'Not configured',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const Spacer(),
-                        if (_isConfigured)
-                          Tooltip(
-                            message: 'Credentials are stored securely using device keychain/encrypted storage',
-                            child: Icon(
-                              Icons.security,
-                              size: 16,
-                              color: Colors.green,
-                            ),
-                          ),
-                      ],
-                    ),
-                    if (_isConfigured) ...[
-                      const SizedBox(height: 8),
+        backgroundColor: theme.colorScheme.surface,
+        appBar: AppBar(
+          title: const Text('Cloudflare Sync'),
+          backgroundColor: theme.colorScheme.surface,
+          elevation: 0,
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Status section
+              NeumorphicContainer(
+                borderRadius: 16,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Row(
                         children: [
                           Icon(
-                            Icons.lock,
-                            size: 14,
-                            color: Colors.green,
+                            _isConfigured ? Icons.cloud_done : Icons.cloud_off,
+                            color: _isConfigured ? Colors.green : Colors.grey,
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 8),
                           Text(
-                            'Credentials stored securely',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.green,
-                            ),
+                            _isConfigured ? 'Configured' : 'Not configured',
+                            style: theme.textTheme.titleMedium,
                           ),
+                          const Spacer(),
+                          if (_isConfigured)
+                            Tooltip(
+                              message: 'Credentials are stored securely using device keychain/encrypted storage',
+                              child: Icon(
+                                Icons.security,
+                                size: 16,
+                                color: Colors.green,
+                              ),
+                            ),
                         ],
                       ),
-                    ],
-                    if (_lastSyncTime != null) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        'Last synced: ${_formatDateTime(_lastSyncTime!)}',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                    if (_lastSaveStatus != null) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        'Config: $_lastSaveStatus!',
-                        style: TextStyle(
-                          color: _lastSaveStatus!.contains('error')
-                              ? Colors.red
-                              : Colors.green,
-                          fontSize: 12,
+                      if (_isConfigured) ...[
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.lock,
+                              size: 14,
+                              color: Colors.green,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Credentials stored securely',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                    if (_lastSyncStatus != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        'Sync: $_lastSyncStatus!',
-                        style: TextStyle(
-                          color: _lastSyncStatus!.contains('error') || _lastSyncStatus!.contains('failed')
-                              ? Colors.red
-                              : Colors.green,
-                          fontSize: 12,
+                      ],
+                      if (_lastSyncTime != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          'Last synced: ${_formatDateTime(_lastSyncTime!)}',
+                          style: theme.textTheme.bodySmall,
                         ),
-                      ),
+                      ],
+                      if (_lastSaveStatus != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          'Config: $_lastSaveStatus!',
+                          style: TextStyle(
+                            color: _lastSaveStatus!.contains('error')
+                                ? Colors.red
+                                : Colors.green,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                      if (_lastSyncStatus != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          'Sync: $_lastSyncStatus!',
+                          style: TextStyle(
+                            color: _lastSyncStatus!.contains('error') || _lastSyncStatus!.contains('failed')
+                                ? Colors.red
+                                : Colors.green,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-            // Sync button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _isLoading || !_isConfigured ? null : _performSync,
-                icon: _isLoading
+              // Sync button
+              NeumorphicButton(
+                onPressed: _isLoading || !_isConfigured ? null : () {
+                  HapticFeedback.mediumImpact();
+                  _performSync();
+                },
+                width: double.infinity,
+                height: 48,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                child: _isLoading
                     ? const SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Icon(Icons.sync),
-                label: Text(_isLoading ? 'Syncing...' : 'Sync Now'),
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.sync),
+                          const SizedBox(width: 8),
+                          Text(_isLoading ? 'Syncing...' : 'Sync Now'),
+                        ],
+                      ),
               ),
-            ),
 
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // Configuration form
-            Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Cloudflare KV Configuration',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: _accountIdController,
-                      decoration: const InputDecoration(
-                        labelText: 'Account ID',
-                        hintText: 'Your Cloudflare account ID',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Account ID is required';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    TextFormField(
-                      controller: _namespaceIdController,
-                      decoration: const InputDecoration(
-                        labelText: 'Namespace ID',
-                        hintText: 'Your KV namespace ID',
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Namespace ID is required';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    TextFormField(
-                      controller: _apiTokenController,
-                      decoration: InputDecoration(
-                        labelText: 'API Token',
-                        hintText: _isConfigured
-                            ? 'Re-enter your API token to update credentials'
-                            : 'Your Cloudflare API token',
-                        helperText: _isConfigured
-                            ? 'Stored securely • Enter new token to update'
-                            : 'Will be stored securely in device keychain',
-                        prefixIcon: Icon(
-                          Icons.key,
-                          color: Colors.grey[600],
+              // Configuration form
+              NeumorphicContainer(
+                borderRadius: 16,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Cloudflare KV Configuration',
+                          style: theme.textTheme.titleLarge,
                         ),
-                        suffixIcon: _isConfigured
-                            ? IconButton(
-                                icon: const Icon(Icons.info_outline),
-                                onPressed: () {
-                                  _showCredentialInfoDialog(context);
-                                },
-                                tooltip: 'About credential storage',
-                              )
-                            : null,
-                      ),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'API token is required';
-                        }
-                        return null;
-                      },
-                    ),
 
-                    const SizedBox(height: 24),
+                        const SizedBox(height: 16),
 
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _saveConfiguration,
-                        child: Text(_isConfigured ? 'Update' : 'Save'),
-                      ),
-                    ),
-
-                    if (_isConfigured) ...[
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          onPressed: _isLoading ? null : _clearConfiguration,
-                          child: const Text('Clear'),
+                        // Account ID field
+                        NeumorphicContainer(
+                          isPressed: false,
+                          borderRadius: 12,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: TextFormField(
+                            controller: _accountIdController,
+                            decoration: const InputDecoration(
+                              labelText: 'Account ID',
+                              hintText: 'Your Cloudflare account ID',
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Account ID is required';
+                              }
+                              return null;
+                            },
+                            onTap: () => HapticFeedback.lightImpact(),
+                          ),
                         ),
-                      ),
-                    ],
-                  ],
+
+                        // Namespace ID field
+                        NeumorphicContainer(
+                          isPressed: false,
+                          borderRadius: 12,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: TextFormField(
+                            controller: _namespaceIdController,
+                            decoration: const InputDecoration(
+                              labelText: 'Namespace ID',
+                              hintText: 'Your KV namespace ID',
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Namespace ID is required';
+                              }
+                              return null;
+                            },
+                            onTap: () => HapticFeedback.lightImpact(),
+                          ),
+                        ),
+
+                        // API Token field
+                        NeumorphicContainer(
+                          isPressed: false,
+                          borderRadius: 12,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          margin: const EdgeInsets.only(bottom: 24),
+                          child: TextFormField(
+                            controller: _apiTokenController,
+                            decoration: InputDecoration(
+                              labelText: 'API Token',
+                              hintText: _isConfigured
+                                  ? 'Re-enter your API token to update credentials'
+                                  : 'Your Cloudflare API token',
+                              helperText: _isConfigured
+                                  ? 'Stored securely • Enter new token to update'
+                                  : 'Will be stored securely in device keychain',
+                              prefixIcon: Icon(
+                                Icons.key,
+                                color: Colors.grey[600],
+                              ),
+                              suffixIcon: _isConfigured
+                                  ? IconButton(
+                                      icon: const Icon(Icons.info_outline),
+                                      onPressed: () {
+                                        HapticFeedback.lightImpact();
+                                        _showCredentialInfoDialog(context);
+                                      },
+                                      tooltip: 'About credential storage',
+                                    )
+                                  : null,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                            ),
+                            obscureText: true,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'API token is required';
+                              }
+                              return null;
+                            },
+                            onTap: () => HapticFeedback.lightImpact(),
+                          ),
+                        ),
+
+                        // Save/Update button
+                        NeumorphicButton(
+                          onPressed: _isLoading ? null : () {
+                            HapticFeedback.mediumImpact();
+                            _saveConfiguration();
+                          },
+                          width: double.infinity,
+                          height: 48,
+                          child: Text(_isConfigured ? 'Update' : 'Save'),
+                        ),
+
+                        if (_isConfigured) ...[
+                          const SizedBox(height: 12),
+                          NeumorphicButton(
+                            onPressed: _isLoading ? null : () {
+                              HapticFeedback.mediumImpact();
+                              _clearConfiguration();
+                            },
+                            width: double.infinity,
+                            height: 48,
+                            color: theme.colorScheme.errorContainer,
+                            child: Text(
+                              'Clear',
+                              style: TextStyle(
+                                color: theme.colorScheme.onErrorContainer,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
-      ),
       );
     } catch (e, stackTrace) {
       print('CloudflareSettingsScreen build error: $e');
