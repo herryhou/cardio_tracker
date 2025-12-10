@@ -5,7 +5,7 @@ import '../models/chart_types.dart';
 import '../providers/dual_chart_provider.dart';
 import '../utils/bp_format.dart';
 import 'clinical_scatter_plot.dart';
-import 'fl_time_series_chart.dart';
+import 'bp_range_bar_chart.dart';
 
 /// Dual Chart Container with synchronized scatter plot and time series chart
 class DualChartContainer extends StatefulWidget {
@@ -176,12 +176,12 @@ class _DualChartContainerState extends State<DualChartContainer> {
                 ),
                 SizedBox(height: spacing * 2),
 
-                // Time Series Chart
+                // Blood Pressure Range Bar Chart
                 Container(
                   height: kClinicalScatterChartHeight * 0.533,
                   margin: EdgeInsets.zero,
                   padding: EdgeInsets.zero,
-                  child: FlTimeSeriesChart(
+                  child: BPRangeBarChart(
                       key: _flTimeSeriesChartKey,
                       readings: widget.readings,
                       selectedReading: chartProvider.selectedReading,
