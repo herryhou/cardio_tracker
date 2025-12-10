@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/blood_pressure_provider.dart';
 import '../models/blood_pressure_reading.dart';
@@ -53,8 +54,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           return RefreshIndicator(
             onRefresh: () => provider.loadReadings(),
             child: GestureDetector(
-              onLongPress: () {
-                HapticFeedback.mediumImpact();
+              onLongPress: () async {
+                await HapticFeedback.mediumImpact();
                 showExportBottomSheet(
                   context,
                   readings: provider.readings,
