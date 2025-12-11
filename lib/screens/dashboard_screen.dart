@@ -9,13 +9,11 @@ import '../services/manual_sync_service.dart';
 import '../screens/add_reading_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/cloudflare_settings_screen.dart';
-import '../widgets/app_icon.dart';
 import '../widgets/recent_reading_item.dart';
 import '../widgets/reading_card_neu.dart';
 import '../widgets/neumorphic_container.dart';
 import '../widgets/neumorphic_button.dart';
 import '../widgets/export_bottom_sheet.dart';
-import 'dart:math' as math;
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -102,7 +100,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // Neumorphic AppBar with minimalist design
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const AppLogo(showText: true, size: 32),
+      title: Text(
+        'Cardio Tracker',
+        style: TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
       elevation: 0,
       backgroundColor: Colors.transparent,
       foregroundColor: Theme.of(context).colorScheme.primary,
@@ -180,7 +185,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
           child: PopupMenuButton<String>(
             icon: Icon(
-              AppIcons.more,
+              Icons.more_vert,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
             ),
             onSelected: (value) {
@@ -202,7 +207,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 value: 'export_csv',
                 child: Row(
                   children: [
-                    Icon(AppIcons.export, size: 18),
+                    Icon(Icons.file_download, size: 18),
                     SizedBox(width: AppSpacing.cardsGap),
                     const Text('Export All Data'),
                   ],
@@ -212,7 +217,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 value: 'export_summary',
                 child: Row(
                   children: [
-                    Icon(AppIcons.analytics, size: 18),
+                    Icon(Icons.assessment, size: 18),
                     SizedBox(width: AppSpacing.cardsGap),
                     const Text('Export Summary'),
                   ],
@@ -560,8 +565,9 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+      decoration: const BoxDecoration(
+        // color: Theme.of(context).colorScheme.surface,
+        color: Color(0xFFF5F5F5),
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SingleChildScrollView(
@@ -606,13 +612,13 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
                                   ),
                         ),
                         Text(
-                          'Record blood pressure and heart rate',
+                          'Record blood pressure / heart rate',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSurface
-                                        .withOpacity(0.7),
+                                        .withValues(alpha: 0.7),
                                   ),
                         ),
                       ],

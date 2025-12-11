@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/distribution_screen.dart';
-import 'widgets/app_icon.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
