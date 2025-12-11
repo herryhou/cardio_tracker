@@ -32,7 +32,7 @@ class ReadingCardNeu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    Theme.of(context);
     final color = accentColor ?? _getCategoryColor(context, reading.category);
 
     // Size configurations
@@ -43,7 +43,8 @@ class ReadingCardNeu extends StatelessWidget {
 
     return Semantics(
       label: 'Blood pressure reading',
-      hint: '${reading.systolic} over ${reading.diastolic}, ${reading.category.name}',
+      hint:
+          '${reading.systolic} over ${reading.diastolic}, ${reading.category.name}',
       child: GestureDetector(
         onTap: onTap,
         child: NeumorphicContainer(
@@ -73,7 +74,8 @@ class ReadingCardNeu extends StatelessWidget {
   }
 
   /// Builds the main blood pressure display
-  Widget _buildBPDisplay(BuildContext context, Color color, double mainFontSize, double labelFontSize) {
+  Widget _buildBPDisplay(BuildContext context, Color color, double mainFontSize,
+      double labelFontSize) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -157,45 +159,51 @@ class ReadingCardNeu extends StatelessWidget {
   }
 
   /// Builds the pulse display and status badge row
-  Widget _buildPulseAndStatus(BuildContext context, Color color, double labelFontSize, double iconSize) {
+  Widget _buildPulseAndStatus(BuildContext context, Color color,
+      double labelFontSize, double iconSize) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Pulse Display with Animated Heart
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.favorite,
-              size: iconSize,
-              color: Colors.red.shade400,
-            ),
-
-            SizedBox(width: AppSpacing.sm),
-
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  reading.heartRate.toString(),
-                  style: TextStyle(
-                    fontSize: labelFontSize * 1.5,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
+        // Pulse Display with Animated Heart (only if heart rate is available)
+        if (reading.hasHeartRate)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.favorite,
+                size: iconSize,
+                color: Colors.red.shade400,
+              ),
+              SizedBox(width: AppSpacing.sm),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    reading.heartRate.toString(),
+                    style: TextStyle(
+                      fontSize: labelFontSize * 1.5,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
-                ),
-                Text(
-                  'bpm',
-                  style: TextStyle(
-                    fontSize: labelFontSize * 0.9,
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  Text(
+                    'bpm',
+                    style: TextStyle(
+                      fontSize: labelFontSize * 0.9,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
+                ],
+              ),
+            ],
+          )
+        else
+          // Placeholder to maintain layout when no pulse
+          const SizedBox(),
 
         // Status Badge
         Container(
@@ -285,7 +293,8 @@ class ReadingCardNeu extends StatelessWidget {
   }
 
   /// Get color based on blood pressure category
-  Color _getCategoryColor(BuildContext context, BloodPressureCategory category) {
+  Color _getCategoryColor(
+      BuildContext context, BloodPressureCategory category) {
     switch (category) {
       case BloodPressureCategory.low:
         return AppTheme.getLowColor(context);
