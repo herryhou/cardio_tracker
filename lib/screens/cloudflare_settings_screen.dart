@@ -4,13 +4,13 @@ import '../services/cloudflare_kv_service.dart';
 import '../services/manual_sync_service.dart';
 import '../widgets/neumorphic_container.dart';
 import '../widgets/neumorphic_button.dart';
-import '../widgets/neumorphic_tile.dart';
 
 class CloudflareSettingsScreen extends StatefulWidget {
   const CloudflareSettingsScreen({super.key});
 
   @override
-  State<CloudflareSettingsScreen> createState() => _CloudflareSettingsScreenState();
+  State<CloudflareSettingsScreen> createState() =>
+      _CloudflareSettingsScreenState();
 }
 
 class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
@@ -59,7 +59,8 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
         });
       }
     } catch (e) {
-      print('CloudflareSettingsScreen: Error loading configuration: ${e.toString()}');
+      print(
+          'CloudflareSettingsScreen: Error loading configuration: ${e.toString()}');
       if (mounted) {
         setState(() {
           _isConfigured = false;
@@ -103,11 +104,9 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
         HapticFeedback.lightImpact();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              wasInitiallyConfigured
-                  ? 'Cloudflare KV credentials updated'
-                  : 'Cloudflare KV configured successfully'
-            ),
+            content: Text(wasInitiallyConfigured
+                ? 'Cloudflare KV credentials updated'
+                : 'Cloudflare KV configured successfully'),
           ),
         );
       }
@@ -123,7 +122,8 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Connection to Cloudflare KV verified successfully'),
+              content:
+                  Text('Connection to Cloudflare KV verified successfully'),
               backgroundColor: Colors.green,
             ),
           );
@@ -135,13 +135,13 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Credentials saved but connection test failed - check console for details'),
+              content: Text(
+                  'Credentials saved but connection test failed - check console for details'),
               backgroundColor: Colors.orange,
             ),
           );
         }
       }
-
     } catch (e) {
       print('CloudflareSettingsScreen: Save failed: ${e.toString()}');
       setState(() {
@@ -190,7 +190,6 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
           SnackBar(content: Text(_lastSyncStatus ?? 'Sync complete')),
         );
       }
-
     } catch (e) {
       setState(() {
         _lastSyncStatus = 'Sync error: ${e.toString()}';
@@ -274,7 +273,8 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                           const Spacer(),
                           if (_isConfigured)
                             Tooltip(
-                              message: 'Credentials are stored securely using device keychain/encrypted storage',
+                              message:
+                                  'Credentials are stored securely using device keychain/encrypted storage',
                               child: Icon(
                                 Icons.security,
                                 size: 16,
@@ -326,7 +326,8 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                         Text(
                           'Sync: $_lastSyncStatus!',
                           style: TextStyle(
-                            color: _lastSyncStatus!.contains('error') || _lastSyncStatus!.contains('failed')
+                            color: _lastSyncStatus!.contains('error') ||
+                                    _lastSyncStatus!.contains('failed')
                                 ? Colors.red
                                 : Colors.green,
                             fontSize: 12,
@@ -342,13 +343,16 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
 
               // Sync button
               NeumorphicButton(
-                onPressed: _isLoading || !_isConfigured ? null : () {
-                  HapticFeedback.mediumImpact();
-                  _performSync();
-                },
+                onPressed: _isLoading || !_isConfigured
+                    ? null
+                    : () {
+                        HapticFeedback.mediumImpact();
+                        _performSync();
+                      },
                 width: double.infinity,
                 height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 child: _isLoading
                     ? const SizedBox(
                         width: 20,
@@ -389,7 +393,8 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                         NeumorphicContainer(
                           isPressed: false,
                           borderRadius: 12,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 4),
                           margin: const EdgeInsets.only(bottom: 12),
                           child: TextFormField(
                             controller: _accountIdController,
@@ -414,7 +419,8 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                         NeumorphicContainer(
                           isPressed: false,
                           borderRadius: 12,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 4),
                           margin: const EdgeInsets.only(bottom: 12),
                           child: TextFormField(
                             controller: _namespaceIdController,
@@ -439,7 +445,8 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                         NeumorphicContainer(
                           isPressed: false,
                           borderRadius: 12,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 4),
                           margin: const EdgeInsets.only(bottom: 24),
                           child: TextFormField(
                             controller: _apiTokenController,
@@ -482,10 +489,12 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
 
                         // Save/Update button
                         NeumorphicButton(
-                          onPressed: _isLoading ? null : () {
-                            HapticFeedback.mediumImpact();
-                            _saveConfiguration();
-                          },
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                                  HapticFeedback.mediumImpact();
+                                  _saveConfiguration();
+                                },
                           width: double.infinity,
                           height: 48,
                           child: Text(_isConfigured ? 'Update' : 'Save'),
@@ -494,10 +503,12 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                         if (_isConfigured) ...[
                           const SizedBox(height: 12),
                           NeumorphicButton(
-                            onPressed: _isLoading ? null : () {
-                              HapticFeedback.mediumImpact();
-                              _clearConfiguration();
-                            },
+                            onPressed: _isLoading
+                                ? null
+                                : () {
+                                    HapticFeedback.mediumImpact();
+                                    _clearConfiguration();
+                                  },
                             width: double.infinity,
                             height: 48,
                             color: theme.colorScheme.errorContainer,
