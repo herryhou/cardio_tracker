@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import '../providers/blood_pressure_provider.dart';
 import '../models/blood_pressure_reading.dart';
 import '../theme/app_theme.dart';
 
@@ -38,7 +35,12 @@ class _AddReadingContentState extends State<AddReadingContent> {
   late final TextEditingController _diastolicController;
   late final TextEditingController _heartRateController;
   late final TextEditingController _notesController;
+  late final FocusNode _systolicFocusNode;
   late DateTime _selectedDateTime;
+
+  // Keyboard animation state
+  bool _keyboardVisible = false;
+  final double _keyboardHeight = 300; // Estimated keyboard height
 
   @override
   void initState() {
@@ -49,7 +51,22 @@ class _AddReadingContentState extends State<AddReadingContent> {
     _heartRateController =
         widget.heartRateController ?? TextEditingController();
     _notesController = widget.notesController ?? TextEditingController();
+    _systolicFocusNode = FocusNode();
     _selectedDateTime = widget.initialDateTime ?? DateTime.now();
+
+    // Add focus listener to systolic field
+    _systolicFocusNode.addListener(_updateKeyboardVisibility);
+
+    // Request focus on systolic field to show keyboard after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _systolicFocusNode.requestFocus();
+        // Start keyboard visibility listener after a short delay
+        Future.delayed(const Duration(milliseconds: 100), () {
+          _updateKeyboardVisibility();
+        });
+      }
+    });
   }
 
   @override
@@ -59,202 +76,243 @@ class _AddReadingContentState extends State<AddReadingContent> {
     if (widget.diastolicController == null) _diastolicController.dispose();
     if (widget.heartRateController == null) _heartRateController.dispose();
     if (widget.notesController == null) _notesController.dispose();
+    _systolicFocusNode.dispose();
     super.dispose();
+  }
+
+  void _updateKeyboardVisibility() {
+    // Check if any text field has focus to determine keyboard visibility
+    bool hasFocus =
+        _systolicFocusNode.hasFocus || FocusScope.of(context).hasFocus;
+
+    if (hasFocus != _keyboardVisible) {
+      setState(() {
+        _keyboardVisible = hasFocus;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(AppSpacing.screenMargin),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            // Date/Time picker
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                // color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .outline
-                      .withValues(alpha: 0.2),
+    return Container(
+      color: Colors.transparent,
+      child: AnimatedPadding(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        padding: EdgeInsets.only(
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: _keyboardVisible ? _keyboardHeight : AppSpacing.md,
+        ),
+        child: GestureDetector(
+          onTap: () {
+            // Hide keyboard when tapping outside
+            FocusScope.of(context).unfocus();
+            Future.delayed(const Duration(milliseconds: 100), () {
+              _updateKeyboardVisibility();
+            });
+          },
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Container(
+                // White container for all input elements
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.schedule_rounded,
-                        size: 20,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          '${_formatDate(_selectedDateTime)} at ${_formatTime(_selectedDateTime)}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Input fields row
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildNumberField(
+                            controller: _systolicController,
+                            label: 'SYS',
+                            hint: '120',
+                            focusNode: _systolicFocusNode,
+                            validator: (value) {
+                              if (value == null || value.isEmpty)
+                                return 'Required';
+                              final systolic = int.tryParse(value);
+                              if (systolic == null) return 'Invalid number';
+                              if (systolic < 70 || systolic > 250) {
+                                return '70-250';
+                              }
+                              return null;
+                            },
+                          ),
                         ),
-                      ),
-                      TextButton.icon(
-                        onPressed: _selectDateTime,
-                        // icon: const Icon(Icons.edit_calendar),
-                        style: TextButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: _buildNumberField(
+                            controller: _diastolicController,
+                            label: 'DIA',
+                            hint: '80',
+                            validator: (value) {
+                              if (value == null || value.isEmpty)
+                                return 'Required';
+                              final diastolic = int.tryParse(value);
+                              if (diastolic == null) return 'Invalid number';
+                              if (diastolic < 40 || diastolic > 150) {
+                                return '40-150';
+                              }
+                              return null;
+                            },
+                          ),
                         ),
-                        label: const Text('Change'),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: _buildNumberField(
+                            controller: _heartRateController,
+                            label: 'Pulse',
+                            hint: '72',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) return null;
+                              final heartRate = int.tryParse(value);
+                              if (heartRate == null) return 'Invalid number';
+                              if (heartRate < 30 || heartRate > 250) {
+                                return '30-250';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Date/Time picker
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.schedule_rounded,
+                            size: 18,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              '${_formatDate(_selectedDateTime)} ${_formatTime(_selectedDateTime)}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: _selectDateTime,
+                            child: const Text('Change'),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: AppSpacing.md),
+                    TextFormField(
+                      controller: _notesController,
+                      maxLines: 1,
+                      maxLength: 150,
+                      decoration: InputDecoration(
+                        hintText: 'Notes (optional)',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .outline
+                                .withValues(alpha: 0.2),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withValues(alpha: 0.5),
+                            width: 1,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        counterText: '',
+                        helperText: ' ',
+                        helperStyle:
+                            Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Colors.transparent,
+                                  height: 1.0,
+                                ),
+                      ),
+                    ),
+                    // const SizedBox(height: AppSpacing.md),
+
+                    // Save button (only show in modal)
+                    if (widget.isInModal) ...[
+                      const SizedBox(height: AppSpacing.lg),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: widget.onSave,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            foregroundColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: widget.isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                  ),
+                                )
+                              : const Text(
+                                  'Save Reading',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: null,
+                                  ),
+                                ),
+                        ),
                       ),
                     ],
-                  ),
-                ],
-              ),
-            ),
-
-            // Simple input fields for modal
-            Row(
-              children: [
-                Expanded(
-                  child: _buildNumberField(
-                    controller: _systolicController,
-                    label: 'SYS',
-                    hint: '120',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Required';
-                      final systolic = int.tryParse(value);
-                      if (systolic == null) return 'Invalid number';
-                      if (systolic < 70 || systolic > 250) {
-                        return '70-250';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: _buildNumberField(
-                    controller: _diastolicController,
-                    label: 'DIA',
-                    hint: '80',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Required';
-                      final diastolic = int.tryParse(value);
-                      if (diastolic == null) return 'Invalid number';
-                      if (diastolic < 40 || diastolic > 150) {
-                        return '40-150';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: _buildNumberField(
-                    controller: _heartRateController,
-                    label: 'Pulse',
-                    hint: '72',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return null;
-                      final heartRate = int.tryParse(value);
-                      if (heartRate == null) return 'Invalid number';
-                      if (heartRate < 30 || heartRate > 250) {
-                        return '30-250';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            TextFormField(
-              controller: _notesController,
-              maxLines: 2,
-              maxLength: 150,
-              decoration: InputDecoration(
-                // labelText: 'Notes (Optional)',
-                hintText:
-                    'e.g., wake up, after workout, felt dizzy, medication taken',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .outline
-                        .withValues(alpha: 0.2),
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.5),
-                    width: 2,
-                  ),
-                ),
-                contentPadding: const EdgeInsets.all(AppSpacing.md),
-                counterText: '',
-                helperText: ' ',
-                helperStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.transparent,
-                      height: 1.2,
-                    ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            // Save button (only show in modal)
-            if (widget.isInModal) ...[
-              const SizedBox(height: AppSpacing.lg),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: widget.onSave,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: widget.isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : const Text(
-                          'Save Reading',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: null,
-                          ),
-                        ),
+                  ],
                 ),
               ),
-            ],
-          ],
+            ),
+          ),
         ),
       ),
     );
@@ -318,13 +376,14 @@ class _AddReadingContentState extends State<AddReadingContent> {
     required String label,
     required String hint,
     required String? Function(String?) validator,
+    FocusNode? focusNode,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 fontWeight: FontWeight.w500,
                 color: Theme.of(context)
                     .colorScheme
@@ -332,24 +391,25 @@ class _AddReadingContentState extends State<AddReadingContent> {
                     .withValues(alpha: 0.8),
               ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 2),
         TextFormField(
           controller: controller,
+          focusNode: focusNode,
           keyboardType: TextInputType.number,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.w400,
               ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: FontWeight.w400,
                   color: Theme.of(context).colorScheme.outline,
                 ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                 color: Theme.of(context)
                     .colorScheme
@@ -358,7 +418,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                 color: Theme.of(context)
                     .colorScheme
@@ -367,40 +427,42 @@ class _AddReadingContentState extends State<AddReadingContent> {
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                 color: Theme.of(context)
                     .colorScheme
                     .primary
                     .withValues(alpha: 0.5),
-                width: 2,
+                width: 1,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                 color: Theme.of(context).colorScheme.error,
-                width: 2,
+                width: 1,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                 color: Theme.of(context).colorScheme.error,
-                width: 2,
+                width: 1,
               ),
             ),
             errorStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.error,
-                  height: 1.2,
+                  height: 1.0,
                 ),
-            errorMaxLines: 2,
-            contentPadding: const EdgeInsets.symmetric(vertical: 12),
+            errorMaxLines: 1,
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
             helperText: ' ',
             helperStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Colors.transparent,
-                  height: 1.2,
+                  height: 1.0,
                 ),
+            isDense: true,
           ),
           validator: validator,
           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -415,9 +477,9 @@ class _AddReadingContentState extends State<AddReadingContent> {
 
     final systolic = int.tryParse(_systolicController.text);
     final diastolic = int.tryParse(_diastolicController.text);
-    final heartRate = _heartRateController.text.isNotEmpty
-        ? int.tryParse(_heartRateController.text)
-        : 0;
+    // final heartRate = _heartRateController.text.isNotEmpty
+    //     ? int.tryParse(_heartRateController.text)
+    //     : 0;
 
     return systolic != null && diastolic != null;
   }
