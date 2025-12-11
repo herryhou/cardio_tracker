@@ -61,7 +61,7 @@ class ClinicalZones {
     ClinicalZone(
       name: 'Stage 1 Hypertension',
       bounds:
-          Rect.fromLTWH(50, 70, 70, 69), // 50-120 diastolic, 70-139 systolic
+          Rect.fromLTWH(50, 70, 40, 69), // 50-120 diastolic, 70-139 systolic
       color: Color.fromARGB(255, 255, 207, 156), // Orange-600
       description: '130-139/80-89',
       category: BloodPressureCategory.stage1,
@@ -508,16 +508,18 @@ class ClinicalScatterPainter extends CustomPainter {
   }
 
   void _drawClinicalZones(Canvas canvas, Rect drawArea) {
-    // Draw zones in order - from largest to smallest for proper layering
+    // Draw zones in correct order for proper layering: stage 2 → stage 1 → elevated → normal
+    // This ensures smaller zones are drawn on top of larger zones
     final orderedZones = [
-      ClinicalZones.zones
-          .firstWhere((z) => z.category == BloodPressureCategory.stage2),
-      ClinicalZones.zones
-          .firstWhere((z) => z.category == BloodPressureCategory.stage1),
-      ClinicalZones.zones
-          .firstWhere((z) => z.category == BloodPressureCategory.elevated),
-      ClinicalZones.zones
-          .firstWhere((z) => z.category == BloodPressureCategory.normal),
+      ClinicalZones.zones.firstWhere((z) =>
+          z.category ==
+          BloodPressureCategory.stage2), // Largest area, drawn first
+      ClinicalZones.zones.firstWhere(
+          (z) => z.category == BloodPressureCategory.stage1), // Second largest
+      ClinicalZones.zones.firstWhere(
+          (z) => z.category == BloodPressureCategory.elevated), // Smaller
+      ClinicalZones.zones.firstWhere((z) =>
+          z.category == BloodPressureCategory.normal), // Smallest, drawn last
     ];
 
     for (final zone in orderedZones) {
@@ -531,7 +533,7 @@ class ClinicalScatterPainter extends CustomPainter {
 
       canvas.drawRect(scaledBounds, zonePaint);
 
-      // Draw zone border only for the outermost edges
+      // Draw zone border only for the outermost edges to avoid overlapping borders
       if (zone.name != 'Normal') {
         // Skip border for Normal zone as it's overlapped
         final borderPaint = Paint()
@@ -723,15 +725,6 @@ class ClinicalScatterPainter extends CustomPainter {
     canvas.drawCircle(point, 6, centerPaint);
   }
 
-  Offset _scalePointToDrawingArea(Offset dataPoint, Rect drawArea) {
-    // Scale data point (systolic: 70-170, diastolic: 50-120) to drawing area
-    final x =
-        drawArea.left + ((dataPoint.dx - 70) / (170 - 70)) * drawArea.width;
-    final y =
-        drawArea.bottom - ((dataPoint.dy - 50) / (120 - 50)) * drawArea.height;
-    return Offset(x, y);
-  }
-
   Offset _scalePointToDrawingAreaSwapped(Offset dataPoint, Rect drawArea) {
     // SWAPPED: Scale data point (diastolic: 50-120 on X, systolic: 70-170 on Y) to drawing area
     final x =
@@ -753,19 +746,6 @@ class ClinicalScatterPainter extends CustomPainter {
     // Darken a color by reducing its brightness significantly
     final hsl = HSLColor.fromColor(color);
     return hsl.withLightness((hsl.lightness - 0.45).clamp(0.0, 1.0)).toColor();
-  }
-
-  Rect _scaleRectToDrawingArea(Rect dataRect, Rect drawArea) {
-    // Scale data rectangle (systolic: 70-170, diastolic: 50-120) to drawing area
-    final left =
-        drawArea.left + ((dataRect.left - 70) / (170 - 70)) * drawArea.width;
-    final top =
-        drawArea.bottom - ((dataRect.top - 50) / (120 - 50)) * drawArea.height;
-    final right =
-        drawArea.left + ((dataRect.right - 70) / (170 - 70)) * drawArea.width;
-    final bottom = drawArea.bottom -
-        ((dataRect.bottom - 50) / (120 - 50)) * drawArea.height;
-    return Rect.fromLTRB(left, top, right, bottom);
   }
 
   Rect _scaleRectToDrawingAreaSwapped(Rect dataRect, Rect drawArea) {
@@ -1153,11 +1133,10 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
       BloodPressureReading reading, Offset globalPosition) {
     _hideTooltip();
 
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final Size size = renderBox.size;
+    // final RenderBox renderBox = context.findRenderObject() as RenderBox;
 
-    final tooltipWidth = 280.0;
-    final tooltipHeight = 200.0;
+    const tooltipWidth = 280.0;
+    const tooltipHeight = 200.0;
 
     double left = globalPosition.dx;
     double top = globalPosition.dy;
@@ -1312,10 +1291,10 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
 
     // SWAPPED: Reverse calculate data coordinates from tap position
     // X-axis is now diastolic (50-120), Y-axis is now systolic (70-170)
-    final diastolicValue =
-        50 + ((position.dx - drawArea.left) / drawArea.width) * (120 - 50);
-    final systolicValue =
-        170 - ((position.dy - drawArea.top) / drawArea.height) * (170 - 70);
+    // final diastolicValue =
+    //     50 + ((position.dx - drawArea.left) / drawArea.width) * (120 - 50);
+    // final systolicValue =
+    //     170 - ((position.dy - drawArea.top) / drawArea.height) * (170 - 70);
 
     // Tolerance adjusted for 5px circles
     final tolerance = 12.0;
@@ -1337,15 +1316,6 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     }
 
     return closestReading;
-  }
-
-  Offset _scalePointToDrawingAreaForHitTesting(
-      Offset dataPoint, Rect drawArea) {
-    final x =
-        drawArea.left + ((dataPoint.dx - 60) / (200 - 60)) * drawArea.width;
-    final y =
-        drawArea.bottom - ((dataPoint.dy - 40) / (130 - 40)) * drawArea.height;
-    return Offset(x, y);
   }
 
   Offset _scalePointToDrawingAreaForHitTestingSwapped(
