@@ -588,13 +588,10 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
               // Header
               Row(
                 children: [
-                  NeumorphicContainer(
-                    borderRadius: 12.0,
-                    padding: EdgeInsets.all(AppSpacing.md),
-                    child: HeartIcon(
-                      size: 24,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  Icon(
+                    Icons.favorite,
+                    size: 24,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   SizedBox(width: AppSpacing.md),
                   Expanded(
@@ -602,14 +599,14 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'New Reading ...',
+                          'New Reading',
                           style:
                               Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                         ),
                         Text(
-                          'Record your blood pressure and heart rate',
+                          'Record blood pressure and heart rate',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: Theme.of(context)
@@ -693,27 +690,32 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.error_outline, color: Theme.of(context).colorScheme.onSurface, size: 20),
+                  Icon(Icons.error_outline,
+                      color: Theme.of(context).colorScheme.onSurface, size: 20),
                   const SizedBox(width: 12),
-                  const Text('Please fix the following errors:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('Please fix the following errors:',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                 ],
               ),
               const SizedBox(height: 8),
               ...errors.map((error) => Padding(
-                padding: const EdgeInsets.only(left: 32, top: 2),
-                child: Row(
-                  children: [
-                    Icon(Icons.circle, size: 4, color: Theme.of(context).colorScheme.onSurface),
-                    const SizedBox(width: 8),
-                    Expanded(child: Text(error)),
-                  ],
-                ),
-              )),
+                    padding: const EdgeInsets.only(left: 32, top: 2),
+                    child: Row(
+                      children: [
+                        Icon(Icons.circle,
+                            size: 4,
+                            color: Theme.of(context).colorScheme.onSurface),
+                        const SizedBox(width: 8),
+                        Expanded(child: Text(error)),
+                      ],
+                    ),
+                  )),
             ],
           ),
           backgroundColor: Theme.of(context).colorScheme.errorContainer,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           margin: const EdgeInsets.all(16),
           duration: const Duration(seconds: 5),
         ),
@@ -750,14 +752,17 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
           SnackBar(
             content: Row(
               children: [
-                Icon(Icons.check_circle_outline, color: Theme.of(context).colorScheme.onPrimaryContainer, size: 20),
+                Icon(Icons.check_circle_outline,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    size: 20),
                 const SizedBox(width: 12),
                 const Text('Reading added successfully'),
               ],
             ),
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: const EdgeInsets.all(16),
           ),
         );
@@ -768,14 +773,17 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
           SnackBar(
             content: Row(
               children: [
-                Icon(Icons.error_outline, color: Theme.of(context).colorScheme.onErrorContainer, size: 20),
+                Icon(Icons.error_outline,
+                    color: Theme.of(context).colorScheme.onErrorContainer,
+                    size: 20),
                 const SizedBox(width: 12),
                 Expanded(child: Text('Error: $e')),
               ],
             ),
             backgroundColor: Theme.of(context).colorScheme.errorContainer,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: const EdgeInsets.all(16),
             duration: const Duration(seconds: 5),
           ),

@@ -44,8 +44,10 @@ class _AddReadingContentState extends State<AddReadingContent> {
   void initState() {
     super.initState();
     _systolicController = widget.systolicController ?? TextEditingController();
-    _diastolicController = widget.diastolicController ?? TextEditingController();
-    _heartRateController = widget.heartRateController ?? TextEditingController();
+    _diastolicController =
+        widget.diastolicController ?? TextEditingController();
+    _heartRateController =
+        widget.heartRateController ?? TextEditingController();
     _notesController = widget.notesController ?? TextEditingController();
     _selectedDateTime = widget.initialDateTime ?? DateTime.now();
   }
@@ -74,15 +76,19 @@ class _AddReadingContentState extends State<AddReadingContent> {
               padding: const EdgeInsets.all(16),
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                // color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .outline
+                      .withValues(alpha: 0.2),
                 ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Icon(
@@ -90,29 +96,24 @@ class _AddReadingContentState extends State<AddReadingContent> {
                         size: 20,
                         color: Theme.of(context).colorScheme.primary,
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Date & Time',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           '${_formatDate(_selectedDateTime)} at ${_formatTime(_selectedDateTime)}',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
                         ),
                       ),
                       TextButton.icon(
                         onPressed: _selectDateTime,
-                        icon: const Icon(Icons.edit_calendar),
+                        // icon: const Icon(Icons.edit_calendar),
+                        style: TextButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                        ),
                         label: const Text('Change'),
                       ),
                     ],
@@ -134,7 +135,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
                       final systolic = int.tryParse(value);
                       if (systolic == null) return 'Invalid number';
                       if (systolic < 70 || systolic > 250) {
-                        return 'Must be 70-250';
+                        return '70-250';
                       }
                       return null;
                     },
@@ -151,7 +152,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
                       final diastolic = int.tryParse(value);
                       if (diastolic == null) return 'Invalid number';
                       if (diastolic < 40 || diastolic > 150) {
-                        return 'Must be 40-150';
+                        return '40-150';
                       }
                       return null;
                     },
@@ -168,7 +169,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
                       final heartRate = int.tryParse(value);
                       if (heartRate == null) return 'Invalid number';
                       if (heartRate < 30 || heartRate > 250) {
-                        return 'Must be 30-250';
+                        return '30-250';
                       }
                       return null;
                     },
@@ -182,13 +183,38 @@ class _AddReadingContentState extends State<AddReadingContent> {
               maxLines: 2,
               maxLength: 150,
               decoration: InputDecoration(
-                labelText: 'Notes (Optional)',
-                hintText: 'Add notes...',
+                // labelText: 'Notes (Optional)',
+                hintText:
+                    'e.g., wake up, after workout, felt dizzy, medication taken',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .outline
+                        .withValues(alpha: 0.2),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.5),
+                    width: 2,
+                  ),
+                ),
                 contentPadding: const EdgeInsets.all(AppSpacing.md),
                 counterText: '',
+                helperText: ' ',
+                helperStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.transparent,
+                      height: 1.2,
+                    ),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -213,7 +239,8 @@ class _AddReadingContentState extends State<AddReadingContent> {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                       : const Text(
@@ -245,6 +272,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
       final TimeOfDay? pickedTime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.fromDateTime(_selectedDateTime),
+        initialEntryMode: TimePickerEntryMode.dial,
       );
 
       if (pickedTime != null) {
@@ -263,8 +291,18 @@ class _AddReadingContentState extends State<AddReadingContent> {
 
   String _formatDate(DateTime dateTime) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
     ];
     return '${months[dateTime.month - 1]} ${dateTime.day}, ${dateTime.year}';
   }
@@ -287,9 +325,12 @@ class _AddReadingContentState extends State<AddReadingContent> {
         Text(
           label,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
-          ),
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.8),
+              ),
         ),
         const SizedBox(height: 4),
         TextFormField(
@@ -297,32 +338,41 @@ class _AddReadingContentState extends State<AddReadingContent> {
           keyboardType: TextInputType.number,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontSize: 24,
-            fontWeight: FontWeight.w400,
-          ),
+                fontSize: 24,
+                fontWeight: FontWeight.w400,
+              ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontSize: 24,
-              fontWeight: FontWeight.w400,
-              color: Theme.of(context).colorScheme.outline,
-            ),
+                  fontSize: 24,
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+                color: Theme.of(context)
+                    .colorScheme
+                    .outline
+                    .withValues(alpha: 0.2),
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+                color: Theme.of(context)
+                    .colorScheme
+                    .outline
+                    .withValues(alpha: 0.2),
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                color: Theme.of(context)
+                    .colorScheme
+                    .primary
+                    .withValues(alpha: 0.5),
                 width: 2,
               ),
             ),
@@ -341,9 +391,16 @@ class _AddReadingContentState extends State<AddReadingContent> {
               ),
             ),
             errorStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.error,
-            ),
+                  color: Theme.of(context).colorScheme.error,
+                  height: 1.2,
+                ),
+            errorMaxLines: 2,
             contentPadding: const EdgeInsets.symmetric(vertical: 12),
+            helperText: ' ',
+            helperStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.transparent,
+                  height: 1.2,
+                ),
           ),
           validator: validator,
           autovalidateMode: AutovalidateMode.onUserInteraction,

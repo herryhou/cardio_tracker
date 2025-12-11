@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import '../models/blood_pressure_reading.dart';
 import '../theme/app_theme.dart';
 import 'neumorphic_container.dart';
-import 'animated_heart_icon.dart';
-import 'app_icon.dart';
 
 /// A centered, pill-shaped neumorphic card for displaying blood pressure readings
 /// Features minimalist design with soft shadows and smooth animations
@@ -167,17 +165,11 @@ class ReadingCardNeu extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (showHeartAnimation)
-              AnimatedHeartIcon(
-                size: iconSize,
-                color: Colors.red.shade400,
-                animate: true,
-              )
-            else
-              HeartIcon(
-                size: iconSize,
-                color: Colors.red.shade400,
-              ),
+            Icon(
+              Icons.favorite,
+              size: iconSize,
+              color: Colors.red.shade400,
+            ),
 
             SizedBox(width: AppSpacing.sm),
 
