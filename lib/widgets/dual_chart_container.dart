@@ -39,7 +39,8 @@ class _DualChartContainerState extends State<DualChartContainer> {
     _currentTimeRange = widget.initialTimeRange;
   }
 
-  void _handleTimeRangeChanged(ExtendedTimeRange timeRange, DateTime? startDate, DateTime? endDate) {
+  void _handleTimeRangeChanged(
+      ExtendedTimeRange timeRange, DateTime? startDate, DateTime? endDate) {
     setState(() {
       _currentTimeRange = timeRange;
     });
@@ -55,9 +56,10 @@ class _DualChartContainerState extends State<DualChartContainer> {
 
     return Semantics(
       label: 'Blood Pressure Analysis Dashboard',
-      hint: 'Comprehensive blood pressure analysis with clinical classification chart and time trends. Use Tab to navigate between sections.',
-      child: Consumer<DualChartProvider>(
-        builder: (context, chartProvider, child) {
+      hint:
+          'Comprehensive blood pressure analysis with clinical classification chart and time trends. Use Tab to navigate between sections.',
+      child:
+          Consumer<DualChartProvider>(builder: (context, chartProvider, child) {
         return LayoutBuilder(
           builder: (context, constraints) {
             // Dynamic spacing based on screen size
@@ -69,7 +71,8 @@ class _DualChartContainerState extends State<DualChartContainer> {
               children: [
                 // Header with title and clear selection button
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: _buildHeader(chartProvider),
                 ),
 
@@ -98,83 +101,96 @@ class _DualChartContainerState extends State<DualChartContainer> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                Theme.of(context).colorScheme.primary.withOpacity(0.05),
+                                Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(0.05),
                                 Colors.transparent,
                               ],
                             )
                           : null,
                     ),
                     child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Blood Pressure Distribution',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: chartProvider.hasSelection
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : null,
+                                      ),
+                                ),
+                              ),
+                              if (chartProvider.hasSelection) ...[
+                                const SizedBox(width: 8),
+                                Icon(
+                                  Icons.fiber_manual_record,
+                                  size: 16,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 200),
                             child: Row(
+                              key: ValueKey(chartProvider.hasSelection),
                               children: [
                                 Expanded(
                                   child: Text(
-                                    'Blood Pressure Distribution',
+                                    chartProvider.hasSelection
+                                        ? 'Selected: ${_formatReading(chartProvider.selectedReading!)}'
+                                        : 'Tap data points to see details in the timeline below',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: chartProvider.hasSelection
-                                          ? Theme.of(context).colorScheme.primary
-                                          : null,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: chartProvider.hasSelection
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                              : Colors.grey[600],
+                                          fontWeight: chartProvider.hasSelection
+                                              ? FontWeight.w600
+                                              : FontWeight.normal,
+                                        ),
                                   ),
                                 ),
-                                if (chartProvider.hasSelection) ...[
-                                  const SizedBox(width: 8),
-                                  Icon(
-                                    Icons.fiber_manual_record,
-                                    size: 16,
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),
-                                ],
                               ],
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 200),
-                              child: Row(
-                                key: ValueKey(chartProvider.hasSelection),
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      chartProvider.hasSelection
-                                          ? 'Selected: ${_formatReading(chartProvider.selectedReading!)}'
-                                          : 'Tap data points to see details in the timeline below',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: chartProvider.hasSelection
-                                            ? Theme.of(context).colorScheme.primary
-                                            : Colors.grey[600],
-                                        fontWeight: chartProvider.hasSelection
-                                            ? FontWeight.w600
-                                            : FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Expanded(
-                            child: InteractiveScatterPlot(
-                              readings: widget.readings,
-                              selectedReading: chartProvider.selectedReading,
-                              onReadingSelected: chartProvider.selectReading,
-                              showResetButton: true,
-                            ),
-                          ),
-                        ],
                         ),
+                        const SizedBox(height: 16),
+                        Expanded(
+                          child: InteractiveScatterPlot(
+                            readings: widget.readings,
+                            selectedReading: chartProvider.selectedReading,
+                            onReadingSelected: chartProvider.selectReading,
+                            showResetButton: true,
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
                 ),
 
                 // Timeline Carousel
@@ -187,9 +203,10 @@ class _DualChartContainerState extends State<DualChartContainer> {
                       children: [
                         Text(
                           'Blood Pressure Timeline',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         const SizedBox(height: 8),
                         TimelineCarousel(
@@ -200,7 +217,8 @@ class _DualChartContainerState extends State<DualChartContainer> {
                             // Find the reading for the selected date
                             final selectedReading = widget.readings.firstWhere(
                               (reading) {
-                                final dateStr = '${reading.timestamp.month.toString().padLeft(2, '0')}/${reading.timestamp.day.toString().padLeft(2, '0')}';
+                                final dateStr =
+                                    '${reading.timestamp.month.toString().padLeft(2, '0')}/${reading.timestamp.day.toString().padLeft(2, '0')}';
                                 return dateStr == selectedDate;
                               },
                               orElse: () => widget.readings.first,
@@ -221,17 +239,17 @@ class _DualChartContainerState extends State<DualChartContainer> {
                   margin: EdgeInsets.zero,
                   padding: EdgeInsets.zero,
                   child: BPRangeBarChart(
-                      key: _flTimeSeriesChartKey,
-                      readings: widget.readings,
-                      selectedReading: chartProvider.selectedReading,
-                      onReadingSelected: chartProvider.selectReading,
-                      initialTimeRange: _currentTimeRange,
-                      startDate: widget.startDate,
-                      endDate: widget.endDate,
-                      onTimeRangeChanged: _handleTimeRangeChanged,
-                      showTimeRangeSelector: false,
-                      currentTimeRange: _currentTimeRange,
-                    ),
+                    key: _flTimeSeriesChartKey,
+                    readings: widget.readings,
+                    selectedReading: chartProvider.selectedReading,
+                    onReadingSelected: chartProvider.selectReading,
+                    initialTimeRange: _currentTimeRange,
+                    startDate: widget.startDate,
+                    endDate: widget.endDate,
+                    onTimeRangeChanged: _handleTimeRangeChanged,
+                    showTimeRangeSelector: false,
+                    currentTimeRange: _currentTimeRange,
+                  ),
                 ),
               ],
             );
@@ -251,15 +269,15 @@ class _DualChartContainerState extends State<DualChartContainer> {
             Text(
               'Blood Pressure Analysis',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 4),
             Text(
               '${widget.readings.length} readings • ${_getCurrentRangeLabel()}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
+                    color: Colors.grey[600],
+                  ),
             ),
           ],
         ),
@@ -311,7 +329,8 @@ class _DualChartContainerState extends State<DualChartContainer> {
         selected: {_currentTimeRange},
         onSelectionChanged: (Set<ExtendedTimeRange> selection) {
           if (selection.isNotEmpty) {
-            _handleTimeRangeChanged(selection.first, widget.startDate, widget.endDate);
+            _handleTimeRangeChanged(
+                selection.first, widget.startDate, widget.endDate);
           }
         },
       );
@@ -341,7 +360,8 @@ class _DualChartContainerState extends State<DualChartContainer> {
         selected: {_currentTimeRange},
         onSelectionChanged: (Set<ExtendedTimeRange> selection) {
           if (selection.isNotEmpty) {
-            _handleTimeRangeChanged(selection.first, widget.startDate, widget.endDate);
+            _handleTimeRangeChanged(
+                selection.first, widget.startDate, widget.endDate);
           }
         },
       );
@@ -362,7 +382,6 @@ class _DualChartContainerState extends State<DualChartContainer> {
     );
   }
 
-  
   String _getCurrentRangeLabel() {
     switch (_currentTimeRange) {
       case ExtendedTimeRange.week:
@@ -373,8 +392,6 @@ class _DualChartContainerState extends State<DualChartContainer> {
         return 'Seasonal View';
       case ExtendedTimeRange.year:
         return 'Yearly View';
-      case ExtendedTimeRange.day:
-        return 'Daily View'; // Keep for compatibility, though not selectable
     }
   }
 
@@ -387,7 +404,8 @@ class _DualChartContainerState extends State<DualChartContainer> {
   Widget _buildAccessibleEmptyState() {
     return Semantics(
       label: 'No blood pressure data available',
-      hint: 'Start recording blood pressure readings to see comprehensive analysis with clinical classification and trends',
+      hint:
+          'Start recording blood pressure readings to see comprehensive analysis with clinical classification and trends',
       child: _buildEmptyState(),
     );
   }
@@ -407,15 +425,15 @@ class _DualChartContainerState extends State<DualChartContainer> {
           Text(
             'No Blood Pressure Data',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.grey[600],
-            ),
+                  color: Colors.grey[600],
+                ),
           ),
           const SizedBox(height: 12),
           Text(
             'Start recording your blood pressure to see comprehensive analysis\nincluding distribution patterns and trends over time.',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Colors.grey[500],
-            ),
+                  color: Colors.grey[500],
+                ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -428,16 +446,16 @@ class _DualChartContainerState extends State<DualChartContainer> {
           Text(
             'Dual Chart System',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Colors.grey[500],
-              fontWeight: FontWeight.w600,
-            ),
+                  color: Colors.grey[500],
+                  fontWeight: FontWeight.w600,
+                ),
           ),
           const SizedBox(height: 4),
           Text(
             'Clinical Distribution + Time Series Trends',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[400],
-            ),
+                  color: Colors.grey[400],
+                ),
           ),
         ],
       ),

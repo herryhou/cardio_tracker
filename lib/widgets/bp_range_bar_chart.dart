@@ -11,7 +11,7 @@ import '../theme/app_theme.dart';
 
 // Bar styling
 const double _barWidth = 5.0;
-const double _barSpacing = 20.0;
+// const double _barSpacing = 20.0;
 
 // Y-axis bounds
 const double _minY = 60.0;
@@ -150,9 +150,9 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
               timestamp: reading.timestamp,
               systolic: reading.systolic.toDouble(),
               diastolic: reading.diastolic.toDouble(),
-              heartRate: reading.heartRate?.toDouble(),
+              heartRate: reading.heartRate.toDouble(),
               notes: reading.notes,
-              category: reading.category?.name,
+              category: reading.category.name,
               originalReadings: [reading],
             ))
         .toList();
@@ -173,19 +173,6 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
       final ts = _timeSeriesData[i].timestamp.millisecondsSinceEpoch.toDouble();
       _xValueToIndex[ts] = i;
     }
-  }
-
-  int? _getClosestIndexForX(double x) {
-    if (_timeSeriesData.isEmpty) return null;
-
-    // Since we're using indices directly, round to nearest index
-    final index = x.round();
-
-    if (index >= 0 && index < _timeSeriesData.length) {
-      return index;
-    }
-
-    return null;
   }
 
   // ============================================================================
@@ -252,21 +239,23 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.bar_chart, size: 48, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
+          Icon(Icons.bar_chart,
+              size: 48,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
           SizedBox(height: AppSpacing.md),
           Text(
             'No data available',
             style: AppTheme.headerStyle.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                  fontSize: 16, // Override for this context
-                ),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              fontSize: 16, // Override for this context
+            ),
           ),
           SizedBox(height: AppSpacing.sm),
           Text(
             'Start recording blood pressure to see ranges here',
             style: AppTheme.bodyStyle.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                ),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -285,9 +274,8 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
 
     for (int i = 0; i < _timeSeriesData.length; i++) {
       final data = _timeSeriesData[i];
-      final reading = data.originalReadings.isNotEmpty
-          ? data.originalReadings.first
-          : null;
+      final reading =
+          data.originalReadings.isNotEmpty ? data.originalReadings.first : null;
 
       if (reading != null) {
         barGroups.add(_createBarGroup(i, reading, data));
@@ -307,8 +295,9 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
     );
   }
 
-  BarChartGroupData _createBarGroup(int x, BloodPressureReading reading, TimeSeriesData data) {
-    final isSelected = widget.selectedReading == reading;
+  BarChartGroupData _createBarGroup(
+      int x, BloodPressureReading reading, TimeSeriesData data) {
+    // final isSelected = widget.selectedReading == reading;
     final color = _getCategoryColor(reading.category);
 
     return BarChartGroupData(
@@ -447,9 +436,10 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
   BarTouchData _buildBarTouchData() {
     return BarTouchData(
       touchTooltipData: BarTouchTooltipData(
-        getTooltipColor: (group) => Theme.of(context).colorScheme.surfaceContainer,
-        tooltipBorder:
-            BorderSide(color: Theme.of(context).colorScheme.outline.withOpacity(0.3)),
+        getTooltipColor: (group) =>
+            Theme.of(context).colorScheme.surfaceContainer,
+        tooltipBorder: BorderSide(
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.3)),
         getTooltipItem: _buildTooltipItem,
       ),
       touchCallback: _handleBarTouchEvent,
@@ -457,13 +447,15 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
     );
   }
 
-  BarTooltipItem? _buildTooltipItem(group, int groupIndex, BarChartRodData rod, int rodIndex) {
+  BarTooltipItem? _buildTooltipItem(
+      group, int groupIndex, BarChartRodData rod, int rodIndex) {
     // Find the reading associated with this bar
     if (groupIndex >= _timeSeriesData.length) return null;
 
     final data = _timeSeriesData[groupIndex];
-    final reading = data.originalReadings.isNotEmpty ? data.originalReadings.first : null;
-    final category = reading?.category?.name ?? 'Normal';
+    final reading =
+        data.originalReadings.isNotEmpty ? data.originalReadings.first : null;
+    final category = reading?.category.name ?? 'Normal';
 
     return BarTooltipItem(
       'Systolic: ${data.systolic.toInt()}\n'
@@ -471,14 +463,16 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
       '$category\n'
       '${DateFormat('MMM dd, HH:mm').format(data.timestamp)}',
       TextStyle(
-        color: _getCategoryColor(reading?.category ?? BloodPressureCategory.normal),
+        color: _getCategoryColor(
+            reading?.category ?? BloodPressureCategory.normal),
         fontWeight: FontWeight.bold,
         fontSize: 12,
       ),
     );
   }
 
-  void _handleBarTouchEvent(FlTouchEvent event, BarTouchResponse? touchResponse) {
+  void _handleBarTouchEvent(
+      FlTouchEvent event, BarTouchResponse? touchResponse) {
     if (event is! FlTapUpEvent || touchResponse == null) return;
 
     final touchedGroup = touchResponse.spot?.touchedBarGroup;
@@ -536,8 +530,6 @@ class _TimeRangeInfo {
   DateTime _computeRangeStart() {
     final now = DateTime.now();
     switch (timeRange) {
-      case ExtendedTimeRange.day:
-        return DateTime(now.year, now.month, now.day);
       case ExtendedTimeRange.week:
         return DateTime(now.year, now.month, now.day)
             .subtract(const Duration(days: 6));
@@ -553,8 +545,6 @@ class _TimeRangeInfo {
   DateTime _computeRangeEnd() {
     final start = _computeRangeStart();
     switch (timeRange) {
-      case ExtendedTimeRange.day:
-        return start.add(const Duration(days: 1));
       case ExtendedTimeRange.week:
         return start.add(const Duration(days: 7));
       case ExtendedTimeRange.month:
@@ -575,7 +565,6 @@ class _TimeRangeInfo {
   /// Get date format string based on time range.
   String getDateFormat() {
     switch (timeRange) {
-      case ExtendedTimeRange.day:
       case ExtendedTimeRange.week:
         return 'MMM dd';
       case ExtendedTimeRange.month:

@@ -10,7 +10,7 @@ import '../theme/app_theme.dart';
 // ============================================================================
 
 // Chart colors
-const Color _systolicColor = Color(0xFFFF0000);  // Red
+const Color _systolicColor = Color(0xFFFF0000); // Red
 const Color _diastolicColor = Color(0xFF0000FF); // Blue
 
 // Line styling
@@ -48,7 +48,6 @@ const double _shadowBlurRadius = 8.0;
 
 // Padding
 const EdgeInsets _chartPadding = EdgeInsets.all(AppSpacing.md);
-const double _labelTopPadding = AppSpacing.sm;
 
 /// Time Series Chart Widget using fl_chart with clean, maintainable architecture.
 class FlTimeSeriesChart extends StatefulWidget {
@@ -161,9 +160,9 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
               timestamp: reading.timestamp,
               systolic: reading.systolic.toDouble(),
               diastolic: reading.diastolic.toDouble(),
-              heartRate: reading.heartRate?.toDouble(),
+              heartRate: reading.heartRate.toDouble(),
               notes: reading.notes,
-              category: reading.category?.name,
+              category: reading.category.name,
               originalReadings: [reading],
             ))
         .toList();
@@ -184,9 +183,6 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       final ts = _timeSeriesData[i].timestamp.millisecondsSinceEpoch.toDouble();
       _xValueToIndex[ts] = i;
     }
-
-    final first = _timeSeriesData.first.timestamp;
-    final last = _timeSeriesData.last.timestamp;
   }
 
   int? _getClosestIndexForX(double x) {
@@ -213,7 +209,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     }
 
     return Container(
-      padding: EdgeInsets.all(AppSpacing.md + AppSpacing.xs),
+      padding: const EdgeInsets.all(AppSpacing.md + AppSpacing.xs),
       decoration: _buildContainerDecoration(),
       child: Column(
         children: [
@@ -266,21 +262,23 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.show_chart, size: 48, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
+          Icon(Icons.show_chart,
+              size: 48,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
           SizedBox(height: AppSpacing.md),
           Text(
             'No data available',
             style: AppTheme.headerStyle.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                  fontSize: 16, // Override for this context
-                ),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              fontSize: 16, // Override for this context
+            ),
           ),
           SizedBox(height: AppSpacing.sm),
           Text(
             'Start recording blood pressure to see trends here',
             style: AppTheme.bodyStyle.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                ),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -296,10 +294,14 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     if (_timeSeriesData.isEmpty) return _buildEmptyChartData();
 
     // Calculate averages
-    final avgSystolic = _timeSeriesData.isEmpty ? 0.0 :
-        _timeSeriesData.map((d) => d.systolic).reduce((a, b) => a + b) / _timeSeriesData.length;
-    final avgDiastolic = _timeSeriesData.isEmpty ? 0.0 :
-        _timeSeriesData.map((d) => d.diastolic).reduce((a, b) => a + b) / _timeSeriesData.length;
+    final avgSystolic = _timeSeriesData.isEmpty
+        ? 0.0
+        : _timeSeriesData.map((d) => d.systolic).reduce((a, b) => a + b) /
+            _timeSeriesData.length;
+    final avgDiastolic = _timeSeriesData.isEmpty
+        ? 0.0
+        : _timeSeriesData.map((d) => d.diastolic).reduce((a, b) => a + b) /
+            _timeSeriesData.length;
 
     // Build spots using indices for X-axis (simpler approach)
     final systolicSpots = <FlSpot>[];
@@ -328,30 +330,6 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       maxY: _maxY,
       lineTouchData: _buildLineTouchData(),
     );
-  }
-
-  Color _getCategoryColor(BloodPressureCategory category) {
-    switch (category) {
-      case BloodPressureCategory.low:
-        return const Color(0xFF3B82F6); // Blue
-      case BloodPressureCategory.normal:
-        return const Color(0xFF10B981); // Green
-      case BloodPressureCategory.elevated:
-        return const Color(0xFFF59E0B); // Yellow/Amber
-      case BloodPressureCategory.stage1:
-        return const Color(0xFFF97316); // Orange
-      case BloodPressureCategory.stage2:
-        return const Color(0xFFEF4444); // Red
-      case BloodPressureCategory.crisis:
-        return const Color(0xFF991B1B); // Dark Red
-    }
-  }
-
-  List<FlSpot> _buildSpots(double Function(TimeSeriesData) accessor) {
-    return _timeSeriesData.asMap().entries.map((e) {
-      final x = _getXValueForIndex(e.key);
-      return FlSpot(x, accessor(e.value).toDouble());
-    }).toList();
   }
 
   LineChartBarData _buildSystolicLine(List<FlSpot> spots) {
@@ -502,31 +480,6 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     );
   }
 
-  Widget _buildXAxisLabel(double value, _TimeRangeInfo rangeInfo) {
-    try {
-      final xMs = value.toInt();
-      final date = DateTime.fromMillisecondsSinceEpoch(xMs);
-      final formattedDate = DateFormat(rangeInfo.getDateFormat()).format(date);
-
-      return Padding(
-        padding: EdgeInsets.only(top: _labelTopPadding),
-        child: Transform.rotate(
-          angle: _labelRotationAngle,
-          child: Text(
-            formattedDate,
-            style: const TextStyle(
-              fontSize: _xAxisLabelFontSize,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
-          ),
-        ),
-      );
-    } catch (e) {
-      return const SizedBox.shrink();
-    }
-  }
-
   FlGridData _buildGridData() {
     return FlGridData(
       show: true,
@@ -662,15 +615,6 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       maxY: _maxY,
     );
   }
-
-  // ============================================================================
-  // HELPERS
-  // ============================================================================
-
-  double _getXValueForIndex(int index) {
-    if (index < 0 || index >= _timeSeriesData.length) return 0.0;
-    return index.toDouble(); // Return index directly
-  }
 }
 
 /// Helper class to encapsulate time range logic and computations.
@@ -698,8 +642,6 @@ class _TimeRangeInfo {
   DateTime _computeRangeStart() {
     final now = DateTime.now();
     switch (timeRange) {
-      case ExtendedTimeRange.day:
-        return DateTime(now.year, now.month, now.day);
       case ExtendedTimeRange.week:
         return DateTime(now.year, now.month, now.day)
             .subtract(const Duration(days: 6));
@@ -715,8 +657,6 @@ class _TimeRangeInfo {
   DateTime _computeRangeEnd() {
     final start = _computeRangeStart();
     switch (timeRange) {
-      case ExtendedTimeRange.day:
-        return start.add(const Duration(days: 1));
       case ExtendedTimeRange.week:
         return start.add(const Duration(days: 7));
       case ExtendedTimeRange.month:
@@ -737,8 +677,6 @@ class _TimeRangeInfo {
   /// Get X-axis interval based on time range.
   double getXAxisInterval() {
     switch (timeRange) {
-      case ExtendedTimeRange.day:
-        return 3.0; // Show every 3rd reading
       case ExtendedTimeRange.week:
         return 3.0; // Show every 3rd reading
       case ExtendedTimeRange.month:
@@ -753,7 +691,6 @@ class _TimeRangeInfo {
   /// Get date format string based on time range.
   String getDateFormat() {
     switch (timeRange) {
-      case ExtendedTimeRange.day:
       case ExtendedTimeRange.week:
         return 'MMM dd';
       case ExtendedTimeRange.month:
