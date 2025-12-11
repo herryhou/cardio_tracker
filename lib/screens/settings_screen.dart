@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import 'cloudflare_settings_screen.dart';
 import '../widgets/neumorphic_container.dart';
-import '../widgets/neumorphic_button.dart';
-import '../widgets/neumorphic_slider.dart';
 import '../widgets/neumorphic_tile.dart';
 import '../widgets/neumorphic_slider_theme_toggle.dart';
 
@@ -57,10 +55,12 @@ class SettingsScreen extends StatelessWidget {
                         color: theme.colorScheme.primary,
                       ),
                       title: const Text('Theme'),
-                      subtitle: Text(_getThemeSubtitle(themeProvider.themeMode)),
+                      subtitle:
+                          Text(_getThemeSubtitle(themeProvider.themeMode)),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 12.0),
                       child: NeumorphicSliderThemeToggle(
                         value: _getThemeValue(themeProvider.themeMode),
                         onChanged: (value) {

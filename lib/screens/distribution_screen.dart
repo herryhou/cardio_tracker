@@ -29,7 +29,8 @@ class _DistributionScreenState extends State<DistributionScreen> {
     });
   }
 
-  List<BloodPressureReading> _filterReadingsByTimeRange(List<BloodPressureReading> allReadings) {
+  List<BloodPressureReading> _filterReadingsByTimeRange(
+      List<BloodPressureReading> allReadings) {
     if (allReadings.isEmpty) {
       return [];
     }
@@ -44,10 +45,6 @@ class _DistributionScreenState extends State<DistributionScreen> {
       // Calculate based on predefined time range
       final now = DateTime.now();
       switch (_currentTimeRange) {
-        case ExtendedTimeRange.day:
-          rangeStart = DateTime(now.year, now.month, now.day);
-          rangeEnd = rangeStart.add(const Duration(days: 1));
-          break;
         case ExtendedTimeRange.week:
           rangeStart = DateTime(now.year, now.month, now.day)
               .subtract(const Duration(days: 6));
@@ -76,7 +73,8 @@ class _DistributionScreenState extends State<DistributionScreen> {
 
     return allReadings
         .where((reading) =>
-            reading.timestamp.isAfter(rangeStart.subtract(const Duration(milliseconds: 1))) &&
+            reading.timestamp.isAfter(
+                rangeStart.subtract(const Duration(milliseconds: 1))) &&
             reading.timestamp.isBefore(rangeEnd))
         .toList();
   }
@@ -209,8 +207,11 @@ class _DistributionScreenState extends State<DistributionScreen> {
               Text(
                 'Add some blood pressure readings to see the distribution chart',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                ),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.6),
+                    ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
@@ -218,7 +219,9 @@ class _DistributionScreenState extends State<DistributionScreen> {
                 onPressed: () {
                   // Navigate to add reading
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Use bottom navigation to go to Add Reading')),
+                    const SnackBar(
+                        content:
+                            Text('Use bottom navigation to go to Add Reading')),
                   );
                 },
                 icon: const Icon(Icons.add),
