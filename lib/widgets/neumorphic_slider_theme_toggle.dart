@@ -16,10 +16,12 @@ class NeumorphicSliderThemeToggle extends StatefulWidget {
   });
 
   @override
-  State<NeumorphicSliderThemeToggle> createState() => _NeumorphicSliderThemeToggleState();
+  State<NeumorphicSliderThemeToggle> createState() =>
+      _NeumorphicSliderThemeToggleState();
 }
 
-class _NeumorphicSliderThemeToggleState extends State<NeumorphicSliderThemeToggle> {
+class _NeumorphicSliderThemeToggleState
+    extends State<NeumorphicSliderThemeToggle> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -32,12 +34,16 @@ class _NeumorphicSliderThemeToggleState extends State<NeumorphicSliderThemeToggl
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withOpacity(0.4) : Colors.black.withOpacity(0.1),
+            color: isDark
+                ? Colors.black.withOpacity(0.4)
+                : Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(2, 2),
           ),
           BoxShadow(
-            color: isDark ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.7),
+            color: isDark
+                ? Colors.black.withOpacity(0.2)
+                : Colors.white.withOpacity(0.7),
             blurRadius: 8,
             offset: const Offset(-2, -2),
           ),
@@ -98,7 +104,8 @@ class _ThemeOption extends StatefulWidget {
   State<_ThemeOption> createState() => _ThemeOptionState();
 }
 
-class _ThemeOptionState extends State<_ThemeOption> with SingleTickerProviderStateMixin {
+class _ThemeOptionState extends State<_ThemeOption>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
 
@@ -143,7 +150,6 @@ class _ThemeOptionState extends State<_ThemeOption> with SingleTickerProviderSta
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return GestureDetector(
       onTapDown: (_) => _animationController.forward(),
@@ -166,13 +172,15 @@ class _ThemeOptionState extends State<_ThemeOption> with SingleTickerProviderSta
                     ? theme.colorScheme.primary
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(26),
-                boxShadow: widget.isSelected ? [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ] : null,
+                boxShadow: widget.isSelected
+                    ? [
+                        BoxShadow(
+                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    : null,
               ),
               child: Center(
                 child: Column(
@@ -193,7 +201,9 @@ class _ThemeOptionState extends State<_ThemeOption> with SingleTickerProviderSta
                         color: widget.isSelected
                             ? theme.colorScheme.onPrimary
                             : theme.colorScheme.onSurface.withOpacity(0.7),
-                        fontWeight: widget.isSelected ? FontWeight.w600 : FontWeight.normal,
+                        fontWeight: widget.isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                       ),
                     ),
                   ],

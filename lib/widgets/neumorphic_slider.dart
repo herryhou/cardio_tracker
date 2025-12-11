@@ -111,9 +111,11 @@ class _NeumorphicSliderState extends State<NeumorphicSlider>
           .mapRange(0.0, 1.0, widget.min, widget.max);
 
       if (widget.divisions != null) {
-        final double divisionValue = (widget.max - widget.min) / widget.divisions!;
+        final double divisionValue =
+            (widget.max - widget.min) / widget.divisions!;
         final double roundedValue = (newValue - widget.min) / divisionValue;
-        final double snappedValue = (roundedValue.round() * divisionValue) + widget.min;
+        final double snappedValue =
+            (roundedValue.round() * divisionValue) + widget.min;
         widget.onChanged!(snappedValue.clamp(widget.min, widget.max));
       } else {
         widget.onChanged!(newValue);
@@ -140,9 +142,11 @@ class _NeumorphicSliderState extends State<NeumorphicSlider>
           .mapRange(0.0, 1.0, widget.min, widget.max);
 
       if (widget.divisions != null) {
-        final double divisionValue = (widget.max - widget.min) / widget.divisions!;
+        final double divisionValue =
+            (widget.max - widget.min) / widget.divisions!;
         final double roundedValue = (newValue - widget.min) / divisionValue;
-        final double snappedValue = (roundedValue.round() * divisionValue) + widget.min;
+        final double snappedValue =
+            (roundedValue.round() * divisionValue) + widget.min;
         widget.onChanged!(snappedValue.clamp(widget.min, widget.max));
       } else {
         widget.onChanged!(newValue);
@@ -153,7 +157,6 @@ class _NeumorphicSliderState extends State<NeumorphicSlider>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     // Calculate neumorphic colors
     final activeTrackColor = widget.activeColor ?? theme.colorScheme.primary;
@@ -174,7 +177,8 @@ class _NeumorphicSliderState extends State<NeumorphicSlider>
           onTapUp: (details) => _handleTapUp(details, constraints),
           onTapCancel: () => _animationController.reverse(),
           onHorizontalDragStart: _handlePanStart,
-          onHorizontalDragUpdate: (details) => _handlePanUpdate(details, constraints),
+          onHorizontalDragUpdate: (details) =>
+              _handlePanUpdate(details, constraints),
           onHorizontalDragEnd: _handlePanEnd,
           child: SizedBox(
             width: trackWidth,
@@ -255,46 +259,46 @@ class _NeumorphicTrack extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final shadowLight = isDark
-        ? Colors.black.withOpacity(0.2)
-        : Colors.white.withOpacity(0.6);
-    final shadowDark = isDark
-        ? Colors.black.withOpacity(0.4)
-        : Colors.black.withOpacity(0.1);
+    final shadowLight =
+        isDark ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.6);
+    final shadowDark =
+        isDark ? Colors.black.withOpacity(0.4) : Colors.black.withOpacity(0.1);
 
     return Container(
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: isPressed ? [
-          // Reversed shadows for pressed effect
-          BoxShadow(
-            color: shadowLight,
-            blurRadius: 4,
-            offset: const Offset(2, 2),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: shadowDark,
-            blurRadius: 4,
-            offset: const Offset(-2, -2),
-            spreadRadius: 0,
-          ),
-        ] : [
-          // Outer shadows
-          BoxShadow(
-            color: shadowDark,
-            blurRadius: 4,
-            offset: const Offset(2, 2),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: shadowLight,
-            blurRadius: 4,
-            offset: const Offset(-2, -2),
-            spreadRadius: 0,
-          ),
-        ],
+        boxShadow: isPressed
+            ? [
+                // Reversed shadows for pressed effect
+                BoxShadow(
+                  color: shadowLight,
+                  blurRadius: 4,
+                  offset: const Offset(2, 2),
+                  spreadRadius: 0,
+                ),
+                BoxShadow(
+                  color: shadowDark,
+                  blurRadius: 4,
+                  offset: const Offset(-2, -2),
+                  spreadRadius: 0,
+                ),
+              ]
+            : [
+                // Outer shadows
+                BoxShadow(
+                  color: shadowDark,
+                  blurRadius: 4,
+                  offset: const Offset(2, 2),
+                  spreadRadius: 0,
+                ),
+                BoxShadow(
+                  color: shadowLight,
+                  blurRadius: 4,
+                  offset: const Offset(-2, -2),
+                  spreadRadius: 0,
+                ),
+              ],
       ),
     );
   }
@@ -317,12 +321,10 @@ class _NeumorphicThumb extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final shadowLight = isDark
-        ? Colors.black.withOpacity(0.3)
-        : Colors.white.withOpacity(0.8);
-    final shadowDark = isDark
-        ? Colors.black.withOpacity(0.6)
-        : Colors.black.withOpacity(0.2);
+    final shadowLight =
+        isDark ? Colors.black.withOpacity(0.3) : Colors.white.withOpacity(0.8);
+    final shadowDark =
+        isDark ? Colors.black.withOpacity(0.6) : Colors.black.withOpacity(0.2);
 
     return Container(
       width: size,
@@ -330,35 +332,37 @@ class _NeumorphicThumb extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        boxShadow: isPressed ? [
-          // Reversed shadows when pressed
-          BoxShadow(
-            color: shadowLight,
-            blurRadius: 6,
-            offset: const Offset(3, 3),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: shadowDark,
-            blurRadius: 6,
-            offset: const Offset(-3, -3),
-            spreadRadius: 0,
-          ),
-        ] : [
-          // Outer shadow when not pressed
-          BoxShadow(
-            color: shadowDark,
-            blurRadius: 6,
-            offset: const Offset(3, 3),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: shadowLight,
-            blurRadius: 6,
-            offset: const Offset(-3, -3),
-            spreadRadius: 0,
-          ),
-        ],
+        boxShadow: isPressed
+            ? [
+                // Reversed shadows when pressed
+                BoxShadow(
+                  color: shadowLight,
+                  blurRadius: 6,
+                  offset: const Offset(3, 3),
+                  spreadRadius: 0,
+                ),
+                BoxShadow(
+                  color: shadowDark,
+                  blurRadius: 6,
+                  offset: const Offset(-3, -3),
+                  spreadRadius: 0,
+                ),
+              ]
+            : [
+                // Outer shadow when not pressed
+                BoxShadow(
+                  color: shadowDark,
+                  blurRadius: 6,
+                  offset: const Offset(3, 3),
+                  spreadRadius: 0,
+                ),
+                BoxShadow(
+                  color: shadowLight,
+                  blurRadius: 6,
+                  offset: const Offset(-3, -3),
+                  spreadRadius: 0,
+                ),
+              ],
       ),
     );
   }
