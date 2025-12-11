@@ -14,8 +14,8 @@ class BloodPressureReading {
   final int heartRate;
   final DateTime timestamp;
   final String? notes;
-  final DateTime lastModified;  // NEW
-  final bool isDeleted;         // NEW
+  final DateTime lastModified; // NEW
+  final bool isDeleted; // NEW
 
   BloodPressureReading({
     required this.id,
@@ -45,7 +45,8 @@ class BloodPressureReading {
     }
 
     // Check for elevated (systolic 121-129 OR diastolic 81-84)
-    if ((systolic >= 121 && systolic <= 129) || (diastolic >= 81 && diastolic <= 84)) {
+    if ((systolic >= 121 && systolic <= 129) ||
+        (diastolic >= 81 && diastolic <= 84)) {
       return BloodPressureCategory.elevated;
     }
 
@@ -57,6 +58,9 @@ class BloodPressureReading {
     // Otherwise, it's low
     return BloodPressureCategory.low;
   }
+
+  /// Returns true if heart rate is available and valid (> 0)
+  bool get hasHeartRate => heartRate > 0;
 
   factory BloodPressureReading.fromJson(Map<String, dynamic> json) {
     return BloodPressureReading(

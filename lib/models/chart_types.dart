@@ -1,7 +1,6 @@
 import 'blood_pressure_reading.dart';
 
 enum ExtendedTimeRange {
-  day,
   week,
   month,
   season,
