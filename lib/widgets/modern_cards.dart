@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
-import 'app_icon.dart';
+// import 'app_icon.dart';
 
 /// Production-ready modern card components
 /// Clean design with proper information grouping and visual hierarchy
@@ -40,10 +40,13 @@ class ModernMetricCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: backgroundColor ?? Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
-            border: showBorder ? Border.all(
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.08),
-              width: 1,
-            ) : null,
+            border: showBorder
+                ? Border.all(
+                    color:
+                        Theme.of(context).colorScheme.outline.withOpacity(0.08),
+                    width: 1,
+                  )
+                : null,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.04),
@@ -78,17 +81,20 @@ class ModernMetricCard extends StatelessWidget {
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                  fontWeight: FontWeight.w400,
-                ),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.6),
+                      fontWeight: FontWeight.w400,
+                    ),
               ),
               const SizedBox(height: 4),
               Text(
                 value,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
               ),
             ],
           ),
@@ -156,7 +162,8 @@ class ReadingSummaryCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: categoryColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
@@ -179,7 +186,10 @@ class ReadingSummaryCard extends StatelessWidget {
                     icon: Icon(
                       Icons.more_vert,
                       size: 18,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.6),
                     ),
                     onSelected: (value) {
                       switch (value) {
@@ -196,7 +206,9 @@ class ReadingSummaryCard extends StatelessWidget {
                         value: 'edit',
                         child: Row(
                           children: [
-                            Icon(Icons.edit, size: 16, color: Theme.of(context).colorScheme.onSurface),
+                            Icon(Icons.edit,
+                                size: 16,
+                                color: Theme.of(context).colorScheme.onSurface),
                             const SizedBox(width: 8),
                             const Text('Edit'),
                           ],
@@ -206,7 +218,9 @@ class ReadingSummaryCard extends StatelessWidget {
                         value: 'delete',
                         child: Row(
                           children: [
-                            Icon(Icons.delete, size: 16, color: Theme.of(context).colorScheme.error),
+                            Icon(Icons.delete,
+                                size: 16,
+                                color: Theme.of(context).colorScheme.error),
                             const SizedBox(width: 8),
                             const Text('Delete'),
                           ],
@@ -220,25 +234,35 @@ class ReadingSummaryCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildMetricColumn('Systolic', '$systolic', AppTheme.getStage2Color(context)),
-                  _buildMetricColumn('Diastolic', '$diastolic', AppTheme.getStage2Color(context)),
-                  _buildMetricColumn('Pulse', '$heartRate', AppTheme.getLowColor(context)),
+                  _buildMetricColumn('Systolic', '$systolic',
+                      AppTheme.getStage2Color(context)),
+                  _buildMetricColumn('Diastolic', '$diastolic',
+                      AppTheme.getStage2Color(context)),
+                  _buildMetricColumn(
+                      'Pulse', '$heartRate', AppTheme.getLowColor(context)),
                 ],
               ),
               if (notes != null && notes!.isNotEmpty) ...[
                 const SizedBox(height: 12),
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .surfaceVariant
+                        .withOpacity(0.5),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     notes!,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                    ),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.7),
+                        ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -253,14 +277,20 @@ class ReadingSummaryCard extends StatelessWidget {
                       Icon(
                         Icons.calendar_today,
                         size: 14,
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.5),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         date,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                        ),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.5),
+                            ),
                       ),
                     ],
                   ),
@@ -269,14 +299,20 @@ class ReadingSummaryCard extends StatelessWidget {
                       Icon(
                         Icons.access_time,
                         size: 14,
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.5),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         time,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                        ),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.5),
+                            ),
                       ),
                     ],
                   ),
@@ -342,7 +378,8 @@ class SectionHeader extends StatelessWidget {
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                color: (iconColor ?? Theme.of(context).colorScheme.primary).withOpacity(0.08),
+                color: (iconColor ?? Theme.of(context).colorScheme.primary)
+                    .withOpacity(0.08),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -360,17 +397,20 @@ class SectionHeader extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 1),
                   Text(
                     subtitle!,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                    ),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.5),
+                        ),
                   ),
                 ],
               ],
@@ -425,9 +465,9 @@ class ModernEmptyState extends StatelessWidget {
             Text(
               title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
               textAlign: TextAlign.center,
             ),
             if (subtitle != null) ...[
@@ -435,8 +475,11 @@ class ModernEmptyState extends StatelessWidget {
               Text(
                 subtitle!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                ),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
+                    ),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -450,7 +493,8 @@ class ModernEmptyState extends StatelessWidget {
                 icon: const Icon(Icons.add),
                 label: Text(actionText!),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

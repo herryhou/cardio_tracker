@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 /// Modern Medical Metric Card Component
 /// Displays key health metrics with visual indicators and optional trend
@@ -131,7 +130,8 @@ class MedicalMetricCard extends StatelessWidget {
     final theme = Theme.of(context);
     final bool isUpwardTrend = trendValue! > 0;
     final bool isNeutral = (trendValue!).abs() < 0.01;
-    final Color trendColor = isUpwardTrend ? theme.colorScheme.error : theme.colorScheme.primary;
+    final Color trendColor =
+        isUpwardTrend ? theme.colorScheme.error : theme.colorScheme.primary;
 
     if (isNeutral) return const SizedBox.shrink();
 
@@ -373,7 +373,8 @@ class BloodPressureMetricCard extends StatelessWidget {
                           Text(
                             'PULSE',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.6),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -397,7 +398,8 @@ class BloodPressureMetricCard extends StatelessWidget {
               if (timestamp != null) ...[
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(6),
@@ -417,10 +419,13 @@ class BloodPressureMetricCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTrendIndicator(BuildContext context, double value, {required bool isUpTrend, required bool showColor}) {
+  Widget _buildTrendIndicator(BuildContext context, double value,
+      {required bool isUpTrend, required bool showColor}) {
     final theme = Theme.of(context);
     final trendColor = isUpTrend
-        ? (showColor ? theme.colorScheme.error : theme.colorScheme.onSurface.withOpacity(0.6))
+        ? (showColor
+            ? theme.colorScheme.error
+            : theme.colorScheme.onSurface.withOpacity(0.6))
         : theme.colorScheme.primary;
 
     return Container(

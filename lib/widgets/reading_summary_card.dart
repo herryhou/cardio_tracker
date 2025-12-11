@@ -65,7 +65,9 @@ class ReadingSummaryCard extends StatelessWidget {
 
                   // Category badge
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.cardsGap, vertical: AppSpacing.xs - 2),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: AppSpacing.cardsGap,
+                        vertical: AppSpacing.xs - 2),
                     decoration: BoxDecoration(
                       color: categoryColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
@@ -83,7 +85,8 @@ class ReadingSummaryCard extends StatelessWidget {
                   if (showActions) ...[
                     SizedBox(width: AppSpacing.sm),
                     Container(
-                      constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                      constraints:
+                          const BoxConstraints(minWidth: 44, minHeight: 44),
                       child: PopupMenuButton<String>(
                         icon: Icon(
                           Icons.more_vert,
@@ -100,32 +103,35 @@ class ReadingSummaryCard extends StatelessWidget {
                               break;
                           }
                         },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              Icon(Icons.edit, size: 16, color: theme.colorScheme.onSurface),
-                              SizedBox(width: AppSpacing.sm),
-                              const Text('Edit'),
-                            ],
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'edit',
+                            child: Row(
+                              children: [
+                                Icon(Icons.edit,
+                                    size: 16,
+                                    color: theme.colorScheme.onSurface),
+                                SizedBox(width: AppSpacing.sm),
+                                const Text('Edit'),
+                              ],
+                            ),
                           ),
-                        ),
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              Icon(Icons.delete, size: 16, color: theme.colorScheme.error),
-                              SizedBox(width: AppSpacing.sm),
-                              const Text('Delete'),
-                            ],
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete,
+                                    size: 16, color: theme.colorScheme.error),
+                                SizedBox(width: AppSpacing.sm),
+                                const Text('Delete'),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-              ],
-            ],
+                  ],
+                ],
               ),
               SizedBox(height: AppSpacing.md),
 
@@ -137,18 +143,16 @@ class ReadingSummaryCard extends StatelessWidget {
                     child: _buildBPDisplay(context),
                   ),
 
-                  // Separator
-                  if (reading.heartRate != null) ...[
+                  // Pulse section (conditionally displayed)
+                  if (reading.hasHeartRate) ...[
                     Container(
                       width: 1,
                       height: 50,
-                      color: theme.colorScheme.outline.withOpacity(0.2),
+                      color: theme.colorScheme.outline.withValues(alpha: 0.2),
                     ),
                     SizedBox(width: AppSpacing.md),
+                    _buildPulseDisplay(context),
                   ],
-
-                  // Pulse
-                  if (reading.heartRate != null) _buildPulseDisplay(context),
                 ],
               ),
 
@@ -191,7 +195,7 @@ class ReadingSummaryCard extends StatelessWidget {
   }
 
   Widget _buildBPDisplay(BuildContext context) {
-    final theme = Theme.of(context);
+    Theme.of(context);
     final categoryColor = _getCategoryColor(context, reading.category);
 
     return Row(
@@ -240,7 +244,8 @@ class ReadingSummaryCard extends StatelessWidget {
     );
   }
 
-  Color _getCategoryColor(BuildContext context, BloodPressureCategory category) {
+  Color _getCategoryColor(
+      BuildContext context, BloodPressureCategory category) {
     switch (category) {
       case BloodPressureCategory.low:
         return AppTheme.getLowColor(context);
@@ -282,12 +287,22 @@ class ReadingSummaryCard extends StatelessWidget {
 
 /// Compact version for list displays
 String _getMonthAbbr(int month) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-    return months[month - 1];
-  }
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ];
+  return months[month - 1];
+}
 
 class CompactReadingCard extends StatelessWidget {
   final BloodPressureReading reading;
@@ -313,7 +328,8 @@ class CompactReadingCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.cardsGap),
+          padding: EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.cardsGap),
           child: Row(
             children: [
               // Date
@@ -356,7 +372,7 @@ class CompactReadingCard extends StatelessWidget {
               ),
 
               // Pulse (if available)
-              if (reading.heartRate != null) ...[
+              if (reading.hasHeartRate) ...[
                 const SizedBox(width: 16),
                 Row(
                   children: [
@@ -394,7 +410,8 @@ class CompactReadingCard extends StatelessWidget {
     );
   }
 
-  Color _getCategoryColor(BuildContext context, BloodPressureCategory category) {
+  Color _getCategoryColor(
+      BuildContext context, BloodPressureCategory category) {
     switch (category) {
       case BloodPressureCategory.low:
         return AppTheme.getLowColor(context);

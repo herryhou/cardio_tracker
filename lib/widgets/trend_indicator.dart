@@ -129,7 +129,8 @@ class TrendIndicator extends StatelessWidget {
                 ],
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: trendColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -139,7 +140,9 @@ class TrendIndicator extends StatelessWidget {
                     children: [
                       if (!isNeutral)
                         Icon(
-                          isUpwardTrend ? Icons.trending_up : Icons.trending_down,
+                          isUpwardTrend
+                              ? Icons.trending_up
+                              : Icons.trending_down,
                           size: 12,
                           color: trendColor,
                         ),
@@ -225,7 +228,8 @@ class TrendIndicator extends StatelessWidget {
               const SizedBox(height: 12),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: trendColor.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(6),
@@ -308,9 +312,9 @@ class TrendIndicator extends StatelessWidget {
 
 /// Mode for displaying trend information
 enum TrendDisplayMode {
-  compact,   // Small inline indicator
-  detailed,  // Full card with comparison
-  minimal,   // Just arrow and value change
+  compact, // Small inline indicator
+  detailed, // Full card with comparison
+  minimal, // Just arrow and value change
 }
 
 /// Specialized trend indicator for blood pressure
@@ -334,7 +338,7 @@ class BloodPressureTrendIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    Theme.of(context);
 
     if (displayMode == TrendDisplayMode.compact) {
       return _buildCompactBPTrend(context);
@@ -419,7 +423,9 @@ class BloodPressureTrendIndicator extends StatelessWidget {
         Text(
           isNeutral ? '→' : '${change.abs()}',
           style: theme.textTheme.labelSmall?.copyWith(
-            color: isNeutral ? theme.colorScheme.onSurface.withOpacity(0.5) : color,
+            color: isNeutral
+                ? theme.colorScheme.onSurface.withOpacity(0.5)
+                : color,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -445,7 +451,6 @@ class BloodPressureTrendIndicator extends StatelessWidget {
               ),
               const SizedBox(height: 16),
             ],
-
             Row(
               children: [
                 Expanded(

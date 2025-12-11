@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/blood_pressure_reading.dart';
 import '../theme/app_theme.dart';
-import '../screens/dashboard_screen.dart';
 
 class RecentReadingItem extends StatelessWidget {
   final BloodPressureReading reading;
@@ -72,7 +71,8 @@ class RecentReadingItem extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: _getCategoryBackgroundColor(reading.category),
                     borderRadius: BorderRadius.circular(12),
@@ -92,30 +92,32 @@ class RecentReadingItem extends StatelessWidget {
 
               const SizedBox(width: 16),
 
-              // Pulse (right)
+              // Pulse (right) - only show if heart rate is available
               Expanded(
                 flex: 2,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.favorite,
-                      size: 16,
-                      color: const Color(0xFFEF4444),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '${reading.heartRate}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFEF4444),
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
+                child: reading.hasHeartRate
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.favorite,
+                            size: 16,
+                            color: const Color(0xFFEF4444),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${reading.heartRate}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFFEF4444),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      )
+                    : const SizedBox(), // Empty space when no pulse data
               ),
             ],
           ),
@@ -145,7 +147,8 @@ class RecentReadingItem extends StatelessWidget {
     return '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
   }
 
-  Color _getCategoryColor(BuildContext context, BloodPressureCategory category) {
+  Color _getCategoryColor(
+      BuildContext context, BloodPressureCategory category) {
     switch (category) {
       case BloodPressureCategory.low:
         return AppTheme.getLowColor(context);
