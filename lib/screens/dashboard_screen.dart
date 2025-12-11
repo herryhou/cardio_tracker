@@ -66,31 +66,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 padding: EdgeInsets.zero,
                 child: Column(
                   children: [
-                  // Minimalist Header with extra spacing
-                  SizedBox(height: AppSpacing.xl),
+                    // Minimalist Header with extra spacing
+                    SizedBox(height: AppSpacing.xl),
 
-                  // Centered Reading Card - Main Feature
-                  if (provider.latestReading != null) ...[
-                    _buildCenteredReadingCard(context, provider.latestReading!),
-                    SizedBox(height: AppSpacing.xxl),
-                  ] else ...[
-                    _buildEmptyStateCard(context),
+                    // Centered Reading Card - Main Feature
+                    if (provider.latestReading != null) ...[
+                      _buildCenteredReadingCard(
+                          context, provider.latestReading!),
+                      SizedBox(height: AppSpacing.xxl),
+                    ] else ...[
+                      _buildEmptyStateCard(context),
+                      SizedBox(height: AppSpacing.xxl),
+                    ],
+
+                    // Recent Readings Section with neumorphic styling
+                    Padding(
+                      padding: AppSpacing.screenMargins,
+                      child: _buildRecentReadingsSection(
+                          context, provider.recentReadings),
+                    ),
+
+                    // Extra bottom spacing for minimalist feel
                     SizedBox(height: AppSpacing.xxl),
                   ],
-
-                  // Recent Readings Section with neumorphic styling
-                  Padding(
-                    padding: AppSpacing.screenMargins,
-                    child: _buildRecentReadingsSection(context, provider.recentReadings),
-                  ),
-
-                  // Extra bottom spacing for minimalist feel
-                  SizedBox(height: AppSpacing.xxl),
-                ],
+                ),
               ),
             ),
-          ),
-        );  // RefreshIndicator
+          ); // RefreshIndicator
         },
       ),
       floatingActionButton: _buildNeumorphicFAB(context),
@@ -234,7 +236,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   // Main centered reading card with neumorphic design
-  Widget _buildCenteredReadingCard(BuildContext context, BloodPressureReading reading) {
+  Widget _buildCenteredReadingCard(
+      BuildContext context, BloodPressureReading reading) {
     return Padding(
       padding: AppSpacing.screenMargins,
       child: ReadingCardNeu(
@@ -328,7 +331,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             )
           else
             Column(
-              children: recentReadings.take(5).toList().asMap().entries.map((entry) {
+              children:
+                  recentReadings.take(5).toList().asMap().entries.map((entry) {
                 final index = entry.key;
                 final reading = entry.value;
                 final isLast = index == recentReadings.length - 1 || index == 4;
@@ -342,7 +346,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     if (!isLast)
                       Divider(
                         height: 1,
-                        color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .outline
+                            .withOpacity(0.2),
                         indent: 0,
                         endIndent: 0,
                       ),
@@ -357,30 +364,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // Neumorphic Floating Action Button
   Widget _buildNeumorphicFAB(BuildContext context) {
-    return NeumorphicButton(
-      onPressed: () {
-        _showAddReadingModal(context);
-      },
-      borderRadius: 28.0,
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            AppIcons.add,
-            color: Colors.white,
-            size: 20,
+    return Container(
+      width: 56,
+      height: 56,
+      child: FloatingActionButton(
+        onPressed: () {
+          _showAddReadingModal(context);
+        },
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        elevation: 8,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onPrimary,
+            shape: BoxShape.circle,
           ),
-          SizedBox(width: AppSpacing.sm),
-          const Text(
-            'New',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+          child: Icon(
+            Icons.add,
+            color: Theme.of(context).colorScheme.primary,
+            size: 28,
+            weight: 300,
           ),
-        ],
+        ),
       ),
     );
   }
@@ -419,7 +425,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 error,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                 ),
               ),
               SizedBox(height: AppSpacing.lg),
@@ -427,7 +434,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 onPressed: () =>
                     context.read<BloodPressureProvider>().loadReadings(),
                 borderRadius: 12.0,
-                padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+                padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg, vertical: AppSpacing.md),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -525,8 +533,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
 }
 
 /// Modal bottom sheet for adding new blood pressure readings
-class AddReadingModalSheet extends StatelessWidget {
+class AddReadingModalSheet extends StatefulWidget {
   const AddReadingModalSheet({super.key});
+
+  @override
+  State<AddReadingModalSheet> createState() => _AddReadingModalSheetState();
+}
+
+class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
+  bool _isLoading = false;
+  final _systolicController = TextEditingController();
+  final _diastolicController = TextEditingController();
+  final _heartRateController = TextEditingController();
+  final _notesController = TextEditingController();
+  DateTime _selectedDateTime = DateTime.now();
+
+  @override
+  void dispose() {
+    _systolicController.dispose();
+    _diastolicController.dispose();
+    _heartRateController.dispose();
+    _notesController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -573,7 +602,7 @@ class AddReadingModalSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'New Reading',
+                          'New Reading ...',
                           style:
                               Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
@@ -601,8 +630,15 @@ class AddReadingModalSheet extends StatelessWidget {
               SizedBox(height: AppSpacing.lg),
 
               // Add Reading Screen content
-              const AddReadingContent(
+              AddReadingContent(
                 isInModal: true,
+                onSave: _isLoading ? null : () => _saveReading(),
+                isLoading: _isLoading,
+                systolicController: _systolicController,
+                diastolicController: _diastolicController,
+                heartRateController: _heartRateController,
+                notesController: _notesController,
+                initialDateTime: _selectedDateTime,
               ),
               SizedBox(height: AppSpacing.md),
             ],
@@ -610,5 +646,145 @@ class AddReadingModalSheet extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _saveReading() async {
+    // Check if required fields are empty
+    final errors = <String>[];
+
+    if (_systolicController.text.isEmpty) {
+      errors.add('Systolic is required');
+    } else {
+      final systolic = int.tryParse(_systolicController.text);
+      if (systolic == null) {
+        errors.add('Systolic must be a valid number');
+      } else if (systolic < 70 || systolic > 250) {
+        errors.add('Systolic must be between 70 and 250');
+      }
+    }
+
+    if (_diastolicController.text.isEmpty) {
+      errors.add('Diastolic is required');
+    } else {
+      final diastolic = int.tryParse(_diastolicController.text);
+      if (diastolic == null) {
+        errors.add('Diastolic must be a valid number');
+      } else if (diastolic < 40 || diastolic > 150) {
+        errors.add('Diastolic must be between 40 and 150');
+      }
+    }
+
+    if (_heartRateController.text.isNotEmpty) {
+      final heartRate = int.tryParse(_heartRateController.text);
+      if (heartRate == null) {
+        errors.add('Heart rate must be a valid number');
+      } else if (heartRate < 30 || heartRate > 250) {
+        errors.add('Heart rate must be between 30 and 250');
+      }
+    }
+
+    // If there are errors, show them
+    if (errors.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.error_outline, color: Theme.of(context).colorScheme.onSurface, size: 20),
+                  const SizedBox(width: 12),
+                  const Text('Please fix the following errors:', style: TextStyle(fontWeight: FontWeight.bold)),
+                ],
+              ),
+              const SizedBox(height: 8),
+              ...errors.map((error) => Padding(
+                padding: const EdgeInsets.only(left: 32, top: 2),
+                child: Row(
+                  children: [
+                    Icon(Icons.circle, size: 4, color: Theme.of(context).colorScheme.onSurface),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(error)),
+                  ],
+                ),
+              )),
+            ],
+          ),
+          backgroundColor: Theme.of(context).colorScheme.errorContainer,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 5),
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    // Parse values again (they've already been validated above)
+    final systolic = int.parse(_systolicController.text);
+    final diastolic = int.parse(_diastolicController.text);
+    final heartRate = _heartRateController.text.isNotEmpty
+        ? int.parse(_heartRateController.text)
+        : 0;
+
+    // Create the reading
+    final reading = BloodPressureReading(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      systolic: systolic,
+      diastolic: diastolic,
+      heartRate: heartRate,
+      timestamp: _selectedDateTime,
+      notes: _notesController.text.trim(),
+      lastModified: DateTime.now(),
+    );
+
+    try {
+      await context.read<BloodPressureProvider>().addReading(reading);
+
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle_outline, color: Theme.of(context).colorScheme.onPrimaryContainer, size: 20),
+                const SizedBox(width: 12),
+                const Text('Reading added successfully'),
+              ],
+            ),
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.error_outline, color: Theme.of(context).colorScheme.onErrorContainer, size: 20),
+                const SizedBox(width: 12),
+                Expanded(child: Text('Error: $e')),
+              ],
+            ),
+            backgroundColor: Theme.of(context).colorScheme.errorContainer,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            margin: const EdgeInsets.all(16),
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 }
