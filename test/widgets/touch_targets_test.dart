@@ -63,11 +63,13 @@ void main() {
       }
     });
 
-    testWidgets('Add reading screen touch targets meet minimum requirements', (WidgetTester tester) async {
-      // Build the add reading screen
+    testWidgets('Add reading content touch targets meet minimum requirements', (WidgetTester tester) async {
+      // Build the add reading content
       await tester.pumpWidget(
         MaterialApp(
-          home: AddReadingScreen(),
+          home: Scaffold(
+            body: AddReadingContent(isInModal: true),
+          ),
         ),
       );
 
