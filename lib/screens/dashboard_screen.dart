@@ -377,31 +377,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // Neumorphic Floating Action Button
+  // Plain Floating Action Button
   Widget _buildNeumorphicFAB(BuildContext context) {
-    return SizedBox(
-      width: 56,
-      height: 56,
-      child: FloatingActionButton(
-        onPressed: () {
-          _showAddReadingModal(context);
-        },
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        elevation: 8,
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onPrimary,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.add,
-            color: Theme.of(context).colorScheme.primary,
-            size: 28,
-            weight: 300,
-          ),
-        ),
+    return FloatingActionButton(
+      onPressed: () {
+        _showAddReadingModal(context);
+      },
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      elevation: 8,
+      child: Icon(
+        Icons.add,
+        color: Theme.of(context).colorScheme.onPrimary,
+        size: 28,
       ),
     );
   }

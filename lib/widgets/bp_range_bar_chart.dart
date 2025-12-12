@@ -10,7 +10,7 @@ import '../theme/app_theme.dart';
 // ============================================================================
 
 // Bar styling
-const double _barWidth = 5.0;
+const double _barWidth = 13.0;
 // const double _barSpacing = 20.0;
 
 // Y-axis bounds
@@ -317,10 +317,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
           fromY: reading.diastolic.toDouble(),
           color: color.withValues(alpha: 0.8),
           width: _barWidth,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(2),
-            bottom: Radius.circular(2),
-          ),
+          borderRadius: BorderRadius.circular(_barWidth / 2),
         ),
       ],
     );
