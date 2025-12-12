@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import '../../lib/theme/app_theme.dart';
+import 'package:cardio_tracker/theme/app_theme.dart';
 
 void main() {
   group('Typography System Tests', () {

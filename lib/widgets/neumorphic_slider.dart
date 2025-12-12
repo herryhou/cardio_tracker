@@ -161,7 +161,7 @@ class _NeumorphicSliderState extends State<NeumorphicSlider>
     // Calculate neumorphic colors
     final activeTrackColor = widget.activeColor ?? theme.colorScheme.primary;
     final inactiveTrackColor = widget.inactiveColor ??
-        theme.colorScheme.surfaceVariant.withOpacity(0.5);
+        theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
     final thumbColor = widget.thumbColor ?? theme.colorScheme.surface;
 
     return LayoutBuilder(
@@ -259,10 +259,12 @@ class _NeumorphicTrack extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final shadowLight =
-        isDark ? Colors.black.withOpacity(0.2) : Colors.white.withOpacity(0.6);
-    final shadowDark =
-        isDark ? Colors.black.withOpacity(0.4) : Colors.black.withOpacity(0.1);
+    final shadowLight = isDark
+        ? Colors.black.withValues(alpha: 0.2)
+        : Colors.white.withValues(alpha: 0.6);
+    final shadowDark = isDark
+        ? Colors.black.withValues(alpha: 0.4)
+        : Colors.black.withValues(alpha: 0.1);
 
     return Container(
       decoration: BoxDecoration(
@@ -321,10 +323,12 @@ class _NeumorphicThumb extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final shadowLight =
-        isDark ? Colors.black.withOpacity(0.3) : Colors.white.withOpacity(0.8);
-    final shadowDark =
-        isDark ? Colors.black.withOpacity(0.6) : Colors.black.withOpacity(0.2);
+    final shadowLight = isDark
+        ? Colors.black.withValues(alpha: 0.3)
+        : Colors.white.withValues(alpha: 0.8);
+    final shadowDark = isDark
+        ? Colors.black.withValues(alpha: 0.6)
+        : Colors.black.withValues(alpha: 0.2);
 
     return Container(
       width: size,

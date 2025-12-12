@@ -286,8 +286,4 @@ class SettingsProvider extends ChangeNotifier {
     _error = null;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

@@ -53,7 +53,7 @@ class TrendIndicator extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: trendColor.withOpacity(0.1),
+        color: trendColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -132,7 +132,7 @@ class TrendIndicator extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: trendColor.withOpacity(0.1),
+                    color: trendColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Row(
@@ -174,7 +174,8 @@ class TrendIndicator extends StatelessWidget {
                       Text(
                         'Current',
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.6),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -193,7 +194,7 @@ class TrendIndicator extends StatelessWidget {
                 Text(
                   'VS',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.4),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -206,7 +207,8 @@ class TrendIndicator extends StatelessWidget {
                       Text(
                         'Previous',
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.6),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -214,7 +216,8 @@ class TrendIndicator extends StatelessWidget {
                         '$previousValue$unit',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -231,7 +234,7 @@ class TrendIndicator extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: trendColor.withOpacity(0.05),
+                  color: trendColor.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -276,7 +279,7 @@ class TrendIndicator extends StatelessWidget {
             unit,
             style: TextStyle(
               fontSize: 10,
-              color: trendColor.withOpacity(0.7),
+              color: trendColor.withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -288,7 +291,7 @@ class TrendIndicator extends StatelessWidget {
     if (color != null) return color!;
 
     if (isNeutral) {
-      return theme.colorScheme.onSurface.withOpacity(0.5);
+      return theme.colorScheme.onSurface.withValues(alpha: 0.5);
     }
 
     // For health metrics, upward trends aren't always bad
@@ -408,7 +411,7 @@ class BloodPressureTrendIndicator extends StatelessWidget {
         Text(
           '$label:',
           style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
         const SizedBox(width: 4),
@@ -424,7 +427,7 @@ class BloodPressureTrendIndicator extends StatelessWidget {
           isNeutral ? '→' : '${change.abs()}',
           style: theme.textTheme.labelSmall?.copyWith(
             color: isNeutral
-                ? theme.colorScheme.onSurface.withOpacity(0.5)
+                ? theme.colorScheme.onSurface.withValues(alpha: 0.5)
                 : color,
             fontWeight: FontWeight.w600,
           ),

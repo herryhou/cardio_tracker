@@ -244,7 +244,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: TimelineCarousel(
-              readings: [],
+              readings: const [],
               onDateSelected: (date) {},
             ),
           ),

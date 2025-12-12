@@ -99,7 +99,7 @@ class AccessibilityHelper {
           ),
           // Add pattern for colorblind users
           child: showPattern
-              ? Icon(
+              ? const Icon(
                   Icons.circle,
                   color: Colors.white,
                   size: 12,
@@ -109,7 +109,7 @@ class AccessibilityHelper {
         const SizedBox(width: 8),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.black87,
             fontSize: 14,
           ),

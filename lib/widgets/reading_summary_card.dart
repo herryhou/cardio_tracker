@@ -35,7 +35,7 @@ class ReadingSummaryCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: EdgeInsets.all(AppSpacing.md),
+          padding: const EdgeInsets.all(AppSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -56,7 +56,8 @@ class ReadingSummaryCard extends StatelessWidget {
                         Text(
                           _formatTime(reading.timestamp),
                           style: AppTheme.bodyStyle.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -65,11 +66,11 @@ class ReadingSummaryCard extends StatelessWidget {
 
                   // Category badge
                   Container(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.cardsGap,
                         vertical: AppSpacing.xs - 2),
                     decoration: BoxDecoration(
-                      color: categoryColor.withOpacity(0.1),
+                      color: categoryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -83,7 +84,7 @@ class ReadingSummaryCard extends StatelessWidget {
 
                   // Actions
                   if (showActions) ...[
-                    SizedBox(width: AppSpacing.sm),
+                    const SizedBox(width: AppSpacing.sm),
                     Container(
                       constraints:
                           const BoxConstraints(minWidth: 44, minHeight: 44),
@@ -91,7 +92,8 @@ class ReadingSummaryCard extends StatelessWidget {
                         icon: Icon(
                           Icons.more_vert,
                           size: 20,
-                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.6),
                         ),
                         onSelected: (value) {
                           switch (value) {
@@ -111,7 +113,7 @@ class ReadingSummaryCard extends StatelessWidget {
                                 Icon(Icons.edit,
                                     size: 16,
                                     color: theme.colorScheme.onSurface),
-                                SizedBox(width: AppSpacing.sm),
+                                const SizedBox(width: AppSpacing.sm),
                                 const Text('Edit'),
                               ],
                             ),
@@ -122,7 +124,7 @@ class ReadingSummaryCard extends StatelessWidget {
                               children: [
                                 Icon(Icons.delete,
                                     size: 16, color: theme.colorScheme.error),
-                                SizedBox(width: AppSpacing.sm),
+                                const SizedBox(width: AppSpacing.sm),
                                 const Text('Delete'),
                               ],
                             ),
@@ -133,7 +135,7 @@ class ReadingSummaryCard extends StatelessWidget {
                   ],
                 ],
               ),
-              SizedBox(height: AppSpacing.md),
+              const SizedBox(height: AppSpacing.md),
 
               // Main readings display
               Row(
@@ -150,7 +152,7 @@ class ReadingSummaryCard extends StatelessWidget {
                       height: 50,
                       color: theme.colorScheme.outline.withValues(alpha: 0.2),
                     ),
-                    SizedBox(width: AppSpacing.md),
+                    const SizedBox(width: AppSpacing.md),
                     _buildPulseDisplay(context),
                   ],
                 ],
@@ -158,9 +160,9 @@ class ReadingSummaryCard extends StatelessWidget {
 
               // Notes (if available)
               if (reading.notes != null && reading.notes!.isNotEmpty) ...[
-                SizedBox(height: AppSpacing.cardsGap),
+                const SizedBox(height: AppSpacing.cardsGap),
                 Container(
-                  padding: EdgeInsets.all(AppSpacing.cardsGap),
+                  padding: const EdgeInsets.all(AppSpacing.cardsGap),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
@@ -172,7 +174,7 @@ class ReadingSummaryCard extends StatelessWidget {
                         size: 16,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      SizedBox(width: AppSpacing.sm),
+                      const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
                           reading.notes!,
@@ -235,7 +237,7 @@ class ReadingSummaryCard extends StatelessWidget {
             Text(
               'BPM',
               style: AppTheme.bodyStyle.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -328,7 +330,7 @@ class CompactReadingCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.md, vertical: AppSpacing.cardsGap),
           child: Row(
             children: [
@@ -345,9 +347,10 @@ class CompactReadingCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${_getMonthAbbr(reading.timestamp.month)}',
+                      _getMonthAbbr(reading.timestamp.month),
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ],

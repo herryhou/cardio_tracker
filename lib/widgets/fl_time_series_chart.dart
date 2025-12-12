@@ -82,7 +82,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
   // State
   late ExtendedTimeRange _currentTimeRange;
   List<TimeSeriesData> _timeSeriesData = [];
-  Map<double, int> _xValueToIndex = {};
+  final Map<double, int> _xValueToIndex = {};
 
   @override
   void initState() {
@@ -255,7 +255,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Theme.of(context).brightness == Brightness.dark
-              ? Theme.of(context).colorScheme.outline.withOpacity(0.3)
+              ? Theme.of(context).colorScheme.outline.withValues(alpha: 0.3)
               : Colors.grey.withValues(alpha: _gridAlpha),
         ),
       ),
@@ -264,20 +264,29 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
         children: [
           Icon(Icons.show_chart,
               size: 48,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
-          SizedBox(height: AppSpacing.md),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.4)),
+          const SizedBox(height: AppSpacing.md),
           Text(
             'No data available',
             style: AppTheme.headerStyle.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.6),
               fontSize: 16, // Override for this context
             ),
           ),
-          SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             'Start recording blood pressure to see trends here',
             style: AppTheme.bodyStyle.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.5),
             ),
             textAlign: TextAlign.center,
           ),
@@ -374,7 +383,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
       barWidth: 1.5,
       isStrokeCapRound: false,
       dashArray: [5, 5], // Dotted line
-      dotData: FlDotData(show: false), // No dots on average line
+      dotData: const FlDotData(show: false), // No dots on average line
       belowBarData: BarAreaData(show: false),
     );
   }
@@ -424,8 +433,8 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
         ),
         axisNameSize: 20,
       ),
-      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
@@ -607,7 +616,7 @@ class _FlTimeSeriesChartState extends State<FlTimeSeriesChart> {
     return LineChartData(
       lineBarsData: [],
       titlesData: _buildTitlesData(),
-      gridData: FlGridData(show: false),
+      gridData: const FlGridData(show: false),
       borderData: _buildBorderData(),
       minX: 0,
       maxX: 1,

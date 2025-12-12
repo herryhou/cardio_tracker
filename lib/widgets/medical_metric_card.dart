@@ -53,7 +53,7 @@ class MedicalMetricCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: cardColor.withOpacity(0.1),
+                        color: cardColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
@@ -68,7 +68,8 @@ class MedicalMetricCard extends StatelessWidget {
                     child: Text(
                       title,
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -94,7 +95,8 @@ class MedicalMetricCard extends StatelessWidget {
                     Text(
                       unit!,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -109,7 +111,7 @@ class MedicalMetricCard extends StatelessWidget {
                 Text(
                   subtitle!,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -138,7 +140,7 @@ class MedicalMetricCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: trendColor.withOpacity(0.1),
+        color: trendColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -237,7 +239,7 @@ class BloodPressureMetricCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: categoryColor.withOpacity(0.1),
+                      color: categoryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -254,7 +256,8 @@ class BloodPressureMetricCard extends StatelessWidget {
                         Text(
                           'Blood Pressure',
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -292,7 +295,8 @@ class BloodPressureMetricCard extends StatelessWidget {
                         Text(
                           'SYS',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -314,7 +318,7 @@ class BloodPressureMetricCard extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(horizontal: 12),
                     height: 40,
                     width: 1,
-                    color: theme.colorScheme.outline.withOpacity(0.3),
+                    color: theme.colorScheme.outline.withValues(alpha: 0.3),
                   ),
 
                   // Diastolic
@@ -333,7 +337,8 @@ class BloodPressureMetricCard extends StatelessWidget {
                         Text(
                           'DIA',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -356,7 +361,7 @@ class BloodPressureMetricCard extends StatelessWidget {
                       margin: const EdgeInsets.symmetric(horizontal: 12),
                       height: 40,
                       width: 1,
-                      color: theme.colorScheme.outline.withOpacity(0.3),
+                      color: theme.colorScheme.outline.withValues(alpha: 0.3),
                     ),
                     Expanded(
                       child: Column(
@@ -373,8 +378,8 @@ class BloodPressureMetricCard extends StatelessWidget {
                           Text(
                             'PULSE',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color:
-                                  theme.colorScheme.onSurface.withOpacity(0.6),
+                              color: theme.colorScheme.onSurface
+                                  .withValues(alpha: 0.6),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -425,13 +430,13 @@ class BloodPressureMetricCard extends StatelessWidget {
     final trendColor = isUpTrend
         ? (showColor
             ? theme.colorScheme.error
-            : theme.colorScheme.onSurface.withOpacity(0.6))
+            : theme.colorScheme.onSurface.withValues(alpha: 0.6))
         : theme.colorScheme.primary;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: trendColor.withOpacity(0.1),
+        color: trendColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(

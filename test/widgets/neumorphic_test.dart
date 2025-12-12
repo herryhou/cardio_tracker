@@ -9,10 +9,10 @@ void main() {
     group('NeumorphicContainer', () {
       testWidgets('renders with proper structure', (WidgetTester tester) async {
         await tester.pumpWidget(
-          MaterialApp(
+          const MaterialApp(
             home: Scaffold(
               body: NeumorphicContainer(
-                child: Container(
+                child: SizedBox(
                   width: 100,
                   height: 100,
                   child: Text('Test'),
@@ -30,9 +30,9 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData.light(),
-            home: Scaffold(
+            home: const Scaffold(
               body: NeumorphicContainer(
-                child: Container(width: 100, height: 100),
+                child: SizedBox(width: 100, height: 100),
               ),
             ),
           ),
@@ -66,9 +66,9 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData.dark(),
-            home: Scaffold(
+            home: const Scaffold(
               body: NeumorphicContainer(
-                child: Container(width: 100, height: 100),
+                child: SizedBox(width: 100, height: 100),
               ),
             ),
           ),
@@ -94,11 +94,11 @@ void main() {
         const radius = 30.0;
 
         await tester.pumpWidget(
-          MaterialApp(
+          const MaterialApp(
             home: Scaffold(
               body: NeumorphicContainer(
                 borderRadius: radius,
-                child: Container(width: 100, height: 100),
+                child: SizedBox(width: 100, height: 100),
               ),
             ),
           ),
@@ -117,11 +117,11 @@ void main() {
 
       testWidgets('has pressed state animation', (WidgetTester tester) async {
         await tester.pumpWidget(
-          MaterialApp(
+          const MaterialApp(
             home: Scaffold(
               body: NeumorphicContainer(
                 isPressed: true,
-                child: Container(width: 100, height: 100),
+                child: SizedBox(width: 100, height: 100),
               ),
             ),
           ),
@@ -154,7 +154,7 @@ void main() {
             home: Scaffold(
               body: NeumorphicButton(
                 onPressed: () {},
-                child: Text('Button'),
+                child: const Text('Button'),
               ),
             ),
           ),
@@ -174,7 +174,7 @@ void main() {
                 onPressed: () {
                   wasPressed = true;
                 },
-                child: Text('Button'),
+                child: const Text('Button'),
               ),
             ),
           ),
@@ -190,7 +190,7 @@ void main() {
             home: Scaffold(
               body: NeumorphicButton(
                 onPressed: () {},
-                child: Text('Button'),
+                child: const Text('Button'),
               ),
             ),
           ),
@@ -209,7 +209,7 @@ void main() {
             home: Scaffold(
               body: NeumorphicButton(
                 onPressed: () {},
-                child: SizedBox(
+                child: const SizedBox(
                   width: 20,
                   height: 20,
                   child: Text('X'),
@@ -236,7 +236,7 @@ void main() {
                 onPressed: () {},
                 width: width,
                 height: height,
-                child: Text('Button'),
+                child: const Text('Button'),
               ),
             ),
           ),
@@ -406,7 +406,7 @@ void main() {
             home: Scaffold(
               body: NeumorphicButton(
                 onPressed: () {},
-                child: Text('Button'),
+                child: const Text('Button'),
               ),
             ),
           ),

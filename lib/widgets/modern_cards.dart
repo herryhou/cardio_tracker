@@ -42,14 +42,16 @@ class ModernMetricCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             border: showBorder
                 ? Border.all(
-                    color:
-                        Theme.of(context).colorScheme.outline.withOpacity(0.08),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .outline
+                        .withValues(alpha: 0.08),
                     width: 1,
                   )
                 : null,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 12,
                 offset: const Offset(0, 2),
               ),
@@ -64,7 +66,7 @@ class ModernMetricCard extends StatelessWidget {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: iconColor.withOpacity(0.08),
+                      color: iconColor.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -84,7 +86,7 @@ class ModernMetricCard extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.6),
+                          .withValues(alpha: 0.6),
                       fontWeight: FontWeight.w400,
                     ),
               ),
@@ -146,12 +148,13 @@ class ReadingSummaryCard extends StatelessWidget {
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.12),
+              color:
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.12),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withValues(alpha: 0.03),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -165,10 +168,10 @@ class ReadingSummaryCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: categoryColor.withOpacity(0.1),
+                      color: categoryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: categoryColor.withOpacity(0.3),
+                        color: categoryColor.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
@@ -189,7 +192,7 @@ class ReadingSummaryCard extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.6),
+                          .withValues(alpha: 0.6),
                     ),
                     onSelected: (value) {
                       switch (value) {
@@ -251,8 +254,8 @@ class ReadingSummaryCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Theme.of(context)
                         .colorScheme
-                        .surfaceVariant
-                        .withOpacity(0.5),
+                        .surfaceContainerHighest
+                        .withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -261,7 +264,7 @@ class ReadingSummaryCard extends StatelessWidget {
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
                         ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -280,7 +283,7 @@ class ReadingSummaryCard extends StatelessWidget {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.5),
+                            .withValues(alpha: 0.5),
                       ),
                       const SizedBox(width: 4),
                       Text(
@@ -289,7 +292,7 @@ class ReadingSummaryCard extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.5),
+                                  .withValues(alpha: 0.5),
                             ),
                       ),
                     ],
@@ -302,7 +305,7 @@ class ReadingSummaryCard extends StatelessWidget {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.5),
+                            .withValues(alpha: 0.5),
                       ),
                       const SizedBox(width: 4),
                       Text(
@@ -311,7 +314,7 @@ class ReadingSummaryCard extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.5),
+                                  .withValues(alpha: 0.5),
                             ),
                       ),
                     ],
@@ -379,7 +382,7 @@ class SectionHeader extends StatelessWidget {
               height: 28,
               decoration: BoxDecoration(
                 color: (iconColor ?? Theme.of(context).colorScheme.primary)
-                    .withOpacity(0.08),
+                    .withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -409,7 +412,7 @@ class SectionHeader extends StatelessWidget {
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.5),
+                              .withValues(alpha: 0.5),
                         ),
                   ),
                 ],
@@ -452,13 +455,19 @@ class ModernEmptyState extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                color: Theme.of(context)
+                    .colorScheme
+                    .primary
+                    .withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(
                 icon,
                 size: 40,
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                color: Theme.of(context)
+                    .colorScheme
+                    .primary
+                    .withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 24),
@@ -478,7 +487,7 @@ class ModernEmptyState extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                     ),
                 textAlign: TextAlign.center,
               ),

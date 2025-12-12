@@ -166,25 +166,25 @@ class ClinicalBarDistributionPainter extends CustomPainter {
         'name': 'Normal',
         'min': 50.0,
         'max': 80.0,
-        'color': Color.fromARGB(255, 185, 255, 203)
+        'color': const Color.fromARGB(255, 185, 255, 203)
       },
       {
         'name': 'Elevated',
         'min': 80.0,
         'max': 80.0,
-        'color': Color.fromARGB(255, 255, 248, 167)
+        'color': const Color.fromARGB(255, 255, 248, 167)
       },
       {
         'name': 'Stage 1',
         'min': 80.0,
         'max': 90.0,
-        'color': Color.fromARGB(255, 255, 207, 156)
+        'color': const Color.fromARGB(255, 255, 207, 156)
       },
       {
         'name': 'Stage 2',
         'min': 90.0,
         'max': 120.0,
-        'color': Color.fromARGB(255, 255, 165, 165)
+        'color': const Color.fromARGB(255, 255, 165, 165)
       },
     ];
 
@@ -198,7 +198,7 @@ class ClinicalBarDistributionPainter extends CustomPainter {
           Rect.fromLTWH(drawArea.left, topY, drawArea.width, bottomY - topY);
 
       final zonePaint = Paint()
-        ..color = (zone['color'] as Color).withOpacity(0.3)
+        ..color = (zone['color'] as Color).withValues(alpha: 0.3)
         ..style = PaintingStyle.fill;
 
       canvas.drawRect(zoneRect, zonePaint);
@@ -331,8 +331,8 @@ class ClinicalBarDistributionPainter extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            barColor.withOpacity(0.8), // Systolic (top)
-            barColor.withOpacity(0.3), // Diastolic (bottom)
+            barColor.withValues(alpha: 0.8), // Systolic (top)
+            barColor.withValues(alpha: 0.3), // Diastolic (bottom)
           ],
         ).createShader(
             Rect.fromLTWH(x, systolicY, barWidth, diastolicY - systolicY));
@@ -792,7 +792,9 @@ class ClinicalScatterPainter extends CustomPainter {
     if (readings.length != oldDelegate.readings.length) return true;
     if (selectedReading != oldDelegate.selectedReading) return true;
     if (zoomLevel != oldDelegate.zoomLevel ||
-        panOffset != oldDelegate.panOffset) return true;
+        panOffset != oldDelegate.panOffset) {
+      return true;
+    }
     if (showTrendLine != oldDelegate.showTrendLine) return true;
     if (backgroundColor != oldDelegate.backgroundColor) return true;
     if (textColor != oldDelegate.textColor) return true;
@@ -930,10 +932,10 @@ class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
                   blurRadius: 10,
                   offset: const Offset(4, 4),
                 ),
-                BoxShadow(
+                const BoxShadow(
                   color: Colors.white,
                   blurRadius: 10,
-                  offset: const Offset(-4, -4),
+                  offset: Offset(-4, -4),
                 ),
               ],
       ),
@@ -972,14 +974,16 @@ class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
                     top: 16,
                     right: 16,
                     child: AnimatedOpacity(
-                      opacity: _transformationController.value != Matrix4.identity()
-                          ? 1.0
-                          : 0.0,
+                      opacity:
+                          _transformationController.value != Matrix4.identity()
+                              ? 1.0
+                              : 0.0,
                       duration: const Duration(milliseconds: 200),
                       child: FloatingActionButton.small(
                         onPressed: _resetView,
                         backgroundColor: Theme.of(context).colorScheme.surface,
-                        foregroundColor: Theme.of(context).colorScheme.onSurface,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onSurface,
                         elevation: 4,
                         child: const Icon(Icons.refresh),
                       ),
@@ -1022,7 +1026,7 @@ class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
               // Prevent tap events from affecting the interactive viewer
             },
             child: Container(
-              padding: EdgeInsets.all(AppSpacing.md),
+              padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Theme.of(context).colorScheme.surfaceContainer
@@ -1030,7 +1034,10 @@ class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Theme.of(context).colorScheme.outline.withOpacity(0.3)
+                      ? Theme.of(context)
+                          .colorScheme
+                          .outline
+                          .withValues(alpha: 0.3)
                       : Colors.grey[300]!,
                 ),
               ),
@@ -1067,7 +1074,7 @@ class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
           Container(
             width: 16,
             height: 16,
-            margin: EdgeInsets.only(top: AppSpacing.xs / 2),
+            margin: const EdgeInsets.only(top: AppSpacing.xs / 2),
             decoration: BoxDecoration(
               color: zone.color,
               borderRadius: BorderRadius.circular(4),
@@ -1092,7 +1099,7 @@ class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
                     color: _getZoneTextColor(zone.category),
                   ),
                 ),
-                SizedBox(height: AppSpacing.xs / 2),
+                const SizedBox(height: AppSpacing.xs / 2),
                 Text(
                   zone.description,
                   style: TextStyle(
@@ -1306,7 +1313,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
           border: Border.all(color: color.withValues(alpha: 0.3), width: 2),
         ),
         child: Padding(
-          padding: EdgeInsets.all(AppSpacing.md),
+          padding: const EdgeInsets.all(AppSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -1321,7 +1328,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  SizedBox(width: AppSpacing.sm),
+                  const SizedBox(width: AppSpacing.sm),
                   Text(
                     'Blood Pressure Reading',
                     style: AppTheme.bodyStyle.copyWith(
@@ -1331,19 +1338,19 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                   ),
                 ],
               ),
-              SizedBox(height: AppSpacing.cardsGap),
+              const SizedBox(height: AppSpacing.cardsGap),
               _buildDetailRow('Blood Pressure:',
                   formatBloodPressure(reading.systolic, reading.diastolic)),
               _buildDetailRow('Heart Rate:', '${reading.heartRate} bpm'),
               _buildDetailRow('Category:',
                   ClinicalZones.getCategoryDescription(reading.category)),
-              SizedBox(height: AppSpacing.sm),
+              const SizedBox(height: AppSpacing.sm),
               _buildDetailRow('Date & Time:', formattedDate,
                   style: const TextStyle(fontWeight: FontWeight.w600)),
               if (reading.notes?.isNotEmpty ?? false) ...[
-                SizedBox(height: AppSpacing.sm),
+                const SizedBox(height: AppSpacing.sm),
                 Container(
-                  padding: EdgeInsets.all(AppSpacing.sm),
+                  padding: const EdgeInsets.all(AppSpacing.sm),
                   decoration: BoxDecoration(
                     color: Theme.of(context).brightness == Brightness.dark
                         ? Theme.of(context).colorScheme.surfaceContainerHighest
@@ -1411,7 +1418,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     //     170 - ((position.dy - drawArea.top) / drawArea.height) * (170 - 70);
 
     // Tolerance adjusted for 5px circles
-    final tolerance = 12.0;
+    const tolerance = 12.0;
 
     BloodPressureReading? closestReading;
     double minDistance = double.infinity;
@@ -1472,7 +1479,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
           elevation: 4,
           borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: EdgeInsets.all(AppSpacing.cardsGap),
+            padding: const EdgeInsets.all(AppSpacing.cardsGap),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -1483,13 +1490,13 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: AppSpacing.sm),
+                const SizedBox(height: AppSpacing.sm),
                 _buildDetailRow('Blood Pressure:',
                     formatBloodPressure(reading.systolic, reading.diastolic)),
                 _buildDetailRow('Heart Rate:', '${reading.heartRate} bpm'),
                 _buildDetailRow('Category:',
                     ClinicalZones.getCategoryDescription(reading.category)),
-                SizedBox(height: AppSpacing.xs),
+                const SizedBox(height: AppSpacing.xs),
                 _buildDetailRow('Date:', formattedDate),
               ],
             ),
@@ -1524,7 +1531,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
 
   Widget _buildDetailRow(String label, String value, {TextStyle? style}) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppSpacing.xs / 2),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs / 2),
       child: RichText(
         text: TextSpan(
           children: [
@@ -1578,7 +1585,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               },
               child: Container(
                 // Constrain gestures to chart area only
-                constraints: BoxConstraints.expand(),
+                constraints: const BoxConstraints.expand(),
                 child: CustomPaint(
                   painter: ClinicalScatterPainter(
                     readings: widget.readings,
@@ -1596,8 +1603,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               ),
             ),
           ),
-          SizedBox(height: AppSpacing.md + AppSpacing.xs),
-          ],
+          const SizedBox(height: AppSpacing.md + AppSpacing.xs),
+        ],
       ),
     );
   }

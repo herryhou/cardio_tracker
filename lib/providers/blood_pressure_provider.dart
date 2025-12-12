@@ -46,7 +46,7 @@ class BloodPressureProvider extends ChangeNotifier {
 
   List<BloodPressureReading> get recentReadings {
     final now = DateTime.now();
-    final thirtyDaysAgo = now.subtract(Duration(days: 30));
+    final thirtyDaysAgo = now.subtract(const Duration(days: 30));
     return _readings
         .where((reading) => reading.timestamp.isAfter(thirtyDaysAgo))
         .toList()
@@ -139,8 +139,8 @@ class BloodPressureProvider extends ChangeNotifier {
   List<BloodPressureReading> getReadingsByDateRange(DateTime start, DateTime end) {
     return _readings
         .where((reading) =>
-            reading.timestamp.isAfter(start.subtract(Duration(days: 1))) &&
-            reading.timestamp.isBefore(end.add(Duration(days: 1))))
+            reading.timestamp.isAfter(start.subtract(const Duration(days: 1))) &&
+            reading.timestamp.isBefore(end.add(const Duration(days: 1))))
         .toList()
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
@@ -190,8 +190,4 @@ class BloodPressureProvider extends ChangeNotifier {
     _error = null;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

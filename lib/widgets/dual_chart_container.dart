@@ -104,7 +104,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
                                 Theme.of(context)
                                     .colorScheme
                                     .primary
-                                    .withOpacity(0.05),
+                                    .withValues(alpha: 0.05),
                                 Colors.transparent,
                               ],
                             )
@@ -377,7 +377,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
           width: 1,
         ),
       ),
-      padding: EdgeInsets.all(isMobile ? 2.0 : 4.0),
+      padding: const EdgeInsets.all(2.0),
       child: selectorWidget,
     );
   }

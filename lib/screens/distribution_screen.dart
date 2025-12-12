@@ -107,7 +107,7 @@ class _DistributionScreenState extends State<DistributionScreen> {
           if (provider.error != null) {
             return Center(
               child: Padding(
-                padding: EdgeInsets.all(AppSpacing.md),
+                padding: const EdgeInsets.all(AppSpacing.md),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -116,18 +116,18 @@ class _DistributionScreenState extends State<DistributionScreen> {
                       size: 64,
                       color: Theme.of(context).colorScheme.error,
                     ),
-                    SizedBox(height: AppSpacing.md),
+                    const SizedBox(height: AppSpacing.md),
                     Text(
                       'Error loading data',
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
-                    SizedBox(height: AppSpacing.sm),
+                    const SizedBox(height: AppSpacing.sm),
                     Text(
                       provider.error!,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    SizedBox(height: AppSpacing.md),
+                    const SizedBox(height: AppSpacing.md),
                     ElevatedButton(
                       onPressed: () => provider.loadReadings(),
                       child: const Text('Retry'),
@@ -189,14 +189,14 @@ class _DistributionScreenState extends State<DistributionScreen> {
     return Center(
       child: Card(
         child: Padding(
-          padding: EdgeInsets.all(AppSpacing.lg + AppSpacing.md),
+          padding: const EdgeInsets.all(AppSpacing.lg + AppSpacing.md),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.bar_chart,
                 size: 64,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               const SizedBox(height: 16),
               Text(
@@ -210,7 +210,7 @@ class _DistributionScreenState extends State<DistributionScreen> {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.6),
+                          .withValues(alpha: 0.6),
                     ),
                 textAlign: TextAlign.center,
               ),

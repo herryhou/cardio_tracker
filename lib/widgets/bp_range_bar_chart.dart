@@ -72,7 +72,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
   // State
   late ExtendedTimeRange _currentTimeRange;
   List<TimeSeriesData> _timeSeriesData = [];
-  Map<double, int> _xValueToIndex = {};
+  final Map<double, int> _xValueToIndex = {};
 
   @override
   void initState() {
@@ -186,7 +186,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
     }
 
     return Container(
-      padding: EdgeInsets.all(AppSpacing.md + AppSpacing.xs),
+      padding: const EdgeInsets.all(AppSpacing.md + AppSpacing.xs),
       decoration: _buildContainerDecoration(),
       child: Column(
         children: [
@@ -232,7 +232,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Theme.of(context).brightness == Brightness.dark
-              ? Theme.of(context).colorScheme.outline.withOpacity(0.3)
+              ? Theme.of(context).colorScheme.outline.withValues(alpha: 0.3)
               : Colors.grey.withValues(alpha: _gridAlpha),
         ),
       ),
@@ -241,20 +241,29 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
         children: [
           Icon(Icons.bar_chart,
               size: 48,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
-          SizedBox(height: AppSpacing.md),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.4)),
+          const SizedBox(height: AppSpacing.md),
           Text(
             'No data available',
             style: AppTheme.headerStyle.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.6),
               fontSize: 16, // Override for this context
             ),
           ),
-          SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             'Start recording blood pressure to see ranges here',
             style: AppTheme.bodyStyle.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.5),
             ),
             textAlign: TextAlign.center,
           ),
@@ -353,8 +362,8 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
         ),
         axisNameSize: 20,
       ),
-      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
@@ -427,7 +436,10 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
     return FlBorderData(
       show: true,
       border: Border.all(
-        color: Theme.of(context).colorScheme.outline.withOpacity(_borderAlpha),
+        color: Theme.of(context)
+            .colorScheme
+            .outline
+            .withValues(alpha: _borderAlpha),
         width: _borderLineWidth,
       ),
     );
@@ -439,7 +451,8 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
         getTooltipColor: (group) =>
             Theme.of(context).colorScheme.surfaceContainer,
         tooltipBorder: BorderSide(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.3)),
+            color:
+                Theme.of(context).colorScheme.outline.withValues(alpha: 0.3)),
         getTooltipItem: _buildTooltipItem,
       ),
       touchCallback: _handleBarTouchEvent,
@@ -496,7 +509,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
     return BarChartData(
       barGroups: [],
       titlesData: _buildTitlesData(),
-      gridData: FlGridData(show: false),
+      gridData: const FlGridData(show: false),
       borderData: _buildBorderData(),
       backgroundColor: Colors.transparent,
       minY: _minY,

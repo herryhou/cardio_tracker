@@ -195,7 +195,7 @@ void main() {
       expect(chartFinder, findsOneWidget);
 
       // Tap near where a data point should be
-      final tapPosition = const Offset(400, 300);
+      const tapPosition = Offset(400, 300);
       await tester.tapAt(tapPosition);
       await tester.pumpAndSettle();
 

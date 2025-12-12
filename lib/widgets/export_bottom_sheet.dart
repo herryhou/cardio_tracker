@@ -100,7 +100,8 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
           await CsvExportService.exportCurrentMonth(widget.readings);
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Monthly data exported successfully')),
+              const SnackBar(
+                  content: Text('Monthly data exported successfully')),
             );
           }
           break;
@@ -140,13 +141,19 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
         child: Row(
           children: [
             Container(
-              key: Key('export_button_container'),
+              key: const Key('export_button_container'),
               width: 48,
               height: 48,
               decoration: BoxDecoration(
                 color: isLoading
-                    ? Theme.of(context).colorScheme.surface.withOpacity(0.5)
-                    : Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    ? Theme.of(context)
+                        .colorScheme
+                        .surface
+                        .withValues(alpha: 0.5)
+                    : Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: isLoading
@@ -181,7 +188,7 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
                               ? Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.5)
+                                  .withValues(alpha: 0.5)
                               : null,
                         ),
                   ),
@@ -192,7 +199,7 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.6),
+                              .withValues(alpha: 0.6),
                         ),
                   ),
                 ],
@@ -201,7 +208,10 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
             if (!isLoading)
               Icon(
                 Icons.chevron_right,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.3),
               ),
           ],
         ),
@@ -215,7 +225,8 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
       animation: _animationController,
       builder: (context, child) {
         return Transform.translate(
-          offset: Offset(0, _slideAnimation.value * MediaQuery.of(context).size.height * 0.3),
+          offset: Offset(0,
+              _slideAnimation.value * MediaQuery.of(context).size.height * 0.3),
           child: Opacity(
             opacity: _fadeAnimation.value,
             child: Container(
@@ -226,7 +237,10 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .shadow
+                        .withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, -2),
                   ),
@@ -248,13 +262,14 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
                         color: Theme.of(context)
                             .colorScheme
                             .outline
-                            .withOpacity(0.3),
+                            .withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
                     // Header
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                       child: Row(
                         children: [
                           NeumorphicContainer(
@@ -280,11 +295,14 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
                                 ),
                                 Text(
                                   'Choose what to export',
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
                                         color: Theme.of(context)
                                             .colorScheme
                                             .onSurface
-                                            .withOpacity(0.7),
+                                            .withValues(alpha: 0.7),
                                       ),
                                 ),
                               ],
@@ -297,7 +315,7 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
                               foregroundColor: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.7),
+                                  .withValues(alpha: 0.7),
                             ),
                           ),
                         ],
@@ -306,7 +324,8 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
                     const SizedBox(height: AppSpacing.xl),
                     // Export options
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                       child: Column(
                         children: [
                           _buildExportButton(
@@ -314,21 +333,24 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
                             subtitle: 'Complete blood pressure history',
                             icon: Icons.download,
                             option: 'all',
-                            isLoading: _isExporting && _exportingOption == 'all',
+                            isLoading:
+                                _isExporting && _exportingOption == 'all',
                           ),
                           _buildExportButton(
                             title: 'Export Summary',
                             subtitle: 'Statistics and averages',
                             icon: Icons.analytics,
                             option: 'summary',
-                            isLoading: _isExporting && _exportingOption == 'summary',
+                            isLoading:
+                                _isExporting && _exportingOption == 'summary',
                           ),
                           _buildExportButton(
                             title: 'Export This Month',
                             subtitle: 'Current month readings only',
                             icon: Icons.today,
                             option: 'month',
-                            isLoading: _isExporting && _exportingOption == 'month',
+                            isLoading:
+                                _isExporting && _exportingOption == 'month',
                           ),
                         ],
                       ),

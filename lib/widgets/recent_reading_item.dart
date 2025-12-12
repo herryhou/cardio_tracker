@@ -100,10 +100,10 @@ class RecentReadingItem extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.favorite,
                             size: 16,
-                            color: const Color(0xFFEF4444),
+                            color: Color(0xFFEF4444),
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -144,6 +144,12 @@ class RecentReadingItem extends StatelessWidget {
   }
 
   String _formatTime(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inDays < 7) {
+      return '';
+    }
     return '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
   }
 
@@ -168,15 +174,15 @@ class RecentReadingItem extends StatelessWidget {
   Color _getCategoryBackgroundColor(BloodPressureCategory category) {
     switch (category) {
       case BloodPressureCategory.normal:
-        return const Color(0xFF10B981).withOpacity(0.08); // Green
+        return const Color(0xFF10B981).withValues(alpha: 0.08); // Green
       case BloodPressureCategory.elevated:
-        return const Color(0xFFF59E0B).withOpacity(0.08); // Orange
+        return const Color(0xFFF59E0B).withValues(alpha: 0.08); // Orange
       case BloodPressureCategory.low:
-        return const Color(0xFF3B82F6).withOpacity(0.08); // Blue
+        return const Color(0xFF3B82F6).withValues(alpha: 0.08); // Blue
       case BloodPressureCategory.stage1:
       case BloodPressureCategory.stage2:
       case BloodPressureCategory.crisis:
-        return const Color(0xFFEF4444).withOpacity(0.08); // Red
+        return const Color(0xFFEF4444).withValues(alpha: 0.08); // Red
     }
   }
 }

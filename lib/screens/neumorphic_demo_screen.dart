@@ -23,12 +23,12 @@ class _NeumorphicDemoScreenState extends State<NeumorphicDemoScreen> {
       darkTheme: ThemeData.dark(),
       themeMode: _useDarkTheme ? ThemeMode.dark : ThemeMode.light,
       home: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           title: const Text('Neumorphic Components Demo'),
           elevation: 0,
-          backgroundColor: Theme.of(context).colorScheme.background,
-          foregroundColor: Theme.of(context).colorScheme.onBackground,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          foregroundColor: Theme.of(context).colorScheme.onSurface,
         ),
         body: Padding(
           padding: const EdgeInsets.all(20),
@@ -73,11 +73,11 @@ class _NeumorphicDemoScreenState extends State<NeumorphicDemoScreen> {
               const SizedBox(height: 10),
               Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: NeumorphicContainer(
-                      child: Container(
+                      child: SizedBox(
                         height: 100,
-                        child: const Center(
+                        child: Center(
                           child: Text('Normal'),
                         ),
                       ),
@@ -93,7 +93,7 @@ class _NeumorphicDemoScreenState extends State<NeumorphicDemoScreen> {
                       },
                       child: NeumorphicContainer(
                         isPressed: _isPressed,
-                        child: Container(
+                        child: SizedBox(
                           height: 100,
                           child: Center(
                             child: Text(_isPressed ? 'Pressed' : 'Tap Me'),

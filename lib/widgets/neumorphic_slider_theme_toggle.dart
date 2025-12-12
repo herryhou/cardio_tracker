@@ -35,15 +35,15 @@ class _NeumorphicSliderThemeToggleState
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.4)
-                : Colors.black.withOpacity(0.1),
+                ? Colors.black.withValues(alpha: 0.4)
+                : Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(2, 2),
           ),
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.2)
-                : Colors.white.withOpacity(0.7),
+                ? Colors.black.withValues(alpha: 0.2)
+                : Colors.white.withValues(alpha: 0.7),
             blurRadius: 8,
             offset: const Offset(-2, -2),
           ),
@@ -175,7 +175,8 @@ class _ThemeOptionState extends State<_ThemeOption>
                 boxShadow: widget.isSelected
                     ? [
                         BoxShadow(
-                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          color:
+                              theme.colorScheme.primary.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -192,7 +193,7 @@ class _ThemeOptionState extends State<_ThemeOption>
                       size: 20,
                       color: widget.isSelected
                           ? theme.colorScheme.onPrimary
-                          : theme.colorScheme.onSurface.withOpacity(0.7),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -200,7 +201,8 @@ class _ThemeOptionState extends State<_ThemeOption>
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: widget.isSelected
                             ? theme.colorScheme.onPrimary
-                            : theme.colorScheme.onSurface.withOpacity(0.7),
+                            : theme.colorScheme.onSurface
+                                .withValues(alpha: 0.7),
                         fontWeight: widget.isSelected
                             ? FontWeight.w600
                             : FontWeight.normal,

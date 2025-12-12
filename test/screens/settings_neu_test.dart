@@ -3,14 +3,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../lib/providers/theme_provider.dart';
-import '../../lib/screens/settings_screen.dart';
-import '../../lib/screens/cloudflare_settings_screen.dart';
-import '../../lib/widgets/neumorphic_container.dart';
-import '../../lib/widgets/neumorphic_button.dart';
-import '../../lib/widgets/neumorphic_slider.dart';
-import '../../lib/widgets/neumorphic_slider_theme_toggle.dart';
-import '../../lib/widgets/neumorphic_tile.dart';
+import 'package:cardio_tracker/providers/theme_provider.dart';
+import 'package:cardio_tracker/screens/settings_screen.dart';
+import 'package:cardio_tracker/screens/cloudflare_settings_screen.dart';
+import 'package:cardio_tracker/widgets/neumorphic_container.dart';
+import 'package:cardio_tracker/widgets/neumorphic_button.dart';
+import 'package:cardio_tracker/widgets/neumorphic_slider_theme_toggle.dart';
+import 'package:cardio_tracker/widgets/neumorphic_tile.dart';
 
 void main() {
   group('Neumorphic Settings Screen Tests', () {
@@ -166,8 +165,7 @@ void main() {
 
       // Find the status card
       final statusContainer = find.byWidgetPredicate((widget) =>
-        widget is NeumorphicContainer &&
-        widget.child is Widget
+        widget is NeumorphicContainer
       );
 
       expect(statusContainer, findsAtLeastNWidgets(1));
@@ -180,7 +178,6 @@ void main() {
       // Initially might not be configured, but clear button should exist
       final clearButton = find.byWidgetPredicate((widget) =>
         widget is NeumorphicButton &&
-        widget.child is Widget &&
         widget.child.toString().toLowerCase().contains('clear')
       );
 
@@ -245,7 +242,6 @@ void main() {
       // Verify important elements have semantic labels
       final saveButton = find.byWidgetPredicate((widget) =>
         widget is NeumorphicButton &&
-        widget.child is Widget &&
         (widget.child.toString().toLowerCase().contains('save') ||
          widget.child.toString().toLowerCase().contains('update'))
       );

@@ -117,7 +117,7 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
 
       if (connectionTest) {
         setState(() {
-          _lastSaveStatus = _lastSaveStatus! + ' - Connection verified';
+          _lastSaveStatus = '${_lastSaveStatus!} - Connection verified';
         });
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -130,7 +130,7 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
         }
       } else {
         setState(() {
-          _lastSaveStatus = _lastSaveStatus! + ' - Connection test failed';
+          _lastSaveStatus = '${_lastSaveStatus!} - Connection test failed';
         });
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -272,7 +272,7 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                           ),
                           const Spacer(),
                           if (_isConfigured)
-                            Tooltip(
+                            const Tooltip(
                               message:
                                   'Credentials are stored securely using device keychain/encrypted storage',
                               child: Icon(
@@ -287,7 +287,7 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.lock,
                               size: 14,
                               color: Colors.green,
@@ -582,11 +582,11 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Row(
+        title: const Row(
           children: [
             Icon(Icons.security, color: Colors.green),
-            const SizedBox(width: 8),
-            const Text('Credential Storage'),
+            SizedBox(width: 8),
+            Text('Credential Storage'),
           ],
         ),
         content: const Column(
@@ -597,32 +597,32 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
               'Your Cloudflare credentials are securely stored using:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Row(
               children: [
                 Icon(Icons.check_circle, color: Colors.green, size: 16),
-                const SizedBox(width: 8),
-                const Text('Device Keychain (iOS)'),
+                SizedBox(width: 8),
+                Text('Device Keychain (iOS)'),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Row(
               children: [
                 Icon(Icons.check_circle, color: Colors.green, size: 16),
-                const SizedBox(width: 8),
-                const Text('Encrypted Storage (Android)'),
+                SizedBox(width: 8),
+                Text('Encrypted Storage (Android)'),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Row(
               children: [
                 Icon(Icons.check_circle, color: Colors.green, size: 16),
-                const SizedBox(width: 8),
-                const Text('SharedPreferences (fallback)'),
+                SizedBox(width: 8),
+                Text('SharedPreferences (fallback)'),
               ],
             ),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: 16),
+            Text(
               'Your API token is never stored in plain text or memory, ensuring your credentials remain secure even if the app is closed.',
               style: TextStyle(color: Colors.grey),
             ),

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cardio_tracker/screens/dashboard_screen.dart';
 import 'package:cardio_tracker/widgets/reading_summary_card.dart';
-import 'package:cardio_tracker/widgets/clinical_scatter_plot.dart';
-import 'package:cardio_tracker/widgets/fl_time_series_chart.dart';
 import 'package:cardio_tracker/screens/add_reading_screen.dart';
 import 'package:cardio_tracker/models/blood_pressure_reading.dart';
 
@@ -12,7 +10,7 @@ void main() {
     testWidgets('Dashboard screen touch targets meet minimum requirements', (WidgetTester tester) async {
       // Build the dashboard screen
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: DashboardScreen(),
         ),
       );
@@ -66,7 +64,7 @@ void main() {
     testWidgets('Add reading content touch targets meet minimum requirements', (WidgetTester tester) async {
       // Build the add reading content
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AddReadingContent(isInModal: true),
           ),

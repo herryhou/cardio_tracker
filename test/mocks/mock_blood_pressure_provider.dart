@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import '../../lib/providers/blood_pressure_provider.dart';
-import '../../lib/models/blood_pressure_reading.dart';
-import '../../lib/services/database_service.dart';
+import 'package:cardio_tracker/providers/blood_pressure_provider.dart';
+import 'package:cardio_tracker/models/blood_pressure_reading.dart';
+import 'package:cardio_tracker/services/database_service.dart';
 
 class MockBloodPressureProvider extends ChangeNotifier implements BloodPressureProvider {
   // Implement all the required properties and methods from BloodPressureProvider

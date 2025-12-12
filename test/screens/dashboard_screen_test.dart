@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import 'package:cardio_tracker/screens/dashboard_screen.dart';
 import 'package:cardio_tracker/providers/blood_pressure_provider.dart';
-import 'package:cardio_tracker/models/blood_pressure_reading.dart';
 import 'package:cardio_tracker/services/database_service.dart';
 
 void main() {
@@ -17,7 +16,7 @@ void main() {
           create: (context) => BloodPressureProvider(
             databaseService: DatabaseService.instance,
           ),
-          child: MaterialApp(
+          child: const MaterialApp(
             home: DashboardScreen(),
           ),
         ),
@@ -41,7 +40,7 @@ void main() {
           create: (context) => BloodPressureProvider(
             databaseService: DatabaseService.instance,
           ),
-          child: MaterialApp(
+          child: const MaterialApp(
             home: DashboardScreen(),
           ),
         ),
@@ -68,7 +67,7 @@ void main() {
           create: (context) => BloodPressureProvider(
             databaseService: DatabaseService.instance,
           ),
-          child: MaterialApp(
+          child: const MaterialApp(
             home: DashboardScreen(),
           ),
         ),
@@ -89,7 +88,7 @@ void main() {
           create: (context) => BloodPressureProvider(
             databaseService: DatabaseService.instance,
           ),
-          child: MaterialApp(
+          child: const MaterialApp(
             home: DashboardScreen(),
           ),
         ),
@@ -116,7 +115,7 @@ void main() {
           create: (context) => BloodPressureProvider(
             databaseService: DatabaseService.instance,
           ),
-          child: MaterialApp(
+          child: const MaterialApp(
             home: DashboardScreen(),
           ),
         ),
@@ -147,7 +146,7 @@ void main() {
           create: (context) => BloodPressureProvider(
             databaseService: DatabaseService.instance,
           ),
-          child: MaterialApp(
+          child: const MaterialApp(
             home: DashboardScreen(),
           ),
         ),
@@ -177,7 +176,7 @@ void main() {
           create: (context) => BloodPressureProvider(
             databaseService: DatabaseService.instance,
           ),
-          child: MaterialApp(
+          child: const MaterialApp(
             home: DashboardScreen(),
           ),
         ),

@@ -47,11 +47,11 @@ class NeumorphicContainer extends StatelessWidget {
     // Calculate neumorphic colors based on theme
     final baseColor = color ?? theme.colorScheme.surface;
     final shadowLight = isDark
-        ? Colors.black.withOpacity(0.5)
-        : Colors.white.withOpacity(0.7);
+        ? Colors.black.withValues(alpha: 0.5)
+        : Colors.white.withValues(alpha: 0.7);
     final shadowDark = isDark
-        ? Colors.black.withOpacity(0.8)
-        : Colors.black.withOpacity(0.15);
+        ? Colors.black.withValues(alpha: 0.8)
+        : Colors.black.withValues(alpha: 0.15);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -62,35 +62,37 @@ class NeumorphicContainer extends StatelessWidget {
       decoration: BoxDecoration(
         color: baseColor,
         borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: isPressed ? [
-          // Reversed shadows for pressed effect
-          BoxShadow(
-            color: shadowLight,
-            blurRadius: 10,
-            offset: const Offset(4, 4),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: shadowDark,
-            blurRadius: 10,
-            offset: const Offset(-4, -4),
-            spreadRadius: 0,
-          ),
-        ] : [
-          // Outer shadow effect when not pressed
-          BoxShadow(
-            color: shadowDark,
-            blurRadius: 10,
-            offset: const Offset(4, 4),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: shadowLight,
-            blurRadius: 10,
-            offset: const Offset(-4, -4),
-            spreadRadius: 0,
-          ),
-        ],
+        boxShadow: isPressed
+            ? [
+                // Reversed shadows for pressed effect
+                BoxShadow(
+                  color: shadowLight,
+                  blurRadius: 10,
+                  offset: const Offset(4, 4),
+                  spreadRadius: 0,
+                ),
+                BoxShadow(
+                  color: shadowDark,
+                  blurRadius: 10,
+                  offset: const Offset(-4, -4),
+                  spreadRadius: 0,
+                ),
+              ]
+            : [
+                // Outer shadow effect when not pressed
+                BoxShadow(
+                  color: shadowDark,
+                  blurRadius: 10,
+                  offset: const Offset(4, 4),
+                  spreadRadius: 0,
+                ),
+                BoxShadow(
+                  color: shadowLight,
+                  blurRadius: 10,
+                  offset: const Offset(-4, -4),
+                  spreadRadius: 0,
+                ),
+              ],
       ),
       child: Padding(
         padding: padding,
@@ -158,7 +160,8 @@ class _NeumorphicPainter extends BoxPainter {
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
     final Rect bounds = offset & configuration.size!;
-    final RRect outer = RRect.fromRectAndRadius(bounds, Radius.circular(borderRadius));
+    final RRect outer =
+        RRect.fromRectAndRadius(bounds, Radius.circular(borderRadius));
 
     final Paint backgroundPaint = Paint()
       ..color = backgroundColor
@@ -173,7 +176,7 @@ class _NeumorphicPainter extends BoxPainter {
         canvas,
         bounds,
         borderRadius,
-        darkShadowColor ?? Colors.black.withOpacity(0.15),
+        darkShadowColor ?? Colors.black.withValues(alpha: 0.15),
         shadowOffset,
         blurRadius,
       );
@@ -181,7 +184,7 @@ class _NeumorphicPainter extends BoxPainter {
         canvas,
         bounds,
         borderRadius,
-        lightShadowColor ?? Colors.white.withOpacity(0.7),
+        lightShadowColor ?? Colors.white.withValues(alpha: 0.7),
         -shadowOffset,
         blurRadius,
       );
@@ -201,7 +204,8 @@ class _NeumorphicPainter extends BoxPainter {
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, blurRadius);
 
     final shadowRect = bounds.shift(offset);
-    final shadowRRect = RRect.fromRectAndRadius(shadowRect, Radius.circular(borderRadius));
+    final shadowRRect =
+        RRect.fromRectAndRadius(shadowRect, Radius.circular(borderRadius));
     canvas.drawRRect(shadowRRect, shadowPaint);
   }
 }

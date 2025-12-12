@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../../lib/screens/add_reading_screen.dart';
+import 'package:cardio_tracker/screens/add_reading_screen.dart';
 
 void main() {
   group('Save Button Behavior', () {
     testWidgets('Save button should be disabled by default (onSave is null)', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AddReadingContent(
               isInModal: true,
@@ -31,7 +31,7 @@ void main() {
 
     testWidgets('Save button can be disabled when onSave is null', (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: AddReadingContent(
               isInModal: true,

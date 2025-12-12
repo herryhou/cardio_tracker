@@ -54,7 +54,7 @@ Text formatBloodPressureText(int systolic, int diastolic, {
   return Text(
     formatBloodPressure(systolic, diastolic),
     style: style?.copyWith(
-      color: color ?? style?.color ?? Colors.black,
+      color: color ?? style.color ?? Colors.black,
     ) ?? TextStyle(
       color: color ?? Colors.black,
     ),
@@ -76,7 +76,7 @@ Text formatBloodPressureTextFromString(String systolicStr, String diastolicStr, 
   return Text(
     formatBloodPressureFromString(systolicStr, diastolicStr),
     style: style?.copyWith(
-      color: color ?? style?.color ?? Colors.black,
+      color: color ?? style.color ?? Colors.black,
     ) ?? TextStyle(
       color: color ?? Colors.black,
     ),

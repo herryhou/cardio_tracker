@@ -61,7 +61,7 @@ class ReadingCardNeu extends StatelessWidget {
                 // Main BP Reading Display
                 _buildBPDisplay(context, color, mainFontSize, labelFontSize),
 
-                SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: AppSpacing.lg),
 
                 // Pulse and Status Row
                 _buildPulseAndStatus(context, color, labelFontSize, iconSize),
@@ -77,7 +77,7 @@ class ReadingCardNeu extends StatelessWidget {
   Widget _buildBPDisplay(BuildContext context, Color color, double mainFontSize,
       double labelFontSize) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         // Systolic
@@ -92,7 +92,7 @@ class ReadingCardNeu extends StatelessWidget {
           ),
         ),
 
-        SizedBox(width: AppSpacing.xl),
+        const SizedBox(width: AppSpacing.sm),
 
         // Separator
         Padding(
@@ -101,13 +101,16 @@ class ReadingCardNeu extends StatelessWidget {
             '/',
             style: TextStyle(
               fontSize: mainFontSize * 0.8,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.5),
               fontWeight: FontWeight.w300,
             ),
           ),
         ),
 
-        SizedBox(width: AppSpacing.xl),
+        const SizedBox(width: AppSpacing.sm),
 
         // Diastolic
         Flexible(
@@ -116,7 +119,7 @@ class ReadingCardNeu extends StatelessWidget {
             reading.diastolic.toString(),
             'Diastolic',
             color,
-            mainFontSize,
+            mainFontSize * 0.6,
             labelFontSize,
           ),
         ),
@@ -145,12 +148,13 @@ class ReadingCardNeu extends StatelessWidget {
             height: 1.0,
           ),
         ),
-        SizedBox(height: AppSpacing.xs),
+        const SizedBox(height: AppSpacing.xs),
         Text(
           label,
           style: TextStyle(
             fontSize: labelFontSize,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            color:
+                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -174,7 +178,7 @@ class ReadingCardNeu extends StatelessWidget {
                 size: iconSize,
                 color: Colors.red.shade400,
               ),
-              SizedBox(width: AppSpacing.sm),
+              const SizedBox(width: AppSpacing.sm),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +198,7 @@ class ReadingCardNeu extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -207,15 +211,15 @@ class ReadingCardNeu extends StatelessWidget {
 
         // Status Badge
         Container(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
             vertical: AppSpacing.sm,
           ),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: color.withOpacity(0.3),
+              color: color.withValues(alpha: 0.3),
               width: 1,
             ),
           ),

@@ -40,8 +40,8 @@ void main() {
       expect(surfaceContrast, greaterThanOrEqualTo(4.5),
           reason: 'On-surface text contrast ratio ${surfaceContrast.toStringAsFixed(2)}:1 is below WCAG AA standard');
 
-      final onBackground = theme.colorScheme.onBackground;
-      final background = theme.colorScheme.background;
+      final onBackground = theme.colorScheme.onSurface;
+      final background = theme.colorScheme.surface;
       final backgroundContrast = _calculateContrastRatio(onBackground, background);
 
       expect(backgroundContrast, greaterThanOrEqualTo(4.5),
@@ -73,8 +73,8 @@ void main() {
           reason: 'On-surface text contrast ratio ${surfaceContrast.toStringAsFixed(2)}:1 is below WCAG AA');
 
       // Primary text on background
-      final onBackground = darkTheme.colorScheme.onBackground;
-      final background = darkTheme.colorScheme.background;
+      final onBackground = darkTheme.colorScheme.onSurface;
+      final background = darkTheme.colorScheme.surface;
       final backgroundContrast = _calculateContrastRatio(onBackground, background);
       expect(backgroundContrast, greaterThanOrEqualTo(4.5),
           reason: 'On-background text contrast ratio ${backgroundContrast.toStringAsFixed(2)}:1 is below WCAG AA');

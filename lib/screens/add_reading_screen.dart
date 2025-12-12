@@ -143,8 +143,9 @@ class _AddReadingContentState extends State<AddReadingContent> {
                             hint: '120',
                             focusNode: _systolicFocusNode,
                             validator: (value) {
-                              if (value == null || value.isEmpty)
+                              if (value == null || value.isEmpty) {
                                 return 'Required';
+                              }
                               final systolic = int.tryParse(value);
                               if (systolic == null) return 'Invalid number';
                               if (systolic < 70 || systolic > 250) {
@@ -161,8 +162,9 @@ class _AddReadingContentState extends State<AddReadingContent> {
                             label: 'DIA',
                             hint: '80',
                             validator: (value) {
-                              if (value == null || value.isEmpty)
+                              if (value == null || value.isEmpty) {
                                 return 'Required';
+                              }
                               final diastolic = int.tryParse(value);
                               if (diastolic == null) return 'Invalid number';
                               if (diastolic < 40 || diastolic > 150) {
@@ -216,13 +218,13 @@ class _AddReadingContentState extends State<AddReadingContent> {
                           ),
                           TextButton(
                             onPressed: _selectDateTime,
-                            child: const Text('Change'),
                             style: TextButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 4),
                               minimumSize: Size.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
+                            child: const Text('Change'),
                           ),
                         ],
                       ),

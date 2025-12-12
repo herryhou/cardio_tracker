@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:cardio_tracker/widgets/bp_range_bar_chart.dart';
 import 'package:cardio_tracker/models/blood_pressure_reading.dart';
-import 'package:cardio_tracker/models/chart_types.dart';
 
 const Duration kLongPressTimeout = Duration(milliseconds: 500);
 
@@ -91,7 +90,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: BPRangeBarChart(
-              readings: [],
+              readings: const [],
               selectedReading: null,
               onReadingSelected: (reading) {},
             ),

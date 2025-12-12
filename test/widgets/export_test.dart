@@ -195,7 +195,7 @@ void main() {
 
     testWidgets('handles empty readings gracefully', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: ExportBottomSheet(
               readings: [],
@@ -214,7 +214,7 @@ void main() {
   group('ExportBottomSheet widget animations', () {
     testWidgets('has slide-up animation', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: ExportBottomSheet(
               readings: [],
@@ -232,7 +232,7 @@ void main() {
 
     testWidgets('buttons have press animation', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: ExportBottomSheet(
               readings: [],

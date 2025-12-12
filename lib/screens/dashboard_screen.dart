@@ -37,7 +37,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(context),
       body: Consumer<BloodPressureProvider>(
         builder: (context, provider, child) {
@@ -65,16 +65,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Column(
                   children: [
                     // Minimalist Header with extra spacing
-                    SizedBox(height: AppSpacing.xl),
+                    const SizedBox(height: AppSpacing.xl),
 
                     // Centered Reading Card - Main Feature
                     if (provider.latestReading != null) ...[
                       _buildCenteredReadingCard(
                           context, provider.latestReading!),
-                      SizedBox(height: AppSpacing.xxl),
+                      const SizedBox(height: AppSpacing.xxl),
                     ] else ...[
                       _buildEmptyStateCard(context),
-                      SizedBox(height: AppSpacing.xxl),
+                      const SizedBox(height: AppSpacing.xxl),
                     ],
 
                     // Recent Readings Section with neumorphic styling
@@ -85,7 +85,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
 
                     // Extra bottom spacing for minimalist feel
-                    SizedBox(height: AppSpacing.xxl),
+                    const SizedBox(height: AppSpacing.xxl),
                   ],
                 ),
               ),
@@ -141,7 +141,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     color: Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.7),
+                        .withValues(alpha: 0.7),
                   ),
                   onPressed: () {
                     Navigator.of(context).push(
@@ -163,7 +163,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: IconButton(
             icon: Icon(
               Icons.file_download_outlined,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.7),
             ),
             onPressed: () async {
               try {
@@ -186,50 +189,53 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: PopupMenuButton<String>(
             icon: Icon(
               Icons.more_vert,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.7),
             ),
             onSelected: (value) {
               _handleMenuAction(context, value);
             },
             itemBuilder: (context) => [
-              PopupMenuItem<String>(
+              const PopupMenuItem<String>(
                 value: 'settings',
                 child: Row(
                   children: [
-                    const Icon(Icons.settings, size: 18),
+                    Icon(Icons.settings, size: 18),
                     SizedBox(width: AppSpacing.cardsGap),
-                    const Text('Settings'),
+                    Text('Settings'),
                   ],
                 ),
               ),
               const PopupMenuDivider(),
-              PopupMenuItem<String>(
+              const PopupMenuItem<String>(
                 value: 'export_csv',
                 child: Row(
                   children: [
                     Icon(Icons.file_download, size: 18),
                     SizedBox(width: AppSpacing.cardsGap),
-                    const Text('Export All Data'),
+                    Text('Export All Data'),
                   ],
                 ),
               ),
-              PopupMenuItem<String>(
+              const PopupMenuItem<String>(
                 value: 'export_summary',
                 child: Row(
                   children: [
                     Icon(Icons.assessment, size: 18),
                     SizedBox(width: AppSpacing.cardsGap),
-                    const Text('Export Summary'),
+                    Text('Export Summary'),
                   ],
                 ),
               ),
-              PopupMenuItem<String>(
+              const PopupMenuItem<String>(
                 value: 'export_month',
                 child: Row(
                   children: [
                     Icon(Icons.today, size: 18),
                     SizedBox(width: AppSpacing.cardsGap),
-                    const Text('Export This Month'),
+                    Text('Export This Month'),
                   ],
                 ),
               ),
@@ -257,19 +263,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildEmptyStateCard(BuildContext context) {
     return Padding(
       padding: AppSpacing.screenMargins,
-      child: NeumorphicContainer(
+      child: const NeumorphicContainer(
         borderRadius: 30.0,
         padding: EdgeInsets.all(AppSpacing.xl + AppSpacing.md),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.favorite_border,
               size: 80,
               color: Color(0xFF9CA3AF),
             ),
             SizedBox(height: AppSpacing.lg),
-            const Text(
+            Text(
               'No readings yet',
               style: TextStyle(
                 fontSize: 24,
@@ -278,7 +284,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             SizedBox(height: AppSpacing.sm),
-            const Text(
+            Text(
               'Tap the + button to add your first reading',
               style: TextStyle(
                 fontSize: 16,
@@ -296,7 +302,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildRecentReadingsSection(
       BuildContext context, List<BloodPressureReading> recentReadings) {
     return NeumorphicContainer(
-      padding: EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -306,24 +312,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
               color: const Color(0xFF1F2937),
             ),
           ),
-          SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.lg),
           if (recentReadings.isEmpty)
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(AppSpacing.lg),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+                color: Theme.of(context)
+                    .colorScheme
+                    .surface
+                    .withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Column(
+              child: const Column(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.history,
                     size: 32,
                     color: Color(0xFF9CA3AF),
                   ),
                   SizedBox(height: AppSpacing.sm),
-                  const Text(
+                  Text(
                     'No recent readings',
                     style: TextStyle(
                       fontSize: 16,
@@ -337,10 +346,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           else
             Column(
               children:
-                  recentReadings.take(5).toList().asMap().entries.map((entry) {
+                  recentReadings.take(20).toList().asMap().entries.map((entry) {
                 final index = entry.key;
                 final reading = entry.value;
-                final isLast = index == recentReadings.length - 1 || index == 4;
+                final isLast =
+                    index == recentReadings.length - 1 || index == 19;
 
                 return Column(
                   children: [
@@ -354,7 +364,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         color: Theme.of(context)
                             .colorScheme
                             .outline
-                            .withOpacity(0.2),
+                            .withValues(alpha: 0.2),
                         indent: 0,
                         endIndent: 0,
                       ),
@@ -369,7 +379,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   // Neumorphic Floating Action Button
   Widget _buildNeumorphicFAB(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 56,
       height: 56,
       child: FloatingActionButton(
@@ -399,14 +409,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildErrorState(BuildContext context, String error) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(AppSpacing.lg + AppSpacing.md),
+        padding: const EdgeInsets.all(AppSpacing.lg + AppSpacing.md),
         child: NeumorphicContainer(
-          padding: EdgeInsets.all(AppSpacing.xl),
+          padding: const EdgeInsets.all(AppSpacing.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: EdgeInsets.all(AppSpacing.md),
+                padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.errorContainer,
                   borderRadius: BorderRadius.circular(16),
@@ -417,7 +427,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   color: Theme.of(context).colorScheme.error,
                 ),
               ),
-              SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.lg),
               const Text(
                 'Unable to load data',
                 style: TextStyle(
@@ -425,28 +435,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: AppSpacing.sm),
+              const SizedBox(height: AppSpacing.sm),
               Text(
                 error,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
                 ),
               ),
-              SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.lg),
               NeumorphicButton(
                 onPressed: () =>
                     context.read<BloodPressureProvider>().loadReadings(),
                 borderRadius: 12.0,
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.lg, vertical: AppSpacing.md),
-                child: Row(
+                child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.refresh),
+                    Icon(Icons.refresh),
                     SizedBox(width: AppSpacing.sm),
-                    const Text('Retry'),
+                    Text('Retry'),
                   ],
                 ),
               ),
@@ -527,7 +539,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => AddReadingModalSheet(),
+      builder: (context) => const AddReadingModalSheet(),
     );
   }
 
@@ -551,7 +563,7 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
   final _diastolicController = TextEditingController();
   final _heartRateController = TextEditingController();
   final _notesController = TextEditingController();
-  DateTime _selectedDateTime = DateTime.now();
+  final DateTime _selectedDateTime = DateTime.now();
 
   @override
   void dispose() {
@@ -572,7 +584,7 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
       ),
       child: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(AppSpacing.lg + AppSpacing.sm),
+          padding: const EdgeInsets.all(AppSpacing.lg + AppSpacing.sm),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -583,13 +595,15 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .outline
+                        .withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ),
-              SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.lg),
 
               // Header
               Row(
@@ -599,7 +613,7 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
                     size: 24,
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  SizedBox(width: AppSpacing.md),
+                  const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -630,7 +644,7 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
                   ),
                 ],
               ),
-              SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.lg),
 
               // Add Reading Screen content
               AddReadingContent(
@@ -643,7 +657,7 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
                 notesController: _notesController,
                 initialDateTime: _selectedDateTime,
               ),
-              SizedBox(height: AppSpacing.md),
+              const SizedBox(height: AppSpacing.md),
             ],
           ),
         ),

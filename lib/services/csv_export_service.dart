@@ -37,7 +37,7 @@ class CsvExportService {
       String csv = const ListToCsvConverter().convert(csvData);
 
       // Create file
-      final directory = await Directory.systemTemp;
+      final directory = Directory.systemTemp;
       final fileName = 'blood_pressure_readings_${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
       final file = File('${directory.path}/$fileName');
 
@@ -147,7 +147,7 @@ ${categoryCounts.entries.map((entry) => '- ${entry.key}: ${entry.value} readings
     try {
       final summary = generateSummaryStats(readings);
 
-      final directory = await Directory.systemTemp;
+      final directory = Directory.systemTemp;
       final fileName = 'bp_summary_${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.txt';
       final file = File('${directory.path}/$fileName');
 

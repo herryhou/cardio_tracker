@@ -103,9 +103,8 @@ class _NeumorphicButtonState extends State<NeumorphicButton>
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      cursor: widget.disabled
-          ? SystemMouseCursors.basic
-          : SystemMouseCursors.click,
+      cursor:
+          widget.disabled ? SystemMouseCursors.basic : SystemMouseCursors.click,
       child: GestureDetector(
         onTapDown: _handleTapDown,
         onTapUp: _handleTapUp,
@@ -166,11 +165,11 @@ class _NeumorphicButtonContainer extends StatelessWidget {
     // Calculate neumorphic colors based on theme
     final baseColor = color ?? theme.colorScheme.surface;
     final shadowLight = isDark
-        ? Colors.black.withOpacity(0.3)
-        : Colors.white.withOpacity(0.8);
+        ? Colors.black.withValues(alpha: 0.3)
+        : Colors.white.withValues(alpha: 0.8);
     final shadowDark = isDark
-        ? Colors.black.withOpacity(0.6)
-        : Colors.black.withOpacity(0.2);
+        ? Colors.black.withValues(alpha: 0.6)
+        : Colors.black.withValues(alpha: 0.2);
 
     // Ensure minimum touch target size of 48dp for accessibility
     final effectiveWidth = width ?? 48.0;
@@ -183,43 +182,45 @@ class _NeumorphicButtonContainer extends StatelessWidget {
       decoration: BoxDecoration(
         color: baseColor,
         borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: isPressed || disabled ? [
-          // Reversed shadows for pressed effect
-          BoxShadow(
-            color: shadowLight,
-            blurRadius: 10,
-            offset: const Offset(2, 2),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: shadowDark,
-            blurRadius: 10,
-            offset: const Offset(-2, -2),
-            spreadRadius: 0,
-          ),
-        ] : [
-          // Outer shadow effect when not pressed
-          BoxShadow(
-            color: shadowDark,
-            blurRadius: 10,
-            offset: const Offset(4, 4),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: shadowLight,
-            blurRadius: 10,
-            offset: const Offset(-4, -4),
-            spreadRadius: 0,
-          ),
-        ],
+        boxShadow: isPressed || disabled
+            ? [
+                // Reversed shadows for pressed effect
+                BoxShadow(
+                  color: shadowLight,
+                  blurRadius: 10,
+                  offset: const Offset(2, 2),
+                  spreadRadius: 0,
+                ),
+                BoxShadow(
+                  color: shadowDark,
+                  blurRadius: 10,
+                  offset: const Offset(-2, -2),
+                  spreadRadius: 0,
+                ),
+              ]
+            : [
+                // Outer shadow effect when not pressed
+                BoxShadow(
+                  color: shadowDark,
+                  blurRadius: 10,
+                  offset: const Offset(4, 4),
+                  spreadRadius: 0,
+                ),
+                BoxShadow(
+                  color: shadowLight,
+                  blurRadius: 10,
+                  offset: const Offset(-4, -4),
+                  spreadRadius: 0,
+                ),
+              ],
       ),
       child: Center(
         child: DefaultTextStyle(
           style: DefaultTextStyle.of(context).style.copyWith(
-            color: disabled
-                ? theme.colorScheme.onSurface.withOpacity(0.38)
-                : theme.colorScheme.onSurface,
-          ),
+                color: disabled
+                    ? theme.colorScheme.onSurface.withValues(alpha: 0.38)
+                    : theme.colorScheme.onSurface,
+              ),
           child: child,
         ),
       ),

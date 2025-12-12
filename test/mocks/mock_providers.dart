@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:cardio_tracker/providers/blood_pressure_provider.dart';
 import 'package:cardio_tracker/models/blood_pressure_reading.dart';
 

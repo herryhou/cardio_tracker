@@ -2,7 +2,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cardio_tracker/theme/app_theme.dart';
-import 'package:cardio_tracker/models/blood_pressure_reading.dart';
 
 /// WCAG AA Contrast Compliance Tests
 /// Ensures all text meets minimum 4.5:1 contrast ratio
@@ -57,8 +56,8 @@ void main() {
 
     test('Stage 1 badge has sufficient contrast', () {
       // Stage 1 should use #BF360C (dark brown-orange) with white text for WCAG AA compliance
-      final stage1Color = const Color(0xFFBF360C);
-      final textColor = Colors.white;
+      const stage1Color = Color(0xFFBF360C);
+      const textColor = Colors.white;
 
       final contrast = _calculateContrastRatio(textColor, stage1Color);
 
@@ -85,7 +84,7 @@ void main() {
 
     test('Hint text has sufficient contrast', () {
       final lightTheme = AppTheme.lightTheme;
-      final hintColor = const Color(0xFF757575);
+      const hintColor = Color(0xFF757575);
 
       final contrast = _calculateContrastRatio(
         hintColor,

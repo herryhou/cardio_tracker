@@ -103,7 +103,7 @@ void main() {
       // With swapped axes: diastolic on X (80), systolic on Y (120)
       // X position: 80 is in the middle of 50-120 range
       // Y position: 120 is in the middle of 70-170 range
-      final tapPosition = const Offset(400, 300);
+      const tapPosition = Offset(400, 300);
 
       await tester.tapAt(tapPosition);
       await tester.pumpAndSettle();
@@ -135,7 +135,7 @@ void main() {
       final chartFinder = find.byType(ClinicalScatterPlot);
       expect(chartFinder, findsOneWidget);
 
-      final tapPosition = const Offset(400, 300);
+      const tapPosition = Offset(400, 300);
       await tester.longPressAt(tapPosition);
       await tester.pumpAndSettle();
 
@@ -146,7 +146,7 @@ void main() {
     testWidgets('Chart should handle empty readings list',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: ClinicalScatterPlot(
               readings: [],

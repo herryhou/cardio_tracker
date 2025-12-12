@@ -106,7 +106,7 @@ class SettingsScreen extends StatelessWidget {
                   subtitle: const Text('Sync data with Cloudflare KV'),
                   trailing: Icon(
                     Icons.chevron_right,
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                   onTap: () {
                     Navigator.of(context).push(
@@ -119,7 +119,7 @@ class SettingsScreen extends StatelessWidget {
                 Container(
                   height: 1,
                   margin: const EdgeInsets.symmetric(horizontal: 16),
-                  color: theme.colorScheme.outline.withOpacity(0.2),
+                  color: theme.colorScheme.outline.withValues(alpha: 0.2),
                 ),
                 NeumorphicTile(
                   leading: Icon(
@@ -130,7 +130,7 @@ class SettingsScreen extends StatelessWidget {
                   subtitle: const Text('App version and information'),
                   trailing: Icon(
                     Icons.chevron_right,
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                   onTap: () {
                     // TODO: Implement about screen
