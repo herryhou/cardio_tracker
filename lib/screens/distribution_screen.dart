@@ -92,12 +92,6 @@ class _DistributionScreenState extends State<DistributionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Blood Pressure Distribution'),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Theme.of(context).colorScheme.primary,
-      ),
       body: Consumer<BloodPressureProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {

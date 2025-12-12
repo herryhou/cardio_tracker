@@ -69,18 +69,9 @@ class _DualChartContainerState extends State<DualChartContainer> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header with title and clear selection button
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: _buildHeader(chartProvider),
-                ),
-
-                SizedBox(height: spacing),
-
                 // Time Range Selector (shared between both charts)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
                   child: _buildSharedTimeRangeSelector(chartProvider),
                 ),
 
@@ -221,41 +212,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
     );
   }
 
-  Widget _buildHeader(DualChartProvider chartProvider) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Blood Pressure Analysis',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${widget.readings.length} readings • ${_getCurrentRangeLabel()}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
-            ),
-          ],
-        ),
-        if (chartProvider.hasSelection)
-          TextButton.icon(
-            onPressed: chartProvider.clearSelection,
-            icon: const Icon(Icons.clear, size: 16),
-            label: const Text('Clear Selection'),
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            ),
-          ),
-      ],
-    );
-  }
-
+  
   Widget _buildSharedTimeRangeSelector(DualChartProvider chartProvider) {
     final isMobile = MediaQuery.of(context).size.width < 400;
     final isSmallMobile = MediaQuery.of(context).size.width < 360;
