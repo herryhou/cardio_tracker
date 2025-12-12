@@ -185,31 +185,11 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
       return _buildEmptyState();
     }
 
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md + AppSpacing.xs),
-      decoration: _buildContainerDecoration(),
-      child: Column(
-        children: [
-          // Render only the chart (bar chart)
-          Expanded(
-            child: _buildChart(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  BoxDecoration _buildContainerDecoration() {
-    return BoxDecoration(
-      color: AppTheme.getChartBackground(context),
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? Colors.black.withValues(alpha: 0.3)
-              : Colors.black.withValues(alpha: _shadowAlpha),
-          blurRadius: _shadowBlurRadius,
-          offset: const Offset(0, 2),
+    return Column(
+      children: [
+        // Render only the chart (bar chart)
+        Expanded(
+          child: _buildChart(),
         ),
       ],
     );

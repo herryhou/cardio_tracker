@@ -6,7 +6,6 @@ import '../providers/dual_chart_provider.dart';
 import '../utils/bp_format.dart';
 import 'clinical_scatter_plot.dart';
 import 'bp_range_bar_chart.dart';
-import 'timeline_carousel.dart';
 
 /// Dual Chart Container with synchronized scatter plot and time series chart
 class DualChartContainer extends StatefulWidget {

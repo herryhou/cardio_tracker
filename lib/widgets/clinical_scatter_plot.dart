@@ -1020,6 +1020,7 @@ class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
           ),
 
           // Legend - separate from interactive area with its own gesture detector
+          /*
           GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
@@ -1057,12 +1058,13 @@ class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
                 ],
               ),
             ),
-          ),
+          ),*/
         ],
       ),
     );
   }
 
+  /*
   Widget _buildEnhancedLegendItem(ClinicalZone zone) {
     return Container(
       constraints: const BoxConstraints(minWidth: 120),
@@ -1131,7 +1133,7 @@ class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
       case BloodPressureCategory.crisis:
         return const Color(0xFF7F1D1D); // Very dark red
     }
-  }
+  }*/
 
   Widget _buildDetailsCard(BloodPressureReading reading) {
     final color = ClinicalZones.getCategoryColor(reading.category);

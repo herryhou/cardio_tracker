@@ -174,7 +174,7 @@ class ReadingCardNeu extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                Icons.favorite_border,
+                Icons.monitor_heart,
                 size: iconSize,
                 color: Colors.red.shade400,
               ),

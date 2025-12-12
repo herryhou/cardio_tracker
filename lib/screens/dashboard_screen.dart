@@ -14,6 +14,9 @@ import '../widgets/reading_card_neu.dart';
 import '../widgets/neumorphic_container.dart';
 import '../widgets/neumorphic_button.dart';
 import '../widgets/export_bottom_sheet.dart';
+import '../widgets/horizontal_charts_container.dart';
+import '../widgets/bp_legend.dart';
+import '../providers/dual_chart_provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -49,44 +52,61 @@ class _DashboardScreenState extends State<DashboardScreen> {
             return _buildErrorState(context, provider.error!);
           }
 
-          return RefreshIndicator(
-            onRefresh: () => provider.loadReadings(),
-            child: GestureDetector(
-              onLongPress: () async {
-                await HapticFeedback.mediumImpact();
-                showExportBottomSheet(
-                  context,
-                  readings: provider.readings,
-                );
-              },
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
-                child: Column(
-                  children: [
-                    // Minimalist Header with extra spacing
-                    const SizedBox(height: AppSpacing.xl),
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider(create: (_) => DualChartProvider()),
+            ],
+            child: RefreshIndicator(
+              onRefresh: () => provider.loadReadings(),
+              child: GestureDetector(
+                onLongPress: () async {
+                  await HapticFeedback.mediumImpact();
+                  showExportBottomSheet(
+                    context,
+                    readings: provider.readings,
+                  );
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      // Minimalist Header with extra spacing
+                      const SizedBox(height: AppSpacing.xl),
 
-                    // Centered Reading Card - Main Feature
-                    if (provider.latestReading != null) ...[
-                      _buildCenteredReadingCard(
-                          context, provider.latestReading!),
-                      const SizedBox(height: AppSpacing.xxl),
-                    ] else ...[
-                      _buildEmptyStateCard(context),
+                      // Centered Reading Card - Main Feature
+                      if (provider.latestReading != null) ...[
+                        _buildCenteredReadingCard(
+                            context, provider.latestReading!),
+                        const SizedBox(height: AppSpacing.xl),
+                      ] else ...[
+                        _buildEmptyStateCard(context),
+                        const SizedBox(height: AppSpacing.xl),
+                      ],
+
+                      // Horizontal Charts Section
+                      HorizontalChartsContainer(
+                        readings: provider.readings,
+                      ),
+
+                      // const SizedBox(height: AppSpacing.xl),
+
+                      // Blood Pressure Legend (common for both charts)
+                      const BPLegend(),
+
+                      const SizedBox(height: AppSpacing.lg),
+
+                      // Recent Readings Section with neumorphic styling
+                      Padding(
+                        padding: AppSpacing.screenMargins,
+                        child: _buildRecentReadingsSection(
+                            context, provider.recentReadings),
+                      ),
+
+                      // Extra bottom spacing for minimalist feel
                       const SizedBox(height: AppSpacing.xxl),
                     ],
-
-                    // Recent Readings Section with neumorphic styling
-                    Padding(
-                      padding: AppSpacing.screenMargins,
-                      child: _buildRecentReadingsSection(
-                          context, provider.recentReadings),
-                    ),
-
-                    // Extra bottom spacing for minimalist feel
-                    const SizedBox(height: AppSpacing.xxl),
-                  ],
+                  ),
                 ),
               ),
             ),
