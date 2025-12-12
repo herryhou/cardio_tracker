@@ -5,7 +5,8 @@ import 'package:cardio_tracker/models/blood_pressure_reading.dart';
 
 void main() {
   group('RecentReadingItem', () {
-    testWidgets('displays reading information correctly', (WidgetTester tester) async {
+    testWidgets('displays reading information correctly',
+        (WidgetTester tester) async {
       final reading = BloodPressureReading(
         id: '1',
         systolic: 120,
@@ -34,10 +35,11 @@ void main() {
 
       // Verify pulse is displayed with icon
       expect(find.text('72'), findsOneWidget);
-      expect(find.byIcon(Icons.favorite), findsOneWidget);
+      expect(find.byIcon(Icons.favorite_border), findsOneWidget);
     });
 
-    testWidgets('shows correct background color based on BP category', (WidgetTester tester) async {
+    testWidgets('shows correct background color based on BP category',
+        (WidgetTester tester) async {
       // Test normal BP
       final normalReading = BloodPressureReading(
         id: '1',
@@ -65,13 +67,16 @@ void main() {
 
       // Get the parent container of the BP text (should be the badge)
       final badgeContainer = tester.widget<Container>(
-        find.ancestor(
-          of: bpTextFinder,
-          matching: find.byType(Container),
-        ).first,
+        find
+            .ancestor(
+              of: bpTextFinder,
+              matching: find.byType(Container),
+            )
+            .first,
       );
 
-      final BoxDecoration decoration = badgeContainer.decoration as BoxDecoration;
+      final BoxDecoration decoration =
+          badgeContainer.decoration as BoxDecoration;
 
       // Verify badge has color (non-transparent)
       expect(decoration.color, isNotNull);
@@ -111,7 +116,8 @@ void main() {
       expect(deleteCalled, true);
     });
 
-    testWidgets('displays formatted date correctly', (WidgetTester tester) async {
+    testWidgets('displays formatted date correctly',
+        (WidgetTester tester) async {
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
       final reading = BloodPressureReading(
         id: '1',

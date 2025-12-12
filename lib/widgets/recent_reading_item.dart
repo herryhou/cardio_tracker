@@ -31,9 +31,9 @@ class RecentReadingItem extends StatelessWidget {
         ),
       ),
       child: Container(
-        constraints: const BoxConstraints(minHeight: 72),
+        constraints: const BoxConstraints(minHeight: 42),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Row(
             children: [
               // Date/Time (left)
@@ -52,15 +52,15 @@ class RecentReadingItem extends StatelessWidget {
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      _formatTime(reading.timestamp),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF6B7280),
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    // const SizedBox(height: 2),
+                    // Text(
+                    //   _formatTime(reading.timestamp),
+                    //   style: const TextStyle(
+                    //     fontSize: 12,
+                    //     color: Color(0xFF6B7280),
+                    //   ),
+                    //   overflow: TextOverflow.ellipsis,
+                    // ),
                   ],
                 ),
               ),
@@ -101,7 +101,7 @@ class RecentReadingItem extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(
-                            Icons.favorite,
+                            Icons.favorite_border,
                             size: 16,
                             color: Color(0xFFEF4444),
                           ),
@@ -137,21 +137,25 @@ class RecentReadingItem extends StatelessWidget {
     } else if (difference.inDays < 7) {
       return '${difference.inDays}d ago';
     } else if (timestamp.year == now.year) {
-      return '${timestamp.month}/${timestamp.day}';
+      final timeStr =
+          '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
+      return '${timestamp.month}/${timestamp.day} $timeStr';
     } else {
-      return '${timestamp.month}/${timestamp.day}/${timestamp.year % 100}';
+      final timeStr =
+          '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
+      return '${timestamp.month}/${timestamp.day}/${timestamp.year % 100} $timeStr';
     }
   }
 
-  String _formatTime(DateTime timestamp) {
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
+  // String _formatTime(DateTime timestamp) {
+  //   final now = DateTime.now();
+  //   final difference = now.difference(timestamp);
 
-    if (difference.inDays < 7) {
-      return '';
-    }
-    return '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
-  }
+  //   if (difference.inDays < 7) {
+  //     return '';
+  //   }
+  //   return '${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
+  // }
 
   Color _getCategoryColor(
       BuildContext context, BloodPressureCategory category) {

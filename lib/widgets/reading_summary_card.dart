@@ -219,7 +219,7 @@ class ReadingSummaryCard extends StatelessWidget {
     return Row(
       children: [
         Icon(
-          Icons.favorite,
+          Icons.favorite_border,
           size: 20,
           color: theme.colorScheme.primary,
         ),
@@ -380,7 +380,7 @@ class CompactReadingCard extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      Icons.favorite,
+                      Icons.favorite_border,
                       size: 16,
                       color: theme.colorScheme.primary,
                     ),

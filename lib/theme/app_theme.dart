@@ -36,7 +36,7 @@ class AppTheme {
   //     const Color(0xFFFFFFFF); // Pure white cards
   // static const Color _dividerColor = const Color(0xFFE5E7EB); // Light dividers
 
-  static const Color _backgroundDark = Color(0xFF0F172A); // Dark slate
+  // static const Color _backgroundDark = Color(0xFF0F172A); // Dark slate
   static const Color _surfaceDark = Color(0xFF1E293B); // Dark surface
   static const Color _errorDark = Color(0xFFEF5350); // Lighter red for dark
 

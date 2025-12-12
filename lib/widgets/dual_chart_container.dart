@@ -369,14 +369,14 @@ class _DualChartContainerState extends State<DualChartContainer> {
 
     return Container(
       width: double.infinity, // Ensure container spans full width
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
+      // decoration: BoxDecoration(
+      //   color: Theme.of(context).colorScheme.surface,
+      //   borderRadius: BorderRadius.circular(12),
+      //   border: Border.all(
+      //     color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
+      //     width: 1,
+      //   ),
+      // ),
       padding: const EdgeInsets.all(2.0),
       child: selectorWidget,
     );

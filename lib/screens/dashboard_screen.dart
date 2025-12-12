@@ -312,7 +312,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               color: const Color(0xFF1F2937),
             ),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.md),
           if (recentReadings.isEmpty)
             Container(
               width: double.infinity,
@@ -609,7 +609,7 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
               Row(
                 children: [
                   Icon(
-                    Icons.favorite,
+                    Icons.favorite_border,
                     size: 24,
                     color: Theme.of(context).colorScheme.primary,
                   ),

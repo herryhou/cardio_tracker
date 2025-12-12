@@ -243,7 +243,7 @@ class BloodPressureMetricCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
-                      Icons.favorite,
+                      Icons.favorite_border,
                       size: 20,
                       color: categoryColor,
                     ),
