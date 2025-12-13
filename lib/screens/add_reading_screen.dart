@@ -38,7 +38,14 @@ class _AddReadingContentState extends State<AddReadingContent> {
   late final FocusNode _systolicFocusNode;
   late final FocusNode _diastolicFocusNode;
   late final FocusNode _heartRateFocusNode;
+  late final FocusNode _notesFocusNode;
   late DateTime _selectedDateTime;
+
+  // State for managing hints visibility
+  bool _systolicHasFocus = false;
+  bool _diastolicHasFocus = false;
+  bool _heartRateHasFocus = false;
+  bool _notesHasFocus = false;
 
   // Keyboard animation state
   bool _keyboardVisible = false;
@@ -56,6 +63,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
     _systolicFocusNode = FocusNode();
     _diastolicFocusNode = FocusNode();
     _heartRateFocusNode = FocusNode();
+    _notesFocusNode = FocusNode();
     _selectedDateTime = widget.initialDateTime ?? DateTime.now();
 
     // Add focus listener to systolic field
@@ -64,6 +72,36 @@ class _AddReadingContentState extends State<AddReadingContent> {
     // Add listeners for auto-transition
     _systolicController.addListener(_onSystolicChanged);
     _diastolicController.addListener(_onDiastolicChanged);
+
+    // Add focus listeners for hint management
+    _systolicFocusNode.addListener(() {
+      if (_systolicFocusNode.hasFocus != _systolicHasFocus) {
+        setState(() {
+          _systolicHasFocus = _systolicFocusNode.hasFocus;
+        });
+      }
+    });
+    _diastolicFocusNode.addListener(() {
+      if (_diastolicFocusNode.hasFocus != _diastolicHasFocus) {
+        setState(() {
+          _diastolicHasFocus = _diastolicFocusNode.hasFocus;
+        });
+      }
+    });
+    _heartRateFocusNode.addListener(() {
+      if (_heartRateFocusNode.hasFocus != _heartRateHasFocus) {
+        setState(() {
+          _heartRateHasFocus = _heartRateFocusNode.hasFocus;
+        });
+      }
+    });
+    _notesFocusNode.addListener(() {
+      if (_notesFocusNode.hasFocus != _notesHasFocus) {
+        setState(() {
+          _notesHasFocus = _notesFocusNode.hasFocus;
+        });
+      }
+    });
 
     // Request focus on systolic field to show keyboard after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -91,6 +129,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
     _systolicFocusNode.dispose();
     _diastolicFocusNode.dispose();
     _heartRateFocusNode.dispose();
+    _notesFocusNode.dispose();
     super.dispose();
   }
 
@@ -177,6 +216,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
                             label: 'SYS',
                             hint: '120',
                             focusNode: _systolicFocusNode,
+                            hasFocus: _systolicHasFocus,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Required';
@@ -198,6 +238,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
                             label: 'DIA',
                             hint: '80',
                             focusNode: _diastolicFocusNode,
+                            hasFocus: _diastolicHasFocus,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Required';
@@ -219,6 +260,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
                             label: 'Pulse',
                             hint: '72',
                             focusNode: _heartRateFocusNode,
+                            hasFocus: _heartRateHasFocus,
                             validator: (value) {
                               if (value == null || value.isEmpty) return null;
                               final heartRate = int.tryParse(value);
@@ -272,10 +314,11 @@ class _AddReadingContentState extends State<AddReadingContent> {
                     const SizedBox(height: AppSpacing.md),
                     TextFormField(
                       controller: _notesController,
+                      focusNode: _notesFocusNode,
                       maxLines: 1,
                       maxLength: 150,
                       decoration: InputDecoration(
-                        hintText: 'Notes (optional)',
+                        hintText: _notesHasFocus ? null : 'Notes (optional)',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -419,6 +462,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
     required String hint,
     required String? Function(String?) validator,
     FocusNode? focusNode,
+    bool hasFocus = false,
   }) {
     return Column(
       key: key,
@@ -470,7 +514,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
                 fontWeight: FontWeight.w400,
               ),
           decoration: InputDecoration(
-            hintText: hint,
+            hintText: hasFocus ? null : hint,
             hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.w400,
