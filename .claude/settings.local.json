@@ -60,7 +60,10 @@
       "Bash(git show:*)",
       "Bash(git pull:*)",
       "Bash(gh pr close:*)",
-      "Bash(dart fix:*)"
+      "Bash(dart fix:*)",
+      "Bash(dart pub add:*)",
+      "Bash(dart run build_runner build:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

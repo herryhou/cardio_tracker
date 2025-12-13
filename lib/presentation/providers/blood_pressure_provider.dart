@@ -1,8 +1,12 @@
 import 'package:flutter/foundation.dart';
+import 'package:dartz/dartz.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
+import '../../domain/value_objects/blood_pressure_category.dart';
 import '../../domain/value_objects/reading_statistics.dart';
 import '../../application/use_cases/get_all_readings.dart';
 import '../../application/use_cases/add_reading.dart';
+import '../../application/use_cases/update_reading.dart';
+import '../../application/use_cases/delete_reading.dart';
 import '../../application/use_cases/get_reading_statistics.dart';
 import '../../core/usecases/usecase.dart';
 import '../../core/errors/failures.dart';
@@ -10,6 +14,8 @@ import '../../core/errors/failures.dart';
 class BloodPressureProvider extends ChangeNotifier {
   final GetAllReadings _getAllReadings;
   final AddReading _addReading;
+  final UpdateReading _updateReading;
+  final DeleteReading _deleteReading;
   final GetReadingStatistics _getReadingStatistics;
 
   List<BloodPressureReading> _readings = [];
@@ -20,9 +26,13 @@ class BloodPressureProvider extends ChangeNotifier {
   BloodPressureProvider({
     required GetAllReadings getAllReadings,
     required AddReading addReading,
+    required UpdateReading updateReading,
+    required DeleteReading deleteReading,
     required GetReadingStatistics getReadingStatistics,
   })  : _getAllReadings = getAllReadings,
         _addReading = addReading,
+        _updateReading = updateReading,
+        _deleteReading = deleteReading,
         _getReadingStatistics = getReadingStatistics;
 
   // Getters
@@ -79,6 +89,50 @@ class BloodPressureProvider extends ChangeNotifier {
       (_) {
         success = true;
         _readings.add(reading);
+        _computeStatistics();
+      },
+    );
+
+    _setLoading(false);
+    return success;
+  }
+
+  Future<bool> updateReading(BloodPressureReading reading) async {
+    _setLoading(true);
+    _clearError();
+
+    final result = await _updateReading(reading);
+
+    bool success = false;
+    result.fold(
+      (failure) => _setError(_mapFailureToMessage(failure)),
+      (_) {
+        success = true;
+        final index = _readings.indexWhere((r) => r.id == reading.id);
+        if (index != -1) {
+          _readings[index] = reading;
+          _readings.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+          _computeStatistics();
+        }
+      },
+    );
+
+    _setLoading(false);
+    return success;
+  }
+
+  Future<bool> deleteReading(String id) async {
+    _setLoading(true);
+    _clearError();
+
+    final result = await _deleteReading(DeleteReadingParams(id: id));
+
+    bool success = false;
+    result.fold(
+      (failure) => _setError(_mapFailureToMessage(failure)),
+      (_) {
+        success = true;
+        _readings.removeWhere((reading) => reading.id == id);
         _computeStatistics();
       },
     );
@@ -147,14 +201,40 @@ class BloodPressureProvider extends ChangeNotifier {
 
   String _mapFailureToMessage(Failure failure) {
     switch (failure.runtimeType) {
-      case DatabaseFailure _:
+      case DatabaseFailure:
         return (failure as DatabaseFailure).message;
-      case NetworkFailure _:
+      case NetworkFailure:
         return (failure as NetworkFailure).message;
-      case ValidationFailure _:
+      case ValidationFailure:
         return (failure as ValidationFailure).message;
       default:
         return 'An unexpected error occurred';
     }
+  }
+
+  // Utility methods
+  List<BloodPressureReading> getReadingsByDateRange(DateTime start, DateTime end) {
+    return _readings
+        .where((reading) =>
+            reading.timestamp.isAfter(start.subtract(const Duration(days: 1))) &&
+            reading.timestamp.isBefore(end.add(const Duration(days: 1))))
+        .toList()
+      ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+  }
+
+  List<BloodPressureReading> getReadingsByCategory(BloodPressureCategory category) {
+    return _readings
+        .where((reading) => reading.category == category)
+        .toList()
+      ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+  }
+
+  void refresh() {
+    loadReadings();
+  }
+
+  void clearError() {
+    _clearError();
+    notifyListeners();
   }
 }
