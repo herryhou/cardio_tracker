@@ -7,7 +7,7 @@ import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
 import 'package:cardio_tracker/presentation/providers/blood_pressure_provider.dart';
 import 'package:cardio_tracker/presentation/providers/dual_chart_provider.dart';
 import 'package:cardio_tracker/widgets/horizontal_charts_container.dart';
-import 'package:cardio_tracker/services/database_service.dart';
+import 'package:cardio_tracker/infrastructure/services/database_service.dart';
 
 /// Benchmark for Chart Carousel Performance
 ///
