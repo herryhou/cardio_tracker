@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'providers/blood_pressure_provider.dart';
 import 'providers/settings_provider.dart';
 import 'providers/theme_provider.dart';
 import 'services/database_service.dart';
+import 'core/injection/injection.dart';
 import 'app.dart';
 import 'theme/app_theme.dart';
+import 'presentation/providers/blood_pressure_provider.dart';
+import 'application/use_cases/get_all_readings.dart';
+import 'application/use_cases/add_reading.dart';
+import 'application/use_cases/get_reading_statistics.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize dependency injection
+  await configureDependencies();
+
   runApp(const CardioTrackerApp());
 }
 
@@ -18,11 +27,20 @@ class CardioTrackerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
+        // New provider using DI
+        ChangeNotifierProvider<BloodPressureProvider>(
           create: (context) => BloodPressureProvider(
-            databaseService: DatabaseService.instance,
+            getAllReadings: getIt<GetAllReadings>(),
+            addReading: getIt<AddReading>(),
+            getReadingStatistics: getIt<GetReadingStatistics>(),
           ),
         ),
+        // Keep existing providers for now until migration
+        // ChangeNotifierProvider(
+        //   create: (context) => BloodPressureProvider(
+        //     databaseService: DatabaseService.instance,
+        //   ),
+        // ),
         ChangeNotifierProvider(
           create: (context) => SettingsProvider(
             databaseService: DatabaseService.instance,

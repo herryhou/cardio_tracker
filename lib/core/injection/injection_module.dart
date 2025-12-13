@@ -1,0 +1,36 @@
+import 'package:injectable/injectable.dart';
+import '../../domain/repositories/blood_pressure_repository.dart';
+import '../../infrastructure/data_sources/local_database_source.dart';
+import '../../infrastructure/repositories/blood_pressure_repository_impl.dart';
+import '../../application/use_cases/get_all_readings.dart';
+import '../../application/use_cases/add_reading.dart';
+import '../../application/use_cases/get_reading_statistics.dart';
+
+@module
+abstract class InjectionModule {
+  // Data Sources
+  @lazySingleton
+  LocalDatabaseSource getLocalDatabaseSource() => LocalDatabaseSource();
+
+  // Repositories
+  @lazySingleton
+  BloodPressureRepository getBloodPressureRepository(LocalDatabaseSource dataSource) {
+    return BloodPressureRepositoryImpl(dataSource: dataSource);
+  }
+
+  // Use Cases
+  @lazySingleton
+  GetAllReadings getAllReadings(BloodPressureRepository repository) {
+    return GetAllReadings(repository);
+  }
+
+  @lazySingleton
+  AddReading addReading(BloodPressureRepository repository) {
+    return AddReading(repository);
+  }
+
+  @lazySingleton
+  GetReadingStatistics getReadingStatistics(BloodPressureRepository repository) {
+    return GetReadingStatistics(repository);
+  }
+}
