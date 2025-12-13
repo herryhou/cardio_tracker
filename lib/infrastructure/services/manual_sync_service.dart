@@ -1,6 +1,7 @@
-import 'database_service.dart';
+import '../mappers/blood_pressure_reading_mapper.dart';
 import 'cloudflare_kv_service.dart';
 import 'package:flutter/foundation.dart';
+import '../data_sources/local_database_source.dart';
 
 class SyncResult {
   final int pushed;
@@ -17,7 +18,7 @@ class SyncResult {
 }
 
 class ManualSyncService {
-  final DatabaseService _databaseService = DatabaseService.instance;
+  final LocalDatabaseSource _dataSource = LocalDatabaseSource();
   final CloudflareKVService _kvService = CloudflareKVService();
 
   Future<SyncResult> performSync() async {
@@ -31,7 +32,10 @@ class ManualSyncService {
       }
 
       // Get all local readings
-      final localReadings = await _databaseService.getAllReadings();
+      final localReadingsMap = await _dataSource.getAllReadings();
+      final localReadings = localReadingsMap
+          .map((map) => BloodPressureReadingMapper.fromJson(map))
+          .toList();
 
       // Get all remote keys
       final remoteKeys = await _kvService.listReadingKeys();
@@ -88,7 +92,7 @@ class ManualSyncService {
             // Reading exists remotely but not locally
             final remoteReading = await _kvService.retrieveReading(readingId);
             if (remoteReading != null && !remoteReading.isDeleted) {
-              await _databaseService.insertReading(remoteReading);
+              await _dataSource.insertReading(remoteReading.toJson());
               pulled++;
             }
           }
@@ -102,7 +106,7 @@ class ManualSyncService {
       // Clean up locally deleted readings
       final deletedReadings = localReadings.where((r) => r.isDeleted).toList();
       for (final deletedReading in deletedReadings) {
-        await _databaseService.deleteReading(deletedReading.id);
+        await _dataSource.deleteReading(deletedReading.id);
       }
 
       return SyncResult(

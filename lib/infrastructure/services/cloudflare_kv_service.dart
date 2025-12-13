@@ -294,7 +294,14 @@ class CloudflareKVService {
       if (item['name'].toString().startsWith('bp_reading_')) {
         final readingId =
             item['name'].toString().substring('bp_reading_'.length);
-        final expiration = item['expiration'] as int?;
+        // Handle both int and string formats for expiration
+        int? expiration;
+        final expValue = item['expiration'];
+        if (expValue is int) {
+          expiration = expValue;
+        } else if (expValue is String) {
+          expiration = int.tryParse(expValue);
+        }
         keyMetadata[readingId] = expiration ?? 0;
       }
     }
