@@ -1,17 +1,18 @@
 import 'package:flutter/foundation.dart';
 import '../../domain/entities/user_settings.dart';
-import '../../domain/entities/blood_pressure_reading.dart';
 import '../../domain/value_objects/blood_pressure_category.dart';
-import '../../infrastructure/services/database_service.dart';
+import '../../domain/repositories/user_settings_repository.dart';
+import '../../core/errors/failures.dart';
 
 class SettingsProvider extends ChangeNotifier {
-  final DatabaseService databaseService;
+  final UserSettingsRepository _repository;
 
   UserSettings? _settings;
   bool _isLoading = false;
   String? _error;
 
-  SettingsProvider({required this.databaseService}) {
+  SettingsProvider({required UserSettingsRepository repository})
+      : _repository = repository {
     _loadSettings();
   }
 
@@ -68,8 +69,6 @@ class SettingsProvider extends ChangeNotifier {
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         );
-
-        await databaseService.insertUserSettings(_settings!);
       } else {
         // Update existing settings
         _settings = _settings!.copyWith(
@@ -84,11 +83,14 @@ class SettingsProvider extends ChangeNotifier {
           dataSharingEnabled: dataSharingEnabled,
           updatedAt: DateTime.now(),
         );
-
-        await databaseService.updateUserSettings(_settings!);
       }
 
-      notifyListeners();
+      final result = await _repository.saveSettings(_settings!);
+
+      result.fold(
+        (failure) => throw Exception(failure.message),
+        (_) => notifyListeners(),
+      );
     } catch (e) {
       _setError('Failed to update settings: ${e.toString()}');
       rethrow;
@@ -120,19 +122,111 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   Future<void> updateMedicationTimes(List<String> times) async {
-    await updateSettings(medicationTimes: times);
+    _setLoading(true);
+    _clearError();
+
+    try {
+      final result = await _repository.updateMedicationTimes(times);
+
+      result.fold(
+        (failure) => throw Exception(failure.message),
+        (_) async {
+          if (_settings != null) {
+            _settings = _settings!.copyWith(
+              medicationTimes: times,
+              updatedAt: DateTime.now(),
+            );
+            notifyListeners();
+          }
+        },
+      );
+    } catch (e) {
+      _setError('Failed to update medication times: ${e.toString()}');
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
   }
 
   Future<void> updateReminderTimes(List<String> times) async {
-    await updateSettings(reminderTimes: times);
+    _setLoading(true);
+    _clearError();
+
+    try {
+      final result = await _repository.updateReminderTimes(times);
+
+      result.fold(
+        (failure) => throw Exception(failure.message),
+        (_) async {
+          if (_settings != null) {
+            _settings = _settings!.copyWith(
+              reminderTimes: times,
+              updatedAt: DateTime.now(),
+            );
+            notifyListeners();
+          }
+        },
+      );
+    } catch (e) {
+      _setError('Failed to update reminder times: ${e.toString()}');
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
   }
 
   Future<void> toggleNotifications(bool enabled) async {
-    await updateSettings(notificationsEnabled: enabled);
+    _setLoading(true);
+    _clearError();
+
+    try {
+      final result = await _repository.updateNotificationSettings(enabled);
+
+      result.fold(
+        (failure) => throw Exception(failure.message),
+        (_) async {
+          if (_settings != null) {
+            _settings = _settings!.copyWith(
+              notificationsEnabled: enabled,
+              updatedAt: DateTime.now(),
+            );
+            notifyListeners();
+          }
+        },
+      );
+    } catch (e) {
+      _setError('Failed to update notification settings: ${e.toString()}');
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
   }
 
   Future<void> toggleDataSharing(bool enabled) async {
-    await updateSettings(dataSharingEnabled: enabled);
+    _setLoading(true);
+    _clearError();
+
+    try {
+      final result = await _repository.updateDataSharingSettings(enabled);
+
+      result.fold(
+        (failure) => throw Exception(failure.message),
+        (_) async {
+          if (_settings != null) {
+            _settings = _settings!.copyWith(
+              dataSharingEnabled: enabled,
+              updatedAt: DateTime.now(),
+            );
+            notifyListeners();
+          }
+        },
+      );
+    } catch (e) {
+      _setError('Failed to update data sharing settings: ${e.toString()}');
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
   }
 
   // Medication time management
@@ -212,23 +306,28 @@ class SettingsProvider extends ChangeNotifier {
     _clearError();
 
     try {
-      _settings = UserSettings(
-        id: 'settings-1',
-        name: 'User',
-        age: 30,
-        gender: 'other',
-        targetMinCategory: BloodPressureCategory.normal,
-        targetMaxCategory: BloodPressureCategory.normal,
-        medicationTimes: [],
-        reminderTimes: [],
-        notificationsEnabled: true,
-        dataSharingEnabled: false,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+      final result = await _repository.resetSettings();
 
-      await databaseService.updateUserSettings(_settings!);
-      notifyListeners();
+      result.fold(
+        (failure) => throw Exception(failure.message),
+        (_) async {
+          _settings = UserSettings(
+            id: 'settings-1',
+            name: 'User',
+            age: 30,
+            gender: 'other',
+            targetMinCategory: BloodPressureCategory.normal,
+            targetMaxCategory: BloodPressureCategory.normal,
+            medicationTimes: [],
+            reminderTimes: [],
+            notificationsEnabled: true,
+            dataSharingEnabled: false,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          );
+          notifyListeners();
+        },
+      );
     } catch (e) {
       _setError('Failed to reset settings: ${e.toString()}');
       rethrow;
@@ -243,34 +342,47 @@ class SettingsProvider extends ChangeNotifier {
     _clearError();
 
     try {
-      _settings = await databaseService.getUserSettings();
+      final result = await _repository.getSettings();
 
-      if (_settings == null) {
-        // Create default settings if none exist
-        _settings = UserSettings(
-          id: 'settings-1',
-          name: 'User',
-          age: 30,
-          gender: 'other',
-          targetMinCategory: BloodPressureCategory.normal,
-          targetMaxCategory: BloodPressureCategory.normal,
-          medicationTimes: [],
-          reminderTimes: [],
-          notificationsEnabled: true,
-          dataSharingEnabled: false,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
-
-        await databaseService.insertUserSettings(_settings!);
-      }
-
-      notifyListeners();
+      result.fold(
+        (failure) {
+          // If no settings exist, create default ones
+          _createDefaultSettings();
+        },
+        (settings) {
+          _settings = settings;
+          notifyListeners();
+        },
+      );
     } catch (e) {
       _setError('Failed to load settings: ${e.toString()}');
     } finally {
       _setLoading(false);
     }
+  }
+
+  Future<void> _createDefaultSettings() async {
+    _settings = UserSettings(
+      id: 'settings-1',
+      name: 'User',
+      age: 30,
+      gender: 'other',
+      targetMinCategory: BloodPressureCategory.normal,
+      targetMaxCategory: BloodPressureCategory.normal,
+      medicationTimes: [],
+      reminderTimes: [],
+      notificationsEnabled: true,
+      dataSharingEnabled: false,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+
+    final result = await _repository.saveSettings(_settings!);
+
+    result.fold(
+      (failure) => _setError('Failed to create default settings: ${failure.message}'),
+      (_) => notifyListeners(),
+    );
   }
 
   void _setLoading(bool loading) {
@@ -286,5 +398,4 @@ class SettingsProvider extends ChangeNotifier {
   void _clearError() {
     _error = null;
   }
-
 }

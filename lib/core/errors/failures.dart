@@ -3,11 +3,15 @@ import 'package:equatable/equatable.dart';
 abstract class Failure extends Equatable {
   const Failure([List properties = const <dynamic>[]]);
 
+  String get message => toString();
+
   @override
   List<Object?> get props => [];
 }
 
 class DatabaseFailure extends Failure {
+  @override
+  @override
   final String message;
 
   const DatabaseFailure(this.message);
@@ -17,6 +21,7 @@ class DatabaseFailure extends Failure {
 }
 
 class NetworkFailure extends Failure {
+  @override
   final String message;
 
   const NetworkFailure(this.message);
@@ -26,6 +31,7 @@ class NetworkFailure extends Failure {
 }
 
 class ValidationFailure extends Failure {
+  @override
   final String message;
 
   const ValidationFailure(this.message);
@@ -35,6 +41,7 @@ class ValidationFailure extends Failure {
 }
 
 class CacheFailure extends Failure {
+  @override
   final String message;
 
   const CacheFailure(this.message);
@@ -44,6 +51,7 @@ class CacheFailure extends Failure {
 }
 
 class ServerFailure extends Failure {
+  @override
   final String message;
   final int? statusCode;
 
@@ -54,6 +62,7 @@ class ServerFailure extends Failure {
 }
 
 class AuthenticationFailure extends Failure {
+  @override
   final String message;
 
   const AuthenticationFailure(this.message);
@@ -63,6 +72,7 @@ class AuthenticationFailure extends Failure {
 }
 
 class AuthorizationFailure extends Failure {
+  @override
   final String message;
 
   const AuthorizationFailure(this.message);
@@ -72,6 +82,7 @@ class AuthorizationFailure extends Failure {
 }
 
 class NotFoundFailure extends Failure {
+  @override
   final String message;
 
   const NotFoundFailure(this.message);
@@ -81,6 +92,7 @@ class NotFoundFailure extends Failure {
 }
 
 class TimeoutFailure extends Failure {
+  @override
   final String message;
 
   const TimeoutFailure(this.message);
@@ -90,6 +102,7 @@ class TimeoutFailure extends Failure {
 }
 
 class UnexpectedFailure extends Failure {
+  @override
   final String message;
   final dynamic error;
 

@@ -50,6 +50,24 @@ class LocalDatabaseSource {
         isDeleted INTEGER DEFAULT 0
       )
     ''');
+
+    // Create user_settings table
+    await db.execute('''
+      CREATE TABLE user_settings (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        age INTEGER NOT NULL,
+        gender TEXT NOT NULL,
+        target_min_category TEXT NOT NULL,
+        target_max_category TEXT NOT NULL,
+        medication_times TEXT NOT NULL,
+        reminder_times TEXT NOT NULL,
+        notifications_enabled INTEGER NOT NULL DEFAULT 1,
+        data_sharing_enabled INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      )
+    ''');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -78,6 +96,34 @@ class LocalDatabaseSource {
         await db.execute('ALTER TABLE blood_pressure_readings ADD COLUMN lastModified TEXT NOT NULL DEFAULT "$now"');
         // Update existing rows to have a valid lastModified timestamp
         await db.execute('UPDATE blood_pressure_readings SET lastModified = "$now" WHERE lastModified = ""');
+      }
+    }
+
+    // Handle migration from version 2 to 3 (add user_settings table)
+    if (oldVersion < 3) {
+      // Check if user_settings table exists
+      final tables = await db.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='user_settings'",
+      );
+
+      if (tables.isEmpty) {
+        // Create user_settings table
+        await db.execute('''
+          CREATE TABLE user_settings (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            age INTEGER NOT NULL,
+            gender TEXT NOT NULL,
+            target_min_category TEXT NOT NULL,
+            target_max_category TEXT NOT NULL,
+            medication_times TEXT NOT NULL,
+            reminder_times TEXT NOT NULL,
+            notifications_enabled INTEGER NOT NULL DEFAULT 1,
+            data_sharing_enabled INTEGER NOT NULL DEFAULT 0,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
+          )
+        ''');
       }
     }
   }

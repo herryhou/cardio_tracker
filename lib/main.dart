@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'presentation/providers/settings_provider.dart';
 import 'presentation/providers/theme_provider.dart';
-import 'infrastructure/services/database_service.dart';
 import 'core/injection/injection.dart';
+import 'domain/repositories/user_settings_repository.dart';
 import 'app.dart';
 import 'theme/app_theme.dart';
 import 'presentation/providers/blood_pressure_provider.dart';
@@ -46,12 +46,13 @@ class CardioTrackerApp extends StatelessWidget {
         //   ),
         // ),
         ChangeNotifierProvider(
-          create: (context) => SettingsProvider(
-            databaseService: DatabaseService.instance,
-          ),
-        ),
-        ChangeNotifierProvider(
           create: (context) => ThemeProvider(),
+        ),
+        // SettingsProvider using DI
+        ChangeNotifierProvider<SettingsProvider>(
+          create: (context) => SettingsProvider(
+            repository: getIt<UserSettingsRepository>(),
+          ),
         ),
       ],
       child: Consumer<ThemeProvider>(

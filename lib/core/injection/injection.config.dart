@@ -18,6 +18,7 @@ import '../../application/use_cases/get_all_readings.dart' as _i931;
 import '../../application/use_cases/get_reading_statistics.dart' as _i191;
 import '../../application/use_cases/update_reading.dart' as _i686;
 import '../../domain/repositories/blood_pressure_repository.dart' as _i347;
+import '../../domain/repositories/user_settings_repository.dart' as _i931;
 import '../../infrastructure/data_sources/local_database_source.dart' as _i378;
 import 'injection_module.dart' as _i212;
 
@@ -37,6 +38,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => injectionModule.getLocalDatabaseSource());
     gh.lazySingleton<_i347.BloodPressureRepository>(() => injectionModule
         .getBloodPressureRepository(gh<_i378.LocalDatabaseSource>()));
+    gh.lazySingleton<_i931.UserSettingsRepository>(() => injectionModule
+        .getUserSettingsRepository(gh<_i378.LocalDatabaseSource>()));
     gh.lazySingleton<_i931.GetAllReadings>(() =>
         injectionModule.getAllReadings(gh<_i347.BloodPressureRepository>()));
     gh.lazySingleton<_i784.AddReading>(

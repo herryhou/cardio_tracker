@@ -21,14 +21,34 @@ extension BloodPressureReadingMapper on BloodPressureReading {
   static BloodPressureReading fromJson(Map<String, dynamic> json) {
     return BloodPressureReading(
       id: json['id'] as String,
-      systolic: json['systolic'] as int,
-      diastolic: json['diastolic'] as int,
-      heartRate: json['heartRate'] as int,
+      systolic: _toInt(json['systolic']),
+      diastolic: _toInt(json['diastolic']),
+      heartRate: _toInt(json['heartRate']),
       timestamp: DateTime.parse(json['timestamp'] as String),
       notes: json['notes'] as String?,
       lastModified: DateTime.parse(json['lastModified'] as String),
-      isDeleted: json['isDeleted'] as bool? ?? false,
+      isDeleted: _toBool(json['isDeleted']) ?? false,
     );
+  }
+
+  /// Safely convert dynamic value to int
+  static int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value) ?? 0;
+    if (value is double) return value.toInt();
+    return 0;
+  }
+
+  /// Safely convert dynamic value to bool
+  static bool? _toBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is int) return value == 1;
+    if (value is String) {
+      if (value.toLowerCase() == 'true') return true;
+      if (value.toLowerCase() == 'false') return false;
+      return int.tryParse(value) == 1;
+    }
+    return null;
   }
 
   static BloodPressureReading fromJsonString(String jsonString) {

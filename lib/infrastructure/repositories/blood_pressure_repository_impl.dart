@@ -91,14 +91,34 @@ class BloodPressureRepositoryImpl implements BloodPressureRepository {
   BloodPressureReading _mapToReading(Map<String, dynamic> map) {
     return BloodPressureReading(
       id: map['id'] as String,
-      systolic: map['systolic'] as int,
-      diastolic: map['diastolic'] as int,
-      heartRate: map['heartRate'] as int,
+      systolic: _toInt(map['systolic']),
+      diastolic: _toInt(map['diastolic']),
+      heartRate: _toInt(map['heartRate']),
       timestamp: DateTime.parse(map['timestamp'] as String),
       notes: map['notes'] as String?,
       lastModified: DateTime.parse(map['lastModified'] as String),
-      isDeleted: (map['isDeleted'] as int) == 1,
+      isDeleted: _toBool(map['isDeleted']) ?? false,
     );
+  }
+
+  /// Safely convert dynamic value to int
+  int _toInt(dynamic value) {
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value) ?? 0;
+    if (value is double) return value.toInt();
+    return 0;
+  }
+
+  /// Safely convert dynamic value to bool
+  bool? _toBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is int) return value == 1;
+    if (value is String) {
+      if (value.toLowerCase() == 'true') return true;
+      if (value.toLowerCase() == 'false') return false;
+      return int.tryParse(value) == 1;
+    }
+    return null;
   }
 
   /// Maps a BloodPressureReading domain entity to a Map<String, dynamic> for the database
