@@ -89,7 +89,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         readings: provider.readings,
                       ),
 
-                      // const SizedBox(height: AppSpacing.xl),
+                      const SizedBox(height: AppSpacing.sm),
 
                       // Blood Pressure Legend (common for both charts)
                       const BPLegend(),

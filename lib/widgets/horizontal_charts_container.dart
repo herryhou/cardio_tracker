@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +11,6 @@ import '../widgets/clinical_scatter_plot.dart';
 import '../widgets/bp_range_bar_chart.dart';
 import '../widgets/bp_legend.dart';
 import '../widgets/swipe_hint.dart';
-import '../widgets/auto_scroll_toggle.dart';
 
 /// Horizontal scrollable charts container for dashboard
 class HorizontalChartsContainer extends StatefulWidget {
@@ -35,8 +33,6 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
   ExtendedTimeRange _currentTimeRange = ExtendedTimeRange.month;
   int _currentPage = 0;
   bool _showSwipeHint = true;
-  bool _autoScrollEnabled = false;
-  Timer? _autoScrollTimer;
 
   static const List<Map<String, String>> _chartInfo = [
     {
@@ -59,7 +55,6 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
   @override
   void dispose() {
     _pageController.dispose();
-    _autoScrollTimer?.cancel();
     super.dispose();
   }
 
@@ -139,21 +134,9 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
 
         // Swipe hint (only show on first visit)
         if (_showSwipeHint && widget.showSwipeHint) ...[
-          const SwipeHint(),
+          const SwipeHint(disableAnimation: true),
           const SizedBox(height: 8),
         ],
-
-        // Auto-scroll toggle
-        AutoScrollToggle(
-          isEnabled: _autoScrollEnabled,
-          onChanged: (value) {
-            setState(() {
-              _autoScrollEnabled = value;
-              _handleAutoScrollChange(value);
-            });
-          },
-        ),
-        const SizedBox(height: 8),
 
         // Horizontal scrollable charts
         SizedBox(
@@ -322,32 +305,4 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
     await prefs.setBool('has_seen_swipe_hint', true);
   }
 
-  void _startAutoScroll() {
-    _autoScrollTimer = Timer.periodic(
-      const Duration(seconds: 5),
-      (_) {
-        if (_pageController.hasClients) {
-          final nextPage = (_currentPage + 1) % 2;
-          _pageController.animateToPage(
-            nextPage,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
-        }
-      },
-    );
   }
-
-  void _stopAutoScroll() {
-    _autoScrollTimer?.cancel();
-    _autoScrollTimer = null;
-  }
-
-  void _handleAutoScrollChange(bool enabled) {
-    if (enabled) {
-      _startAutoScroll();
-    } else {
-      _stopAutoScroll();
-    }
-  }
-}

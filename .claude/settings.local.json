@@ -51,13 +51,17 @@
       "Bash(ls:*)",
       "Bash(adb:*)",
       "Bash(q:*)",
-<<<<<<< Updated upstream
-=======
       "Bash(git push:*)",
->>>>>>> Stashed changes
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh issue view:*)",
+      "Bash(git show:*)",
+      "Bash(git pull:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "outputStyle": "default"
 }

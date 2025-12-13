@@ -44,7 +44,7 @@ void main() {
       expect(find.text('Distribution'), findsOneWidget);
     });
 
-    testWidgets('should show auto-scroll toggle', (WidgetTester tester) async {
+    testWidgets('should show swipe hint when first visiting', (WidgetTester tester) async {
       // Arrange
       final readings = [
         BloodPressureReading(
@@ -66,15 +66,15 @@ void main() {
               ChangeNotifierProvider(create: (_) => DualChartProvider()),
             ],
             child: Scaffold(
-              body: HorizontalChartsContainer(readings: readings, showSwipeHint: false),
+              body: HorizontalChartsContainer(readings: readings, showSwipeHint: true),
             ),
           ),
         ),
       );
 
-      // Find toggle
-      expect(find.text('Auto-scroll'), findsOneWidget);
-      expect(find.byType(Switch), findsOneWidget);
+      // Find swipe hint
+      expect(find.text('Swipe to see more charts'), findsOneWidget);
+      expect(find.byIcon(Icons.swipe), findsOneWidget);
     });
 
     testWidgets('should show correct page indicator', (WidgetTester tester) async {

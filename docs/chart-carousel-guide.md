@@ -24,15 +24,7 @@ The chart carousel enhances the blood pressure visualization experience by provi
 - **Persistence**: Remembers if user has seen the hint (via SharedPreferences)
 - **Animation**: Slides right and fades in/out
 
-### 4. Auto-scroll Toggle
-- **What**: Optional automatic rotation between charts
-- **Controls**:
-  - Toggle switch with play icon
-  - 5-second interval between charts
-  - Smooth animation between transitions
-- **Purpose**: Hands-free viewing for passive monitoring
-
-### 5. Accessibility Features
+### 4. Accessibility Features
 - **Semantic Labels**: Screen reader announcements for chart changes
 - **Navigation Hints**: Clear instructions for swipe navigation
 - **Focus Management**: Proper focus handling for all interactive elements
@@ -42,7 +34,6 @@ The chart carousel enhances the blood pressure visualization experience by provi
 ### Basic Navigation
 1. **Swipe Left/Right**: Navigate between charts
 2. **Tap Dots**: Jump directly to a specific chart
-3. **Auto-scroll**: Toggle for automatic rotation
 
 ### Time Range Selection
 - The time range selector (Week/Month/Season/Year) applies to all charts
@@ -62,28 +53,20 @@ The chart carousel enhances the blood pressure visualization experience by provi
 ### Key Components
 - `HorizontalChartsContainer`: Main widget orchestrating the carousel
 - `SwipeHint`: Animated hint widget
-- `AutoScrollToggle`: Toggle control for auto-scroll
 - Uses existing `BPRangeBarChart` and `InteractiveScatterPlot`
 
 ### Architecture Decisions
 - **PageView.builder**: Efficient rendering with lazy loading
-- **Timer-based auto-scroll**: Non-blocking implementation
 - **Widget tests**: Comprehensive test coverage for all features
 - **Theme adaptation**: Respects light/dark theme settings
 
 ## Performance Considerations
 
 - Only visible chart is fully rendered
-- Auto-scroll timer cancels when disabled
 - Hint animation stops after first interaction
 - Efficient state management with Provider pattern
 
 ## Troubleshooting
-
-### Auto-scroll not working?
-- Check if toggle is enabled
-- Ensure PageView has clients
-- Verify no user interaction is blocking
 
 ### Swipe hint not showing?
 - Only appears on first app launch
