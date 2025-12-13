@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/neumorphic_demo_screen.dart';
+import 'presentation/screens/neumorphic_demo_screen.dart';
 
 void main() {
   runApp(const NeumorphicDemoApp());

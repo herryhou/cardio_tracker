@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cardio_tracker/screens/dashboard_screen.dart';
+import 'package:cardio_tracker/presentation/screens/dashboard_screen.dart';
 import 'package:cardio_tracker/widgets/reading_summary_card.dart';
-import 'package:cardio_tracker/screens/add_reading_screen.dart';
+import 'package:cardio_tracker/presentation/screens/add_reading_screen.dart';
 import 'package:cardio_tracker/models/blood_pressure_reading.dart';
 
 void main() {

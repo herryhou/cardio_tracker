@@ -10,7 +10,7 @@ void main() async {
   final requiredFiles = [
     'lib/services/cloudflare_kv_service.dart',
     'lib/services/manual_sync_service.dart',
-    'lib/models/blood_pressure_reading.dart',
+    'lib/domain/entities/blood_pressure_reading.dart',
   ];
 
   print('Checking required files:');
@@ -70,7 +70,7 @@ void main() async {
 
   // Check BloodPressureReading model
   print('\nChecking BloodPressureReading model:');
-  final modelFile = File('lib/models/blood_pressure_reading.dart');
+  final modelFile = File('lib/domain/entities/blood_pressure_reading.dart');
   if (await modelFile.exists()) {
     final content = await modelFile.readAsString();
 
@@ -116,8 +116,8 @@ void main() async {
   // Verify UI integration
   print('\nChecking UI integration:');
   final uiFiles = [
-    'lib/screens/cloudflare_settings_screen.dart',
-    'lib/screens/dashboard_screen.dart',
+    'lib/presentation/screens/cloudflare_settings_screen.dart',
+    'lib/presentation/screens/dashboard_screen.dart',
   ];
 
   for (final file in uiFiles) {

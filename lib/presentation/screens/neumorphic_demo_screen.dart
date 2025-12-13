@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/neumorphic_container.dart';
-import '../widgets/neumorphic_button.dart';
-import '../widgets/neumorphic_slider.dart';
+import '../../widgets/neumorphic_container.dart';
+import '../../widgets/neumorphic_button.dart';
+import '../../widgets/neumorphic_slider.dart';
 
 /// Demo screen to showcase neumorphic components in both light and dark themes
 class NeumorphicDemoScreen extends StatefulWidget {

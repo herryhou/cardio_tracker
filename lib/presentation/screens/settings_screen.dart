@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../providers/theme_provider.dart';
+import '../../providers/theme_provider.dart';
 import 'cloudflare_settings_screen.dart';
-import '../widgets/neumorphic_container.dart';
-import '../widgets/neumorphic_tile.dart';
-import '../widgets/neumorphic_slider_theme_toggle.dart';
+import '../../widgets/neumorphic_container.dart';
+import '../../widgets/neumorphic_tile.dart';
+import '../../widgets/neumorphic_slider_theme_toggle.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});

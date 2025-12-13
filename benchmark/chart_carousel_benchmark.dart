@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import '../lib/models/blood_pressure_reading.dart';
+import '../lib/domain/entities/blood_pressure_reading.dart';
 import '../lib/providers/blood_pressure_provider.dart';
 import '../lib/providers/dual_chart_provider.dart';
 import '../lib/widgets/horizontal_charts_container.dart';

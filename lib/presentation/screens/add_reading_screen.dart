@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/blood_pressure_reading.dart';
-import '../theme/app_theme.dart';
+import '../../domain/entities/blood_pressure_reading.dart';
+import '../../theme/app_theme.dart';
 
 /// Reusable content widget for adding readings (used in modal)
 class AddReadingContent extends StatefulWidget {
