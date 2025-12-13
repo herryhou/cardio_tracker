@@ -36,6 +36,8 @@ class _AddReadingContentState extends State<AddReadingContent> {
   late final TextEditingController _heartRateController;
   late final TextEditingController _notesController;
   late final FocusNode _systolicFocusNode;
+  late final FocusNode _diastolicFocusNode;
+  late final FocusNode _heartRateFocusNode;
   late DateTime _selectedDateTime;
 
   // Keyboard animation state
@@ -52,10 +54,16 @@ class _AddReadingContentState extends State<AddReadingContent> {
         widget.heartRateController ?? TextEditingController();
     _notesController = widget.notesController ?? TextEditingController();
     _systolicFocusNode = FocusNode();
+    _diastolicFocusNode = FocusNode();
+    _heartRateFocusNode = FocusNode();
     _selectedDateTime = widget.initialDateTime ?? DateTime.now();
 
     // Add focus listener to systolic field
     _systolicFocusNode.addListener(_updateKeyboardVisibility);
+
+    // Add listeners for auto-transition
+    _systolicController.addListener(_onSystolicChanged);
+    _diastolicController.addListener(_onDiastolicChanged);
 
     // Request focus on systolic field to show keyboard after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -71,12 +79,18 @@ class _AddReadingContentState extends State<AddReadingContent> {
 
   @override
   void dispose() {
+    // Always remove listeners
+    _systolicController.removeListener(_onSystolicChanged);
+    _diastolicController.removeListener(_onDiastolicChanged);
+
     // Only dispose controllers that were created locally
     if (widget.systolicController == null) _systolicController.dispose();
     if (widget.diastolicController == null) _diastolicController.dispose();
     if (widget.heartRateController == null) _heartRateController.dispose();
     if (widget.notesController == null) _notesController.dispose();
     _systolicFocusNode.dispose();
+    _diastolicFocusNode.dispose();
+    _heartRateFocusNode.dispose();
     super.dispose();
   }
 
@@ -89,6 +103,26 @@ class _AddReadingContentState extends State<AddReadingContent> {
       setState(() {
         _keyboardVisible = hasFocus;
       });
+    }
+  }
+
+  void _onSystolicChanged() {
+    if (_systolicFocusNode.hasFocus && _systolicController.text.isNotEmpty) {
+      final systolic = int.tryParse(_systolicController.text);
+      if (systolic != null && systolic >= 70 && systolic <= 250) {
+        // Valid systolic value, move to diastolic field
+        FocusScope.of(context).requestFocus(_diastolicFocusNode);
+      }
+    }
+  }
+
+  void _onDiastolicChanged() {
+    if (_diastolicFocusNode.hasFocus && _diastolicController.text.isNotEmpty) {
+      final diastolic = int.tryParse(_diastolicController.text);
+      if (diastolic != null && diastolic >= 40 && diastolic <= 150) {
+        // Valid diastolic value, move to pulse field
+        FocusScope.of(context).requestFocus(_heartRateFocusNode);
+      }
     }
   }
 
@@ -138,6 +172,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
                       children: [
                         Expanded(
                           child: _buildNumberField(
+                            key: const Key('systolic_field'),
                             controller: _systolicController,
                             label: 'SYS',
                             hint: '120',
@@ -158,9 +193,11 @@ class _AddReadingContentState extends State<AddReadingContent> {
                         const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: _buildNumberField(
+                            key: const Key('diastolic_field'),
                             controller: _diastolicController,
                             label: 'DIA',
                             hint: '80',
+                            focusNode: _diastolicFocusNode,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Required';
@@ -177,9 +214,11 @@ class _AddReadingContentState extends State<AddReadingContent> {
                         const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: _buildNumberField(
+                            key: const Key('pulse_field'),
                             controller: _heartRateController,
                             label: 'Pulse',
                             hint: '72',
+                            focusNode: _heartRateFocusNode,
                             validator: (value) {
                               if (value == null || value.isEmpty) return null;
                               final heartRate = int.tryParse(value);
@@ -328,14 +367,14 @@ class _AddReadingContentState extends State<AddReadingContent> {
       lastDate: DateTime.now().add(const Duration(days: 1)),
     );
 
-    if (pickedDate != null) {
+    if (pickedDate != null && mounted) {
       final TimeOfDay? pickedTime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.fromDateTime(_selectedDateTime),
         initialEntryMode: TimePickerEntryMode.dial,
       );
 
-      if (pickedTime != null) {
+      if (pickedTime != null && mounted) {
         setState(() {
           _selectedDateTime = DateTime(
             pickedDate.year,
@@ -374,6 +413,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
   }
 
   Widget _buildNumberField({
+    Key? key,
     required TextEditingController controller,
     required String label,
     required String hint,
@@ -381,6 +421,7 @@ class _AddReadingContentState extends State<AddReadingContent> {
     FocusNode? focusNode,
   }) {
     return Column(
+      key: key,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -399,6 +440,31 @@ class _AddReadingContentState extends State<AddReadingContent> {
           focusNode: focusNode,
           keyboardType: TextInputType.number,
           textAlign: TextAlign.center,
+          textInputAction: focusNode == _heartRateFocusNode
+              ? TextInputAction.done
+              : TextInputAction.next,
+          onEditingComplete: () {
+            if (focusNode == _systolicFocusNode) {
+              final value = _systolicController.text;
+              if (value.isNotEmpty) {
+                final systolic = int.tryParse(value);
+                if (systolic != null && systolic >= 70 && systolic <= 250) {
+                  FocusScope.of(context).requestFocus(_diastolicFocusNode);
+                }
+              }
+            } else if (focusNode == _diastolicFocusNode) {
+              final value = _diastolicController.text;
+              if (value.isNotEmpty) {
+                final diastolic = int.tryParse(value);
+                if (diastolic != null && diastolic >= 40 && diastolic <= 150) {
+                  FocusScope.of(context).requestFocus(_heartRateFocusNode);
+                }
+              }
+            } else if (focusNode == _heartRateFocusNode) {
+              // Hide keyboard when done on pulse field
+              FocusScope.of(context).unfocus();
+            }
+          },
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.w400,
