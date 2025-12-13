@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:provider/provider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/semantics.dart';
 import '../models/blood_pressure_reading.dart';
 import '../models/chart_types.dart';
 import '../providers/dual_chart_provider.dart';
@@ -7,15 +11,19 @@ import '../providers/blood_pressure_provider.dart';
 import '../widgets/clinical_scatter_plot.dart';
 import '../widgets/bp_range_bar_chart.dart';
 import '../widgets/bp_legend.dart';
+import '../widgets/swipe_hint.dart';
+import '../widgets/auto_scroll_toggle.dart';
 
 /// Horizontal scrollable charts container for dashboard
 class HorizontalChartsContainer extends StatefulWidget {
   const HorizontalChartsContainer({
     super.key,
     required this.readings,
+    this.showSwipeHint = true,
   });
 
   final List<BloodPressureReading> readings;
+  final bool showSwipeHint;
 
   @override
   State<HorizontalChartsContainer> createState() =>
@@ -25,16 +33,33 @@ class HorizontalChartsContainer extends StatefulWidget {
 class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
   late final PageController _pageController;
   ExtendedTimeRange _currentTimeRange = ExtendedTimeRange.month;
+  int _currentPage = 0;
+  bool _showSwipeHint = true;
+  bool _autoScrollEnabled = false;
+  Timer? _autoScrollTimer;
+
+  static const List<Map<String, String>> _chartInfo = [
+    {
+      'title': 'Trends',
+      'description': 'Track your blood pressure over time',
+    },
+    {
+      'title': 'Distribution',
+      'description': 'See readings in clinical zones',
+    },
+  ];
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(viewportFraction: 0.9);
+    _loadHintState();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _autoScrollTimer?.cancel();
     super.dispose();
   }
 
@@ -112,6 +137,24 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
 
         const SizedBox(height: 16),
 
+        // Swipe hint (only show on first visit)
+        if (_showSwipeHint && widget.showSwipeHint) ...[
+          const SwipeHint(),
+          const SizedBox(height: 8),
+        ],
+
+        // Auto-scroll toggle
+        AutoScrollToggle(
+          isEnabled: _autoScrollEnabled,
+          onChanged: (value) {
+            setState(() {
+              _autoScrollEnabled = value;
+              _handleAutoScrollChange(value);
+            });
+          },
+        ),
+        const SizedBox(height: 8),
+
         // Horizontal scrollable charts
         SizedBox(
           height: 320,
@@ -121,48 +164,86 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
               final filteredReadings =
                   _filterReadingsByTimeRange(widget.readings);
 
-              return PageView(
+              return PageView.builder(
                 controller: _pageController,
-                children: [
-                  // BP Range Bar Chart (Trends)
-                  Container(
-                    margin: const EdgeInsets.all(0),
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index;
+                    _showSwipeHint = false;
+                  });
+                  _saveHintState();
+                  SemanticsService.announce(
+                    'Now showing ${_chartInfo[index]['title']} chart',
+                    TextDirection.ltr,
+                  );
+                },
+                itemCount: 2,
+                itemBuilder: (context, index) {
+                  return Semantics(
+                    label: 'Chart ${index + 1} of 2: ${_chartInfo[index]['title']}',
+                    hint: 'Swipe left or right to see other charts',
                     child: Card(
-                      elevation: 2,
-                      margin: const EdgeInsets.all(0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                      child: BPRangeBarChart(
-                        readings: filteredReadings,
-                        selectedReading: chartProvider.selectedReading,
-                        onReadingSelected: chartProvider.selectReading,
-                        initialTimeRange: _currentTimeRange,
-                        showTimeRangeSelector: false,
-                        currentTimeRange: _currentTimeRange,
-                      ),
-                    ),
-                  ),
-                  // Clinical Scatter Plot
-                  Container(
-                    margin: const EdgeInsets.all(0),
-                    child: Card(
-                      elevation: 2,
-                      margin: const EdgeInsets.all(0),
+                      elevation: 4,
+                      margin: EdgeInsets.zero,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: InteractiveScatterPlot(
-                        readings: filteredReadings,
-                        selectedReading: chartProvider.selectedReading,
-                        onReadingSelected: chartProvider.selectReading,
-                        showResetButton: false,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _chartInfo[index]['title']!,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _chartInfo[index]['description']!,
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  ),
+                            ),
+                            const SizedBox(height: 16),
+                            Expanded(
+                              child: index == 0
+                                  ? BPRangeBarChart(
+                                      readings: filteredReadings,
+                                      selectedReading: chartProvider.selectedReading,
+                                      onReadingSelected: chartProvider.selectReading,
+                                      initialTimeRange: _currentTimeRange,
+                                      showTimeRangeSelector: false,
+                                      currentTimeRange: _currentTimeRange,
+                                    )
+                                  : InteractiveScatterPlot(
+                                      readings: filteredReadings,
+                                      selectedReading: chartProvider.selectedReading,
+                                      onReadingSelected: chartProvider.selectReading,
+                                      showResetButton: false,
+                                    ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  );
+                },
               );
             },
+          ),
+        ),
+
+        // Page indicator
+        const SizedBox(height: 16),
+        SmoothPageIndicator(
+          controller: _pageController,
+          count: 2,
+          effect: ExpandingDotsEffect(
+            activeDotColor: Theme.of(context).colorScheme.primary,
+            dotColor: Theme.of(context).colorScheme.outline,
+            dotHeight: 8,
+            dotWidth: 8,
+            expansionFactor: 3,
           ),
         ),
       ],
@@ -223,6 +304,50 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
         return 'Last 3 months';
       case ExtendedTimeRange.year:
         return 'This year';
+    }
+  }
+
+  void _loadHintState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenHint = prefs.getBool('has_seen_swipe_hint') ?? false;
+    if (mounted) {
+      setState(() {
+        _showSwipeHint = !hasSeenHint;
+      });
+    }
+  }
+
+  void _saveHintState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('has_seen_swipe_hint', true);
+  }
+
+  void _startAutoScroll() {
+    _autoScrollTimer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) {
+        if (_pageController.hasClients) {
+          final nextPage = (_currentPage + 1) % 2;
+          _pageController.animateToPage(
+            nextPage,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      },
+    );
+  }
+
+  void _stopAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = null;
+  }
+
+  void _handleAutoScrollChange(bool enabled) {
+    if (enabled) {
+      _startAutoScroll();
+    } else {
+      _stopAutoScroll();
     }
   }
 }

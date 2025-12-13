@@ -44,6 +44,9 @@ dependencies:
   # SharedPreferences for fallback storage
   shared_preferences: ^2.2.2
 
+  # Page indicators
+  smooth_page_indicator: ^1.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
