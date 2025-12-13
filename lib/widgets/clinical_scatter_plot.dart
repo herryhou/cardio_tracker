@@ -236,7 +236,7 @@ class ClinicalBarDistributionPainter extends CustomPainter {
 
   void _drawAxes(Canvas canvas, Rect drawArea) {
     final axisPaint = Paint()
-      ..color = axisColor
+      ..color = axisColor.withValues(alpha: 0.6)
       ..strokeWidth = 2.0;
 
     // X-axis (time)
@@ -455,13 +455,14 @@ class ClinicalScatterPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Set up drawing area with padding
-    const padding = 50.0;
-    const leftPadding = 70.0; // Extra space for Y-axis labels
-    const bottomPadding = 70.0; // Extra space for X-axis labels
+    const padding = 0.0;
+    const leftPadding = 60.0; // Extra space for Y-axis labels
+    const rightPadding = 30.0; // Extra space for Y-axis labels
+    const bottomPadding = 50.0; // Extra space for X-axis labels
     final drawArea = Rect.fromLTWH(
         leftPadding,
         padding,
-        size.width - leftPadding - padding,
+        size.width - leftPadding - rightPadding,
         size.height - padding - bottomPadding);
 
     // Draw background
@@ -577,7 +578,7 @@ class ClinicalScatterPainter extends CustomPainter {
 
   void _drawAxes(Canvas canvas, Rect drawArea) {
     final axisPaint = Paint()
-      ..color = axisColor
+      ..color = axisColor.withValues(alpha: 0.6)
       ..strokeWidth = 2.0;
 
     // X-axis (systolic)

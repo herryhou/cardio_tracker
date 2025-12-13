@@ -29,8 +29,8 @@ const double _yAxisReservedSize = 40.0;
 // Grid styling
 const double _gridAlpha = 0.3;
 const double _gridLineWidth = 0.5;
-const double _borderAlpha = 0.1;
-const double _borderLineWidth = 1.0;
+const double _borderAlpha = 0.3;
+const double _borderLineWidth = 2.0;
 
 // Shadow styling
 const double _shadowAlpha = 0.1;
@@ -331,7 +331,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
           getTitlesWidget: (value, meta) => _buildYAxisLabel(value),
         ),
         axisNameWidget: Text(
-          'Sys/Dia',
+          'Dia / Sys (mmHg)',
           style: AppTheme.bodyStyle.copyWith(
             fontSize: 13,
             fontWeight: FontWeight.bold,

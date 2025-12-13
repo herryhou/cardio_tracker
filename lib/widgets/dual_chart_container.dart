@@ -78,9 +78,9 @@ class _DualChartContainerState extends State<DualChartContainer> {
 
                 // Clinical Scatter Plot
                 Container(
-                  height: kClinicalScatterChartHeight,
+                  height: kClinicalScatterChartHeight * 1.3, // Increase height by 30%
                   margin: EdgeInsets.zero,
-                  padding: EdgeInsets.zero,
+                  padding: const EdgeInsets.symmetric(horizontal: 8), // Reduced padding
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     padding: EdgeInsets.zero,
@@ -104,7 +104,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                           child: Row(
                             children: [
                               Expanded(
@@ -137,7 +137,7 @@ class _DualChartContainerState extends State<DualChartContainer> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 200),
                             child: Row(
