@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
-import '../models/blood_pressure_reading.dart';
+import '../domain/entities/blood_pressure_reading.dart';
 import '../models/chart_types.dart';
 import '../theme/app_theme.dart';
 

@@ -1,4 +1,4 @@
-import 'package:cardio_tracker/models/blood_pressure_reading.dart';
+import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
 
 class TestHelpers {
   static BloodPressureReading createTestReading({

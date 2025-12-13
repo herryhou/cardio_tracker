@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:cardio_tracker/presentation/screens/dashboard_screen.dart';
 import 'package:cardio_tracker/widgets/reading_summary_card.dart';
 import 'package:cardio_tracker/presentation/screens/add_reading_screen.dart';
-import 'package:cardio_tracker/models/blood_pressure_reading.dart';
+import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
 
 void main() {
   group('Touch Targets Compliance Test', () {

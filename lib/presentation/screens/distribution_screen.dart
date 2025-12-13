@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/blood_pressure_provider.dart';
+import '../presentation/providers/blood_pressure_provider.dart';
 import '../../providers/dual_chart_provider.dart';
 import '../../widgets/dual_chart_container.dart';
 import '../../models/chart_types.dart';

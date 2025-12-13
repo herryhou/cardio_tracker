@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/blood_pressure_reading.dart';
+import '../domain/entities/blood_pressure_reading.dart';
 import '../theme/app_theme.dart';
 
 class RecentReadingItem extends StatelessWidget {

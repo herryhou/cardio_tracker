@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'dart:math';
 import 'package:cardio_tracker/theme/app_theme.dart';
-import 'package:cardio_tracker/models/blood_pressure_reading.dart';
+import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
+import 'package:cardio_tracker/domain/value_objects/blood_pressure_category.dart';
 
 /// Tests for dark mode contrast compliance
 /// Ensures all text meets WCAG AA standards (4.5:1 contrast ratio)

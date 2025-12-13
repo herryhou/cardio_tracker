@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:flutter/foundation.dart';
-import '../models/blood_pressure_reading.dart';
+import '../domain/entities/blood_pressure_reading.dart';
 
 class CloudflareKVService {
   static const String _accountIdKey = 'cloudflare_account_id';

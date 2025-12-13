@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import '../models/blood_pressure_reading.dart';
-import '../models/user_settings.dart';
+import '../domain/entities/blood_pressure_reading.dart';
+import '../domain/entities/user_settings.dart';
+import '../domain/value_objects/blood_pressure_category.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();

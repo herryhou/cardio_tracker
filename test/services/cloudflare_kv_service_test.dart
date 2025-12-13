@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cardio_tracker/services/cloudflare_kv_service.dart';
-import 'package:cardio_tracker/models/blood_pressure_reading.dart';
+import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
 
 import '../helpers/test_helpers.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../models/user_settings.dart';
-import '../models/blood_pressure_reading.dart';
+import '../domain/entities/blood_pressure_reading.dart';
 import '../services/database_service.dart';
 
 class SettingsProvider extends ChangeNotifier {

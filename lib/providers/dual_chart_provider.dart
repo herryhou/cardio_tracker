@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../models/blood_pressure_reading.dart';
+import '../domain/entities/blood_pressure_reading.dart';
 
 /// Provider for managing synchronized selection between dual charts
 class DualChartProvider extends ChangeNotifier {
