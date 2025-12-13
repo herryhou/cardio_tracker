@@ -1,17 +1,40 @@
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LocalDatabaseSource {
   Database? _database;
+  bool _initialized = false;
 
-  Future<void> initDatabase(String path) async {
+  Future<void> initDatabase([String? path]) async {
+    if (_initialized) return;
+
+    String dbPath = path ?? await _getDatabasePath();
     _database = await openDatabase(
-      path,
+      dbPath,
       version: 2,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
+    _initialized = true;
+  }
+
+  Future<String> _getDatabasePath() async {
+    try {
+      final documentsDirectory = await getApplicationDocumentsDirectory();
+      return join(documentsDirectory.path, 'cardio_tracker.db');
+    } catch (e) {
+      // If we can't get documents directory, we're probably in a test
+      return ':memory:';
+    }
+  }
+
+  Future<Database> get database async {
+    if (!_initialized) {
+      await initDatabase();
+    }
+    return _database!;
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -37,7 +60,7 @@ class LocalDatabaseSource {
   }
 
   Future<List<Map<String, dynamic>>> getAllReadings() async {
-    final db = _database!;
+    final db = await database;
     return await db.query(
       'blood_pressure_readings',
       where: 'isDeleted = ?',
@@ -47,12 +70,12 @@ class LocalDatabaseSource {
   }
 
   Future<void> insertReading(Map<String, dynamic> reading) async {
-    final db = _database!;
+    final db = await database;
     await db.insert('blood_pressure_readings', reading);
   }
 
   Future<void> updateReading(Map<String, dynamic> reading) async {
-    final db = _database!;
+    final db = await database;
     await db.update(
       'blood_pressure_readings',
       reading,
@@ -62,7 +85,7 @@ class LocalDatabaseSource {
   }
 
   Future<void> deleteReading(String id) async {
-    final db = _database!;
+    final db = await database;
     await db.update(
       'blood_pressure_readings',
       {'isDeleted': 1, 'lastModified': DateTime.now().toIso8601String()},
@@ -75,7 +98,7 @@ class LocalDatabaseSource {
     DateTime startDate,
     DateTime endDate,
   ) async {
-    final db = _database!;
+    final db = await database;
     return await db.query(
       'blood_pressure_readings',
       where: 'timestamp BETWEEN ? AND ? AND isDeleted = ?',
@@ -89,7 +112,7 @@ class LocalDatabaseSource {
   }
 
   Future<Map<String, dynamic>?> getLatestReading() async {
-    final db = _database!;
+    final db = await database;
     final result = await db.query(
       'blood_pressure_readings',
       where: 'isDeleted = ?',
@@ -101,6 +124,10 @@ class LocalDatabaseSource {
   }
 
   Future<void> closeDatabase() async {
-    await _database?.close();
+    if (_database != null) {
+      await _database!.close();
+      _database = null;
+      _initialized = false;
+    }
   }
 }

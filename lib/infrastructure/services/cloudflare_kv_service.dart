@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:flutter/foundation.dart';
-import '../domain/entities/blood_pressure_reading.dart';
+import '../../domain/entities/blood_pressure_reading.dart';
+import '../mappers/blood_pressure_reading_mapper.dart';
 
 class CloudflareKVService {
   static const String _accountIdKey = 'cloudflare_account_id';
@@ -239,8 +240,7 @@ class CloudflareKVService {
       throw Exception('Failed to retrieve reading: ${response.body}');
     }
 
-    final json = jsonDecode(response.body);
-    return BloodPressureReading.fromJson(json);
+    return BloodPressureReadingMapper.fromJsonString(response.body);
   }
 
   // Delete a reading

@@ -13,8 +13,10 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
 import '../../application/use_cases/add_reading.dart' as _i784;
+import '../../application/use_cases/delete_reading.dart' as _i548;
 import '../../application/use_cases/get_all_readings.dart' as _i931;
 import '../../application/use_cases/get_reading_statistics.dart' as _i191;
+import '../../application/use_cases/update_reading.dart' as _i686;
 import '../../domain/repositories/blood_pressure_repository.dart' as _i347;
 import '../../infrastructure/data_sources/local_database_source.dart' as _i378;
 import 'injection_module.dart' as _i212;
@@ -39,6 +41,10 @@ extension GetItInjectableX on _i174.GetIt {
         injectionModule.getAllReadings(gh<_i347.BloodPressureRepository>()));
     gh.lazySingleton<_i784.AddReading>(
         () => injectionModule.addReading(gh<_i347.BloodPressureRepository>()));
+    gh.lazySingleton<_i686.UpdateReading>(() =>
+        injectionModule.updateReading(gh<_i347.BloodPressureRepository>()));
+    gh.lazySingleton<_i548.DeleteReading>(() =>
+        injectionModule.deleteReading(gh<_i347.BloodPressureRepository>()));
     gh.lazySingleton<_i191.GetReadingStatistics>(() => injectionModule
         .getReadingStatistics(gh<_i347.BloodPressureRepository>()));
     return this;

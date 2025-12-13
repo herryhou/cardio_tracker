@@ -2,7 +2,8 @@ import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
-import '../domain/entities/blood_pressure_reading.dart';
+import '../../domain/entities/blood_pressure_reading.dart';
+import '../../domain/value_objects/blood_pressure_category.dart';
 
 class CsvExportService {
   /// Export blood pressure readings to CSV file and share it

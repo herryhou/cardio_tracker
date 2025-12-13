@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
+import 'package:cardio_tracker/domain/value_objects/blood_pressure_category.dart';
 import 'package:cardio_tracker/widgets/neumorphic_container.dart';
 
 /// A horizontal scrollable timeline carousel that displays blood pressure readings

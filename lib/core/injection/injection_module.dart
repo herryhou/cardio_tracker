@@ -4,6 +4,8 @@ import '../../infrastructure/data_sources/local_database_source.dart';
 import '../../infrastructure/repositories/blood_pressure_repository_impl.dart';
 import '../../application/use_cases/get_all_readings.dart';
 import '../../application/use_cases/add_reading.dart';
+import '../../application/use_cases/update_reading.dart';
+import '../../application/use_cases/delete_reading.dart';
 import '../../application/use_cases/get_reading_statistics.dart';
 
 @module
@@ -27,6 +29,16 @@ abstract class InjectionModule {
   @lazySingleton
   AddReading addReading(BloodPressureRepository repository) {
     return AddReading(repository);
+  }
+
+  @lazySingleton
+  UpdateReading updateReading(BloodPressureRepository repository) {
+    return UpdateReading(repository);
+  }
+
+  @lazySingleton
+  DeleteReading deleteReading(BloodPressureRepository repository) {
+    return DeleteReading(repository);
   }
 
   @lazySingleton

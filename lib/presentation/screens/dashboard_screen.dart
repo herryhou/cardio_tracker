@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../presentation/providers/blood_pressure_provider.dart';
+import '../providers/blood_pressure_provider.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
 import '../../theme/app_theme.dart';
 import '../../infrastructure/services/csv_export_service.dart';

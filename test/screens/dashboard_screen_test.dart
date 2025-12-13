@@ -1,20 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
+import 'package:dartz/dartz.dart';
 
 import 'package:cardio_tracker/presentation/screens/dashboard_screen.dart';
 import 'package:cardio_tracker/presentation/providers/blood_pressure_provider.dart';
-import 'package:cardio_tracker/infrastructure/services/database_service.dart';
+import 'package:cardio_tracker/application/use_cases/get_all_readings.dart';
+import 'package:cardio_tracker/application/use_cases/add_reading.dart';
+import 'package:cardio_tracker/application/use_cases/update_reading.dart';
+import 'package:cardio_tracker/application/use_cases/delete_reading.dart';
+import 'package:cardio_tracker/application/use_cases/get_reading_statistics.dart';
+import 'package:cardio_tracker/domain/value_objects/reading_statistics.dart';
+import 'package:cardio_tracker/core/usecases/usecase.dart';
 
+import 'dashboard_screen_test.mocks.dart';
+
+@GenerateMocks([
+  GetAllReadings,
+  AddReading,
+  UpdateReading,
+  DeleteReading,
+  GetReadingStatistics
+])
 void main() {
   group('Dashboard Screen Simplification Tests', () {
-    testWidgets('Dashboard should NOT contain greeting text AFTER simplification',
+    late MockGetAllReadings mockGetAllReadings;
+    late MockAddReading mockAddReading;
+    late MockUpdateReading mockUpdateReading;
+    late MockDeleteReading mockDeleteReading;
+    late MockGetReadingStatistics mockGetReadingStatistics;
+
+    setUp(() {
+      mockGetAllReadings = MockGetAllReadings();
+      mockAddReading = MockAddReading();
+      mockUpdateReading = MockUpdateReading();
+      mockDeleteReading = MockDeleteReading();
+      mockGetReadingStatistics = MockGetReadingStatistics();
+
+      // Setup default behavior for mocks to return empty data
+      when(mockGetAllReadings(any)).thenAnswer((_) async => Right([]));
+      when(mockGetReadingStatistics(any))
+          .thenAnswer((_) async => Right(const ReadingStatistics(
+                averageSystolic: 0,
+                averageDiastolic: 0,
+                averageHeartRate: 0,
+                totalReadings: 0,
+                categoryDistribution: {},
+              )));
+    });
+
+    testWidgets(
+        'Dashboard should NOT contain greeting text AFTER simplification',
         (WidgetTester tester) async {
       // Build our app and trigger a frame
       await tester.pumpWidget(
         ChangeNotifierProvider(
           create: (context) => BloodPressureProvider(
-            databaseService: DatabaseService.instance,
+            getAllReadings: mockGetAllReadings,
+            addReading: mockAddReading,
+            updateReading: mockUpdateReading,
+            deleteReading: mockDeleteReading,
+            getReadingStatistics: mockGetReadingStatistics,
           ),
           child: const MaterialApp(
             home: DashboardScreen(),
@@ -32,13 +80,18 @@ void main() {
       expect(find.byIcon(Icons.wb_sunny_outlined), findsNothing);
     });
 
-    testWidgets('Dashboard should NOT contain overview cards AFTER simplification',
+    testWidgets(
+        'Dashboard should NOT contain overview cards AFTER simplification',
         (WidgetTester tester) async {
       // Build our app and trigger a frame
       await tester.pumpWidget(
         ChangeNotifierProvider(
           create: (context) => BloodPressureProvider(
-            databaseService: DatabaseService.instance,
+            getAllReadings: mockGetAllReadings,
+            addReading: mockAddReading,
+            updateReading: mockUpdateReading,
+            deleteReading: mockDeleteReading,
+            getReadingStatistics: mockGetReadingStatistics,
           ),
           child: const MaterialApp(
             home: DashboardScreen(),
@@ -59,13 +112,18 @@ void main() {
       expect(find.text('bpm'), findsNothing);
     });
 
-    testWidgets('Dashboard should NOT contain redundant "Blood Pressure Analysis" heading',
+    testWidgets(
+        'Dashboard should NOT contain redundant "Blood Pressure Analysis" heading',
         (WidgetTester tester) async {
       // Build our app and trigger a frame
       await tester.pumpWidget(
         ChangeNotifierProvider(
           create: (context) => BloodPressureProvider(
-            databaseService: DatabaseService.instance,
+            getAllReadings: mockGetAllReadings,
+            addReading: mockAddReading,
+            updateReading: mockUpdateReading,
+            deleteReading: mockDeleteReading,
+            getReadingStatistics: mockGetReadingStatistics,
           ),
           child: const MaterialApp(
             home: DashboardScreen(),
@@ -86,7 +144,11 @@ void main() {
       await tester.pumpWidget(
         ChangeNotifierProvider(
           create: (context) => BloodPressureProvider(
-            databaseService: DatabaseService.instance,
+            getAllReadings: mockGetAllReadings,
+            addReading: mockAddReading,
+            updateReading: mockUpdateReading,
+            deleteReading: mockDeleteReading,
+            getReadingStatistics: mockGetReadingStatistics,
           ),
           child: const MaterialApp(
             home: DashboardScreen(),
@@ -100,10 +162,12 @@ void main() {
       // Assert - Verify FAB is present
       expect(find.byType(FloatingActionButton), findsOneWidget);
       expect(find.text('New'), findsOneWidget);
-      expect(find.byIcon(Icons.add_circle), findsOneWidget); // AppIcons.add is add_circle
+      expect(find.byIcon(Icons.add_circle),
+          findsOneWidget); // AppIcons.add is add_circle
 
       // Check if FAB has purple background
-      final fab = tester.widget<FloatingActionButton>(find.byType(FloatingActionButton));
+      final fab = tester
+          .widget<FloatingActionButton>(find.byType(FloatingActionButton));
       expect(fab.backgroundColor, equals(const Color(0xFF8B5CF6)));
     });
 
@@ -113,7 +177,11 @@ void main() {
       await tester.pumpWidget(
         ChangeNotifierProvider(
           create: (context) => BloodPressureProvider(
-            databaseService: DatabaseService.instance,
+            getAllReadings: mockGetAllReadings,
+            addReading: mockAddReading,
+            updateReading: mockUpdateReading,
+            deleteReading: mockDeleteReading,
+            getReadingStatistics: mockGetReadingStatistics,
           ),
           child: const MaterialApp(
             home: DashboardScreen(),
@@ -144,7 +212,11 @@ void main() {
       await tester.pumpWidget(
         ChangeNotifierProvider(
           create: (context) => BloodPressureProvider(
-            databaseService: DatabaseService.instance,
+            getAllReadings: mockGetAllReadings,
+            addReading: mockAddReading,
+            updateReading: mockUpdateReading,
+            deleteReading: mockDeleteReading,
+            getReadingStatistics: mockGetReadingStatistics,
           ),
           child: const MaterialApp(
             home: DashboardScreen(),
@@ -174,7 +246,11 @@ void main() {
       await tester.pumpWidget(
         ChangeNotifierProvider(
           create: (context) => BloodPressureProvider(
-            databaseService: DatabaseService.instance,
+            getAllReadings: mockGetAllReadings,
+            addReading: mockAddReading,
+            updateReading: mockUpdateReading,
+            deleteReading: mockDeleteReading,
+            getReadingStatistics: mockGetReadingStatistics,
           ),
           child: const MaterialApp(
             home: DashboardScreen(),

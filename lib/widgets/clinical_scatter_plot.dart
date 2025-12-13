@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../domain/entities/blood_pressure_reading.dart';
+import '../domain/value_objects/blood_pressure_category.dart';
 import '../theme/app_theme.dart';
 import '../utils/bp_format.dart';
 

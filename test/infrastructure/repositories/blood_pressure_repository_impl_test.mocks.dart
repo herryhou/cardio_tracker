@@ -3,11 +3,12 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i4;
 
 import 'package:cardio_tracker/infrastructure/data_sources/local_database_source.dart'
-    as _i2;
+    as _i3;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:sqflite/sqflite.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -23,70 +24,89 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeDatabase_0 extends _i1.SmartFake implements _i2.Database {
+  _FakeDatabase_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [LocalDatabaseSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockLocalDatabaseSource extends _i1.Mock
-    implements _i2.LocalDatabaseSource {
+    implements _i3.LocalDatabaseSource {
   MockLocalDatabaseSource() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<void> initDatabase(String? path) => (super.noSuchMethod(
+  _i4.Future<_i2.Database> get database => (super.noSuchMethod(
+        Invocation.getter(#database),
+        returnValue: _i4.Future<_i2.Database>.value(_FakeDatabase_0(
+          this,
+          Invocation.getter(#database),
+        )),
+      ) as _i4.Future<_i2.Database>);
+
+  @override
+  _i4.Future<void> initDatabase([String? path]) => (super.noSuchMethod(
         Invocation.method(
           #initDatabase,
           [path],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<List<Map<String, dynamic>>> getAllReadings() =>
+  _i4.Future<List<Map<String, dynamic>>> getAllReadings() =>
       (super.noSuchMethod(
         Invocation.method(
           #getAllReadings,
           [],
         ),
-        returnValue: _i3.Future<List<Map<String, dynamic>>>.value(
+        returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
-      ) as _i3.Future<List<Map<String, dynamic>>>);
+      ) as _i4.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i3.Future<void> insertReading(Map<String, dynamic>? reading) =>
+  _i4.Future<void> insertReading(Map<String, dynamic>? reading) =>
       (super.noSuchMethod(
         Invocation.method(
           #insertReading,
           [reading],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> updateReading(Map<String, dynamic>? reading) =>
+  _i4.Future<void> updateReading(Map<String, dynamic>? reading) =>
       (super.noSuchMethod(
         Invocation.method(
           #updateReading,
           [reading],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> deleteReading(String? id) => (super.noSuchMethod(
+  _i4.Future<void> deleteReading(String? id) => (super.noSuchMethod(
         Invocation.method(
           #deleteReading,
           [id],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<List<Map<String, dynamic>>> getReadingsByDateRange(
+  _i4.Future<List<Map<String, dynamic>>> getReadingsByDateRange(
     DateTime? startDate,
     DateTime? endDate,
   ) =>
@@ -98,26 +118,26 @@ class MockLocalDatabaseSource extends _i1.Mock
             endDate,
           ],
         ),
-        returnValue: _i3.Future<List<Map<String, dynamic>>>.value(
+        returnValue: _i4.Future<List<Map<String, dynamic>>>.value(
             <Map<String, dynamic>>[]),
-      ) as _i3.Future<List<Map<String, dynamic>>>);
+      ) as _i4.Future<List<Map<String, dynamic>>>);
 
   @override
-  _i3.Future<Map<String, dynamic>?> getLatestReading() => (super.noSuchMethod(
+  _i4.Future<Map<String, dynamic>?> getLatestReading() => (super.noSuchMethod(
         Invocation.method(
           #getLatestReading,
           [],
         ),
-        returnValue: _i3.Future<Map<String, dynamic>?>.value(),
-      ) as _i3.Future<Map<String, dynamic>?>);
+        returnValue: _i4.Future<Map<String, dynamic>?>.value(),
+      ) as _i4.Future<Map<String, dynamic>?>);
 
   @override
-  _i3.Future<void> closeDatabase() => (super.noSuchMethod(
+  _i4.Future<void> closeDatabase() => (super.noSuchMethod(
         Invocation.method(
           #closeDatabase,
           [],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }
