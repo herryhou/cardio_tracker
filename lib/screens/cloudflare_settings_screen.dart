@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../services/cloudflare_kv_service.dart';
 import '../services/manual_sync_service.dart';
+import '../providers/blood_pressure_provider.dart';
 import '../widgets/neumorphic_container.dart';
 import '../widgets/neumorphic_button.dart';
 
@@ -185,9 +187,19 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
           HapticFeedback.heavyImpact();
         } else {
           HapticFeedback.lightImpact();
+          // Refresh the UI by reloading readings after successful sync
+          if (context.mounted) {
+            context.read<BloodPressureProvider>().loadReadings();
+          }
         }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_lastSyncStatus ?? 'Sync complete')),
+          SnackBar(
+            content: Text(result.error != null
+                ? _lastSyncStatus ?? 'Sync failed'
+                : 'Sync complete and data refreshed'
+            ),
+            backgroundColor: result.error != null ? null : Colors.green,
+          ),
         );
       }
     } catch (e) {
