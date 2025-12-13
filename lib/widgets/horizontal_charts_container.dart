@@ -9,7 +9,6 @@ import '../providers/dual_chart_provider.dart';
 import '../providers/blood_pressure_provider.dart';
 import '../widgets/clinical_scatter_plot.dart';
 import '../widgets/bp_range_bar_chart.dart';
-import '../widgets/bp_legend.dart';
 import '../widgets/swipe_hint.dart';
 
 /// Horizontal scrollable charts container for dashboard
@@ -31,7 +30,6 @@ class HorizontalChartsContainer extends StatefulWidget {
 class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
   late final PageController _pageController;
   ExtendedTimeRange _currentTimeRange = ExtendedTimeRange.month;
-  int _currentPage = 0;
   bool _showSwipeHint = true;
 
   static const List<Map<String, String>> _chartInfo = [
@@ -151,7 +149,6 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
                 controller: _pageController,
                 onPageChanged: (index) {
                   setState(() {
-                    _currentPage = index;
                     _showSwipeHint = false;
                   });
                   _saveHintState();
@@ -275,19 +272,6 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
                 rangeStart.subtract(const Duration(milliseconds: 1))) &&
             reading.timestamp.isBefore(rangeEnd))
         .toList();
-  }
-
-  String _getCurrentRangeLabel() {
-    switch (_currentTimeRange) {
-      case ExtendedTimeRange.week:
-        return 'Last 7 days';
-      case ExtendedTimeRange.month:
-        return 'This month';
-      case ExtendedTimeRange.season:
-        return 'Last 3 months';
-      case ExtendedTimeRange.year:
-        return 'This year';
-    }
   }
 
   void _loadHintState() async {
