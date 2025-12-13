@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
 import 'package:cardio_tracker/presentation/providers/blood_pressure_provider.dart';
-import 'package:cardio_tracker/providers/dual_chart_provider.dart';
+import 'package:cardio_tracker/presentation/providers/dual_chart_provider.dart';
 import 'package:cardio_tracker/widgets/horizontal_charts_container.dart';
 import 'package:cardio_tracker/services/database_service.dart';
 

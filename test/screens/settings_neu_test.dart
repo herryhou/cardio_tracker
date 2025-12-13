@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:cardio_tracker/providers/theme_provider.dart';
+import 'package:cardio_tracker/presentation/providers/theme_provider.dart';
 import 'package:cardio_tracker/presentation/screens/settings_screen.dart';
 import 'package:cardio_tracker/presentation/screens/cloudflare_settings_screen.dart';
 import 'package:cardio_tracker/widgets/neumorphic_container.dart';

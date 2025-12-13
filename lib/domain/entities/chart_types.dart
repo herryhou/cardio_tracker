@@ -1,4 +1,4 @@
-import 'blood_pressure_reading.dart';
+import '../../domain/entities/blood_pressure_reading.dart';
 
 enum ExtendedTimeRange {
   week,

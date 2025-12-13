@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:cardio_tracker/presentation/screens/dashboard_screen.dart';
 import 'package:cardio_tracker/presentation/providers/blood_pressure_provider.dart';
-import 'package:cardio_tracker/services/database_service.dart';
+import 'package:cardio_tracker/infrastructure/services/database_service.dart';
 
 void main() {
   group('Dashboard Screen Simplification Tests', () {

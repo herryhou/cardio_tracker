@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'providers/settings_provider.dart';
-import 'providers/theme_provider.dart';
-import 'services/database_service.dart';
+import 'presentation/providers/settings_provider.dart';
+import 'presentation/providers/theme_provider.dart';
+import 'infrastructure/services/database_service.dart';
 import 'core/injection/injection.dart';
 import 'app.dart';
 import 'theme/app_theme.dart';

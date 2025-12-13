@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:cardio_tracker/widgets/fl_time_series_chart.dart';
 import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
-import 'package:cardio_tracker/models/chart_types.dart';
+import 'package:cardio_tracker/domain/entities/chart_types.dart';
 
 void main() {
   group('FlTimeSeriesChart', () {

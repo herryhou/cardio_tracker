@@ -8,8 +8,8 @@ void main() async {
 
   // Check for required files
   final requiredFiles = [
-    'lib/services/cloudflare_kv_service.dart',
-    'lib/services/manual_sync_service.dart',
+    'lib/infrastructure/services/cloudflare_kv_service.dart',
+    'lib/infrastructure/services/manual_sync_service.dart',
     'lib/domain/entities/blood_pressure_reading.dart',
   ];
 
@@ -24,7 +24,7 @@ void main() async {
 
   // Check CloudflareKVService implementation
   print('\nChecking CloudflareKVService implementation:');
-  final kvServiceFile = File('lib/services/cloudflare_kv_service.dart');
+  final kvServiceFile = File('lib/infrastructure/services/cloudflare_kv_service.dart');
   if (await kvServiceFile.exists()) {
     final content = await kvServiceFile.readAsString();
 
@@ -48,7 +48,7 @@ void main() async {
 
   // Check ManualSyncService implementation
   print('\nChecking ManualSyncService implementation:');
-  final syncServiceFile = File('lib/services/manual_sync_service.dart');
+  final syncServiceFile = File('lib/infrastructure/services/manual_sync_service.dart');
   if (await syncServiceFile.exists()) {
     final content = await syncServiceFile.readAsString();
 

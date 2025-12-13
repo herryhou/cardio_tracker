@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../domain/entities/blood_pressure_reading.dart';
-import '../models/chart_types.dart';
-import '../providers/dual_chart_provider.dart';
+import '../domain/entities/chart_types.dart';
+import '../presentation/providers/dual_chart_provider.dart';
 import '../utils/bp_format.dart';
 import 'clinical_scatter_plot.dart';
 import 'bp_range_bar_chart.dart';

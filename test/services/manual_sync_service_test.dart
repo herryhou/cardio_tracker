@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cardio_tracker/services/manual_sync_service.dart';
+import 'package:cardio_tracker/infrastructure/services/manual_sync_service.dart';
 import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
 
 import '../helpers/test_helpers.dart';

@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../presentation/providers/blood_pressure_provider.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
 import '../../theme/app_theme.dart';
-import '../../services/csv_export_service.dart';
-import '../../services/manual_sync_service.dart';
+import '../../infrastructure/services/csv_export_service.dart';
+import '../../infrastructure/services/manual_sync_service.dart';
 import 'add_reading_screen.dart';
 import 'settings_screen.dart';
 import 'cloudflare_settings_screen.dart';
@@ -16,7 +16,7 @@ import '../../widgets/neumorphic_button.dart';
 import '../../widgets/export_bottom_sheet.dart';
 import '../../widgets/horizontal_charts_container.dart';
 import '../../widgets/bp_legend.dart';
-import '../../providers/dual_chart_provider.dart';
+import '../providers/dual_chart_provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});

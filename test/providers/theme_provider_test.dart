@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cardio_tracker/providers/theme_provider.dart';
+import 'package:cardio_tracker/presentation/providers/theme_provider.dart';
 
 void main() {
   group('ThemeProvider', () {

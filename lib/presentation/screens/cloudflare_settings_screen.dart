@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../services/cloudflare_kv_service.dart';
-import '../../services/manual_sync_service.dart';
+import '../../infrastructure/services/cloudflare_kv_service.dart';
+import '../../infrastructure/services/manual_sync_service.dart';
 import '../presentation/providers/blood_pressure_provider.dart';
 import '../../widgets/neumorphic_container.dart';
 import '../../widgets/neumorphic_button.dart';

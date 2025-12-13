@@ -1,5 +1,5 @@
-import '../services/database_service.dart';
-import '../services/cloudflare_kv_service.dart';
+import 'database_service.dart';
+import 'cloudflare_kv_service.dart';
 import 'package:flutter/foundation.dart';
 
 class SyncResult {
