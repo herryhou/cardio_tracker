@@ -589,10 +589,10 @@ class ClinicalScatterPainter extends CustomPainter {
 
     // X-axis labels (diastolic - now on X-axis)
     // Range: 50-120 mmHg
-    for (int i = 0; i <= 7; i++) {
+    for (int i = 1; i <= 7; i++) {
       final value = 50 + (i * 10);
       final x = drawArea.left + (i * drawArea.width / 7);
-      final y = drawArea.bottom + 15; // Reduced from 20
+      final y = drawArea.bottom + 2; // Reduced from 20
 
       _drawText(canvas, value.toString(), Offset(x, y), textStyle,
           align: TextAlign.center);
@@ -600,9 +600,9 @@ class ClinicalScatterPainter extends CustomPainter {
 
     // Y-axis labels (systolic - now on Y-axis)
     // Range: 70-170 mmHg
-    for (int i = 0; i <= 10; i++) {
+    for (int i = 1; i <= 10; i++) {
       final value = 70 + (i * 10);
-      final x = drawArea.left - 5; // Reduced from 10
+      final x = drawArea.left - 4; // Reduced from 10
       final y = drawArea.bottom - (i * drawArea.height / 10);
 
       _drawText(canvas, value.toString(), Offset(x, y), textStyle,
@@ -620,7 +620,7 @@ class ClinicalScatterPainter extends CustomPainter {
     _drawText(
         canvas,
         'Diastolic (mmHg)',
-        Offset(drawArea.center.dx, drawArea.bottom + 35),
+        Offset(drawArea.center.dx, drawArea.bottom + 25),
         titleStyle, // Reduced from 45
         align: TextAlign.center);
 
@@ -628,7 +628,7 @@ class ClinicalScatterPainter extends CustomPainter {
     _drawText(
         canvas,
         'Systolic (mmHg)',
-        Offset(drawArea.left - 45, drawArea.center.dy),
+        Offset(drawArea.left - 50, drawArea.center.dy + 35),
         titleStyle, // Reduced from 55
         align: TextAlign.center,
         isVertical: true);
@@ -791,7 +791,6 @@ class ClinicalScatterPainter extends CustomPainter {
   }
 }
 
-
 /// Clinical Scatter Plot Widget
 class ClinicalScatterPlot extends StatefulWidget {
   const ClinicalScatterPlot({
@@ -810,7 +809,6 @@ class ClinicalScatterPlot extends StatefulWidget {
   @override
   State<ClinicalScatterPlot> createState() => _ClinicalScatterPlotState();
 }
-
 
 class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
   BloodPressureReading? _selectedReading;
@@ -1122,11 +1120,28 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'Blood Pressure Reading',
-                  style: AppTheme.bodyStyle.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Blood Pressure Reading',
+                      style: AppTheme.bodyStyle.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: _hideTooltip,
+                      child: Icon(
+                        Icons.close,
+                        size: 16,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 _buildDetailRow('Blood Pressure:',
@@ -1144,9 +1159,8 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
     );
     overlay.insert(_tooltipEntry!);
 
-    Future.delayed(const Duration(seconds: 3), () {
-      _tooltipEntry?.remove();
-    });
+    // Note: No auto-hide timer - tooltip stays until user dismisses it
+    // User can dismiss by tapping elsewhere on the chart
   }
 
   String _getMonthAbbreviation(int month) {
