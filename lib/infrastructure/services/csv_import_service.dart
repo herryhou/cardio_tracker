@@ -65,22 +65,35 @@ class CsvImportService {
       print('[CSV Import] About to parse CSV. Content bytes:');
       print(normalizedContent.codeUnits.take(200).toList());
 
-      List<List<dynamic>> rows;
-      try {
-        // First try with automatic EOL detection
-        rows = CsvToListConverter(
-          shouldParseNumbers: false,
-          allowInvalid: true,
-        ).convert(normalizedContent);
-      } catch (e) {
-        print('[CSV Import] First parse attempt failed: $e');
-        // Try with explicit \n
-        rows = const CsvToListConverter(
-          shouldParseNumbers: false,
-          eol: '\n',
-          allowInvalid: true,
-        ).convert(normalizedContent);
+      List<List<dynamic>> rows = [];
+
+      // Split by lines first, then parse each line
+      final lines = normalizedContent.split('\n');
+      print('[CSV Import] Split CSV into ${lines.length} lines');
+
+      for (int i = 0; i < lines.length; i++) {
+        final line = lines[i].trim();
+        if (line.isNotEmpty) {
+          // Parse each line separately
+          try {
+            final lineRows = CsvToListConverter(
+              shouldParseNumbers: false,
+              allowInvalid: true,
+            ).convert(line);
+
+            if (lineRows.isNotEmpty) {
+              rows.add(lineRows[0]); // Take the first (and only) row from each line
+            }
+          } catch (e) {
+            print('[CSV Import] Failed to parse line $i: $e');
+            // Try manual split
+            final fields = line.split(',');
+            rows.add(fields);
+          }
+        }
       }
+
+      print('[CSV Import] Successfully parsed ${rows.length} rows');
 
       print('[CSV Import] Total rows parsed: ${rows.length}');
       for (int i = 0; i < rows.length; i++) {
