@@ -210,8 +210,8 @@ class _CsvEditorScreenState extends State<CsvEditorScreen> {
           ),
           // Editor content
           Expanded(
-            child: SingleChildScrollView(
-              controller: ScrollController(),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
               child: TextFormField(
                 controller: _controller,
                 focusNode: _focusNode,
@@ -227,7 +227,7 @@ class _CsvEditorScreenState extends State<CsvEditorScreen> {
                 ),
                 decoration: const InputDecoration(
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(12),
+                  contentPadding: EdgeInsets.zero,
                   isDense: true,
                 ),
                 onChanged: (value) {
