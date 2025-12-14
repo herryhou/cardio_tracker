@@ -17,10 +17,14 @@ class HorizontalChartsContainer extends StatefulWidget {
     super.key,
     required this.readings,
     this.showSwipeHint = true,
+    this.onTimeRangeChanged,
+    this.initialTimeRange = ExtendedTimeRange.month,
   });
 
   final List<BloodPressureReading> readings;
   final bool showSwipeHint;
+  final Function(ExtendedTimeRange)? onTimeRangeChanged;
+  final ExtendedTimeRange initialTimeRange;
 
   @override
   State<HorizontalChartsContainer> createState() =>
@@ -29,7 +33,7 @@ class HorizontalChartsContainer extends StatefulWidget {
 
 class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
   late final PageController _pageController;
-  ExtendedTimeRange _currentTimeRange = ExtendedTimeRange.month;
+  late ExtendedTimeRange _currentTimeRange;
   bool _showSwipeHint = true;
 
   static const List<Map<String, String>> _chartInfo = [
@@ -47,6 +51,7 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
   void initState() {
     super.initState();
     _pageController = PageController(viewportFraction: 0.9);
+    _currentTimeRange = widget.initialTimeRange;
     _loadHintState();
   }
 
@@ -123,6 +128,8 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
                 setState(() {
                   _currentTimeRange = selection.first;
                 });
+                // Notify parent of time range change
+                widget.onTimeRangeChanged?.call(_currentTimeRange);
               }
             },
           ),

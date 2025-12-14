@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/blood_pressure_provider.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
+import '../../domain/entities/chart_types.dart';
 import '../../theme/app_theme.dart';
 import '../../infrastructure/services/csv_export_service.dart';
 import '../../infrastructure/services/manual_sync_service.dart';
@@ -27,6 +28,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final ManualSyncService _syncService = ManualSyncService();
+  ExtendedTimeRange _currentTimeRange = ExtendedTimeRange.month;
 
   @override
   void initState() {
@@ -87,6 +89,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       // Horizontal Charts Section
                       HorizontalChartsContainer(
                         readings: provider.readings,
+                        onTimeRangeChanged: (ExtendedTimeRange newRange) {
+                          setState(() {
+                            _currentTimeRange = newRange;
+                          });
+                        },
+                        initialTimeRange: _currentTimeRange,
                       ),
 
                       const SizedBox(height: AppSpacing.sm),
@@ -100,7 +108,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Padding(
                         padding: AppSpacing.screenMargins,
                         child: _buildRecentReadingsSection(
-                            context, provider.recentReadings),
+                            context, _filterReadingsByTimeRange(provider.readings)),
                       ),
 
                       // Extra bottom spacing for minimalist feel
@@ -326,13 +334,66 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Recent Readings',
-            style: AppTheme.headerStyle.copyWith(
-              color: const Color(0xFF1F2937),
-            ),
+          Row(
+            children: [
+              Text(
+                'Recent Readings',
+                style: AppTheme.headerStyle.copyWith(
+                  color: const Color(0xFF1F2937),
+                ),
+              ),
+              const Spacer(),
+              // Show count of filtered readings
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${recentReadings.length} reading${recentReadings.length == 1 ? '' : 's'}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: AppSpacing.md),
+
+          // Time range selector for recent readings
+          Container(
+            margin: const EdgeInsets.only(bottom: AppSpacing.md),
+            child: SegmentedButton<ExtendedTimeRange>(
+              segments: const [
+                ButtonSegment<ExtendedTimeRange>(
+                  value: ExtendedTimeRange.week,
+                  label: Text('Week'),
+                ),
+                ButtonSegment<ExtendedTimeRange>(
+                  value: ExtendedTimeRange.month,
+                  label: Text('Month'),
+                ),
+                ButtonSegment<ExtendedTimeRange>(
+                  value: ExtendedTimeRange.season,
+                  label: Text('Season'),
+                ),
+                ButtonSegment<ExtendedTimeRange>(
+                  value: ExtendedTimeRange.year,
+                  label: Text('Year'),
+                ),
+              ],
+              selected: {_currentTimeRange},
+              onSelectionChanged: (Set<ExtendedTimeRange> selection) {
+                if (selection.isNotEmpty) {
+                  setState(() {
+                    _currentTimeRange = selection.first;
+                  });
+                }
+              },
+            ),
+          ),
           if (recentReadings.isEmpty)
             Container(
               width: double.infinity,
@@ -553,6 +614,50 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void _deleteReading(BloodPressureReading reading) {
     final provider = context.read<BloodPressureProvider>();
     provider.deleteReading(reading.id);
+  }
+
+  List<BloodPressureReading> _filterReadingsByTimeRange(
+      List<BloodPressureReading> allReadings) {
+    if (allReadings.isEmpty) {
+      return [];
+    }
+
+    final now = DateTime.now();
+    DateTime rangeStart;
+    DateTime rangeEnd;
+
+    switch (_currentTimeRange) {
+      case ExtendedTimeRange.week:
+        rangeStart = DateTime(now.year, now.month, now.day)
+            .subtract(const Duration(days: 6));
+        rangeEnd = rangeStart.add(const Duration(days: 7));
+        break;
+      case ExtendedTimeRange.month:
+        rangeStart = DateTime(now.year, now.month, 1);
+        int nextMonth = now.month + 1;
+        int nextYear = now.year;
+        if (nextMonth > 12) {
+          nextMonth = 1;
+          nextYear += 1;
+        }
+        rangeEnd = DateTime(nextYear, nextMonth, 1);
+        break;
+      case ExtendedTimeRange.season:
+        rangeStart = now.subtract(const Duration(days: 90));
+        rangeEnd = now.add(const Duration(days: 1));
+        break;
+      case ExtendedTimeRange.year:
+        rangeStart = DateTime(now.year, 1, 1);
+        rangeEnd = DateTime(now.year + 1, 1, 1);
+        break;
+    }
+
+    return allReadings
+        .where((reading) =>
+            reading.timestamp.isAfter(
+                rangeStart.subtract(const Duration(milliseconds: 1))) &&
+            reading.timestamp.isBefore(rangeEnd))
+        .toList();
   }
 }
 
