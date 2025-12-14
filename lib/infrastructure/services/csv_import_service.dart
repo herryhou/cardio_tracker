@@ -61,8 +61,26 @@ class CsvImportService {
       // We'll add proper detection later if needed
       String normalizedContent = csvContent.trim();
 
-      // Parse CSV
-      List<List<dynamic>> rows = const CsvToListConverter().convert(normalizedContent);
+      // Parse CSV with explicit end-of-line handling
+      print('[CSV Import] About to parse CSV. Content bytes:');
+      print(normalizedContent.codeUnits.take(200).toList());
+
+      List<List<dynamic>> rows;
+      try {
+        // First try with automatic EOL detection
+        rows = CsvToListConverter(
+          shouldParseNumbers: false,
+          allowInvalid: true,
+        ).convert(normalizedContent);
+      } catch (e) {
+        print('[CSV Import] First parse attempt failed: $e');
+        // Try with explicit \n
+        rows = const CsvToListConverter(
+          shouldParseNumbers: false,
+          eol: '\n',
+          allowInvalid: true,
+        ).convert(normalizedContent);
+      }
 
       print('[CSV Import] Total rows parsed: ${rows.length}');
       for (int i = 0; i < rows.length; i++) {

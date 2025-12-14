@@ -70,6 +70,8 @@ class CsvEditorProvider with ChangeNotifier {
 
           // Debug: Show raw CSV with line endings visible
           print('[CSV Editor] Raw CSV with line endings:');
+          print('Contains ${_csvContent.split('\n').length} lines');
+          print('Has actual newlines: ${_csvContent.contains('\n')}');
           print(_csvContent.replaceAll('\n', '\\n'));
           print('--- End of raw CSV ---');
           _readingCount = readings.length;
