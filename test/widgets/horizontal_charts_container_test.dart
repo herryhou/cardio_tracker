@@ -13,8 +13,9 @@ import 'package:cardio_tracker/application/use_cases/add_reading.dart';
 import 'package:cardio_tracker/application/use_cases/update_reading.dart';
 import 'package:cardio_tracker/application/use_cases/delete_reading.dart';
 import 'package:cardio_tracker/application/use_cases/get_reading_statistics.dart';
+import 'package:cardio_tracker/application/use_cases/clear_all_readings.dart';
+import 'package:cardio_tracker/application/use_cases/rebuild_database.dart';
 import 'package:cardio_tracker/domain/value_objects/reading_statistics.dart';
-import 'package:cardio_tracker/core/usecases/usecase.dart';
 import 'package:cardio_tracker/widgets/horizontal_charts_container.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -25,7 +26,9 @@ import 'horizontal_charts_container_test.mocks.dart';
   AddReading,
   UpdateReading,
   DeleteReading,
-  GetReadingStatistics
+  GetReadingStatistics,
+  ClearAllReadings,
+  RebuildDatabase
 ])
 void main() {
   group('HorizontalChartsContainer', () {
@@ -34,6 +37,8 @@ void main() {
     late MockUpdateReading mockUpdateReading;
     late MockDeleteReading mockDeleteReading;
     late MockGetReadingStatistics mockGetReadingStatistics;
+    late MockClearAllReadings mockClearAllReadings;
+    late MockRebuildDatabase mockRebuildDatabase;
 
     setUp(() {
       mockGetAllReadings = MockGetAllReadings();
@@ -41,6 +46,8 @@ void main() {
       mockUpdateReading = MockUpdateReading();
       mockDeleteReading = MockDeleteReading();
       mockGetReadingStatistics = MockGetReadingStatistics();
+      mockClearAllReadings = MockClearAllReadings();
+      mockRebuildDatabase = MockRebuildDatabase();
 
       // Setup default behavior for mocks to return empty data
       when(mockGetAllReadings(any)).thenAnswer((_) async => Right([]));
@@ -52,6 +59,8 @@ void main() {
                 totalReadings: 0,
                 categoryDistribution: {},
               )));
+      when(mockClearAllReadings(any)).thenAnswer((_) async => const Right(null));
+      when(mockRebuildDatabase(any)).thenAnswer((_) async => const Right(null));
     });
 
     testWidgets('should show page indicator dots for two charts',
@@ -80,6 +89,8 @@ void main() {
                         updateReading: mockUpdateReading,
                         deleteReading: mockDeleteReading,
                         getReadingStatistics: mockGetReadingStatistics,
+                        clearAllReadings: mockClearAllReadings,
+                        rebuildDatabase: mockRebuildDatabase,
                       )),
               ChangeNotifierProvider(create: (_) => DualChartProvider()),
             ],
@@ -123,6 +134,8 @@ void main() {
                         updateReading: mockUpdateReading,
                         deleteReading: mockDeleteReading,
                         getReadingStatistics: mockGetReadingStatistics,
+                        clearAllReadings: mockClearAllReadings,
+                        rebuildDatabase: mockRebuildDatabase,
                       )),
               ChangeNotifierProvider(create: (_) => DualChartProvider()),
             ],
@@ -165,6 +178,8 @@ void main() {
                         updateReading: mockUpdateReading,
                         deleteReading: mockDeleteReading,
                         getReadingStatistics: mockGetReadingStatistics,
+                        clearAllReadings: mockClearAllReadings,
+                        rebuildDatabase: mockRebuildDatabase,
                       )),
               ChangeNotifierProvider(create: (_) => DualChartProvider()),
             ],

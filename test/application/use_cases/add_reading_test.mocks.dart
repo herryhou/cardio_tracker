@@ -188,4 +188,38 @@ class MockBloodPressureRepository extends _i1.Mock
             )),
           ) as _i4
               .Future<_i2.Either<_i5.Failure, List<_i6.BloodPressureReading>>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> clearAllReadings() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #clearAllReadings,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #clearAllReadings,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> rebuildDatabase() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #rebuildDatabase,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #rebuildDatabase,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
 }
