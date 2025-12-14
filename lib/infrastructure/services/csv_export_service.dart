@@ -6,6 +6,33 @@ import '../../domain/entities/blood_pressure_reading.dart';
 import '../../domain/value_objects/blood_pressure_category.dart';
 
 class CsvExportService {
+  /// Export blood pressure readings to CSV string
+  String exportAllReadings(List<BloodPressureReading> readings) {
+    // Create CSV data
+    List<List<dynamic>> csvData = [
+      ['Date', 'Time', 'Systolic (mmHg)', 'Diastolic (mmHg)', 'Heart Rate (bpm)', 'Category', 'Notes']
+    ];
+
+    // Sort readings by date (oldest first for editor)
+    final sortedReadings = List<BloodPressureReading>.from(readings)
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    for (final reading in sortedReadings) {
+      csvData.add([
+        DateFormat('yyyy-MM-dd').format(reading.timestamp),
+        DateFormat('HH:mm').format(reading.timestamp),
+        reading.systolic,
+        reading.diastolic,
+        reading.heartRate,
+        _getCategoryText(reading.category),
+        reading.notes ?? '',
+      ]);
+    }
+
+    // Convert to CSV string
+    return const ListToCsvConverter().convert(csvData);
+  }
+
   /// Export blood pressure readings to CSV file and share it
   static Future<void> exportToCsv(List<BloodPressureReading> readings) async {
     if (readings.isEmpty) {

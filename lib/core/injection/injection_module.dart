@@ -11,6 +11,7 @@ import '../../application/use_cases/delete_reading.dart';
 import '../../application/use_cases/get_reading_statistics.dart';
 import '../../application/use_cases/clear_all_readings.dart';
 import '../../application/use_cases/rebuild_database.dart';
+import '../../core/validators/reading_validator.dart';
 
 @module
 abstract class InjectionModule {
@@ -64,4 +65,8 @@ abstract class InjectionModule {
   RebuildDatabase rebuildDatabase(BloodPressureRepository repository) {
     return RebuildDatabase(repository);
   }
+
+  // Validators
+  @lazySingleton
+  ReadingValidator getReadingValidator() => ReadingValidator();
 }

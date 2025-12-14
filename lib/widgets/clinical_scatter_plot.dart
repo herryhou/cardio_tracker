@@ -456,9 +456,9 @@ class ClinicalScatterPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Set up drawing area with padding
     const padding = 0.0;
-    const leftPadding = 60.0; // Extra space for Y-axis labels
-    const rightPadding = 30.0; // Extra space for Y-axis labels
-    const bottomPadding = 50.0; // Extra space for X-axis labels
+    const leftPadding = 50.0; // Reduced space for Y-axis labels
+    const rightPadding = 20.0; // Reduced space for Y-axis labels
+    const bottomPadding = 40.0; // Reduced space for X-axis labels
     final drawArea = Rect.fromLTWH(
         leftPadding,
         padding,
@@ -611,7 +611,7 @@ class ClinicalScatterPainter extends CustomPainter {
     for (int i = 0; i <= 7; i++) {
       final value = 50 + (i * 10);
       final x = drawArea.left + (i * drawArea.width / 7);
-      final y = drawArea.bottom + 20;
+      final y = drawArea.bottom + 15; // Reduced from 20
 
       _drawText(canvas, value.toString(), Offset(x, y), textStyle,
           align: TextAlign.center);
@@ -621,7 +621,7 @@ class ClinicalScatterPainter extends CustomPainter {
     // Range: 70-170 mmHg
     for (int i = 0; i <= 10; i++) {
       final value = 70 + (i * 10);
-      final x = drawArea.left - 10;
+      final x = drawArea.left - 5; // Reduced from 10
       final y = drawArea.bottom - (i * drawArea.height / 10);
 
       _drawText(canvas, value.toString(), Offset(x, y), textStyle,
@@ -637,12 +637,12 @@ class ClinicalScatterPainter extends CustomPainter {
 
     // X-axis title (now Diastolic)
     _drawText(canvas, 'Diastolic (mmHg)',
-        Offset(drawArea.center.dx, drawArea.bottom + 45), titleStyle,
+        Offset(drawArea.center.dx, drawArea.bottom + 35), titleStyle, // Reduced from 45
         align: TextAlign.center);
 
     // Y-axis title (now Systolic)
     _drawText(canvas, 'Systolic (mmHg)',
-        Offset(drawArea.left - 55, drawArea.center.dy), titleStyle,
+        Offset(drawArea.left - 45, drawArea.center.dy), titleStyle, // Reduced from 55
         align: TextAlign.center, isVertical: true);
   }
 

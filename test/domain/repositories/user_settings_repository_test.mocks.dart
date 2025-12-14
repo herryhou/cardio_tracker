@@ -214,4 +214,21 @@ class MockUserSettingsRepository extends _i1.Mock
           ),
         )),
       ) as _i4.Future<_i2.Either<_i5.Failure, bool>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> clearAllSettings() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #clearAllSettings,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #clearAllSettings,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../domain/entities/blood_pressure_reading.dart';
 import '../infrastructure/services/csv_export_service.dart';
 import '../theme/app_theme.dart';
 import 'neumorphic_container.dart';
 import 'neumorphic_button.dart';
+import 'csv_editor_button.dart';
 
 /// A neumorphic bottom sheet for export options
 /// Provides haptic feedback and smooth animations
@@ -352,6 +354,21 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
                             isLoading:
                                 _isExporting && _exportingOption == 'month',
                           ),
+                          const SizedBox(height: 8),
+                          const Divider(
+                            height: 32,
+                            thickness: 1,
+                          ),
+                          Text(
+                            'Data Management',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          const CsvEditorButton(),
                         ],
                       ),
                     ),

@@ -170,4 +170,26 @@ class MockLocalDatabaseSource extends _i1.Mock
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> batchInsertReadings(List<Map<String, dynamic>>? readings) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #batchInsertReadings,
+          [readings],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> replaceAllReadings(List<Map<String, dynamic>>? readings) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #replaceAllReadings,
+          [readings],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }

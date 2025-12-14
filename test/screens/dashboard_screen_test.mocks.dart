@@ -6,12 +6,16 @@
 import 'dart:async' as _i5;
 
 import 'package:cardio_tracker/application/use_cases/add_reading.dart' as _i9;
+import 'package:cardio_tracker/application/use_cases/clear_all_readings.dart'
+    as _i14;
 import 'package:cardio_tracker/application/use_cases/delete_reading.dart'
     as _i11;
 import 'package:cardio_tracker/application/use_cases/get_all_readings.dart'
     as _i4;
 import 'package:cardio_tracker/application/use_cases/get_reading_statistics.dart'
     as _i12;
+import 'package:cardio_tracker/application/use_cases/rebuild_database.dart'
+    as _i15;
 import 'package:cardio_tracker/application/use_cases/update_reading.dart'
     as _i10;
 import 'package:cardio_tracker/core/errors/failures.dart' as _i6;
@@ -241,4 +245,74 @@ class MockGetReadingStatistics extends _i1.Mock
           ),
         )),
       ) as _i5.Future<_i3.Either<_i6.Failure, _i13.ReadingStatistics>>);
+}
+
+/// A class which mocks [ClearAllReadings].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockClearAllReadings extends _i1.Mock implements _i14.ClearAllReadings {
+  MockClearAllReadings() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.BloodPressureRepository get repository => (super.noSuchMethod(
+        Invocation.getter(#repository),
+        returnValue: _FakeBloodPressureRepository_0(
+          this,
+          Invocation.getter(#repository),
+        ),
+      ) as _i2.BloodPressureRepository);
+
+  @override
+  _i5.Future<_i3.Either<_i6.Failure, void>> call(_i8.NoParams? params) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #call,
+          [params],
+        ),
+        returnValue: _i5.Future<_i3.Either<_i6.Failure, void>>.value(
+            _FakeEither_1<_i6.Failure, void>(
+          this,
+          Invocation.method(
+            #call,
+            [params],
+          ),
+        )),
+      ) as _i5.Future<_i3.Either<_i6.Failure, void>>);
+}
+
+/// A class which mocks [RebuildDatabase].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockRebuildDatabase extends _i1.Mock implements _i15.RebuildDatabase {
+  MockRebuildDatabase() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.BloodPressureRepository get repository => (super.noSuchMethod(
+        Invocation.getter(#repository),
+        returnValue: _FakeBloodPressureRepository_0(
+          this,
+          Invocation.getter(#repository),
+        ),
+      ) as _i2.BloodPressureRepository);
+
+  @override
+  _i5.Future<_i3.Either<_i6.Failure, void>> call(_i8.NoParams? params) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #call,
+          [params],
+        ),
+        returnValue: _i5.Future<_i3.Either<_i6.Failure, void>>.value(
+            _FakeEither_1<_i6.Failure, void>(
+          this,
+          Invocation.method(
+            #call,
+            [params],
+          ),
+        )),
+      ) as _i5.Future<_i3.Either<_i6.Failure, void>>);
 }

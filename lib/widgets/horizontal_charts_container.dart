@@ -167,7 +167,8 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
                 itemCount: 2,
                 itemBuilder: (context, index) {
                   return Semantics(
-                    label: 'Chart ${index + 1} of 2: ${_chartInfo[index]['title']}',
+                    label:
+                        'Chart ${index + 1} of 2: ${_chartInfo[index]['title']}',
                     hint: 'Swipe left or right to see other charts',
                     child: Card(
                       elevation: 4,
@@ -187,8 +188,13 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
                             const SizedBox(height: 4),
                             Text(
                               _chartInfo[index]['description']!,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
                                   ),
                             ),
                             const SizedBox(height: 16),
@@ -196,16 +202,20 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
                               child: index == 0
                                   ? BPRangeBarChart(
                                       readings: filteredReadings,
-                                      selectedReading: chartProvider.selectedReading,
-                                      onReadingSelected: chartProvider.selectReading,
+                                      selectedReading:
+                                          chartProvider.selectedReading,
+                                      onReadingSelected:
+                                          chartProvider.selectReading,
                                       initialTimeRange: _currentTimeRange,
                                       showTimeRangeSelector: false,
                                       currentTimeRange: _currentTimeRange,
                                     )
                                   : InteractiveScatterPlot(
                                       readings: filteredReadings,
-                                      selectedReading: chartProvider.selectedReading,
-                                      onReadingSelected: chartProvider.selectReading,
+                                      selectedReading:
+                                          chartProvider.selectedReading,
+                                      onReadingSelected:
+                                          chartProvider.selectReading,
                                       showResetButton: false,
                                     ),
                             ),
@@ -295,5 +305,4 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('has_seen_swipe_hint', true);
   }
-
-  }
+}

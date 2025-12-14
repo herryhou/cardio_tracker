@@ -22,6 +22,7 @@ import '../../application/use_cases/update_reading.dart' as _i686;
 import '../../domain/repositories/blood_pressure_repository.dart' as _i347;
 import '../../domain/repositories/user_settings_repository.dart' as _i931;
 import '../../infrastructure/data_sources/local_database_source.dart' as _i378;
+import '../validators/reading_validator.dart' as _i950;
 import 'injection_module.dart' as _i212;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -38,6 +39,8 @@ extension GetItInjectableX on _i174.GetIt {
     final injectionModule = _$InjectionModule();
     gh.lazySingleton<_i378.LocalDatabaseSource>(
         () => injectionModule.getLocalDatabaseSource());
+    gh.lazySingleton<_i950.ReadingValidator>(
+        () => injectionModule.getReadingValidator());
     gh.lazySingleton<_i347.BloodPressureRepository>(() => injectionModule
         .getBloodPressureRepository(gh<_i378.LocalDatabaseSource>()));
     gh.lazySingleton<_i931.UserSettingsRepository>(() => injectionModule

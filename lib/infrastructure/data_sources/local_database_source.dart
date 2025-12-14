@@ -225,4 +225,37 @@ class LocalDatabaseSource {
     final db = await database;
     await db.delete('user_settings');
   }
+
+  /// Batch inserts multiple readings in a single transaction
+  Future<void> batchInsertReadings(List<Map<String, dynamic>> readings) async {
+    if (readings.isEmpty) return;
+
+    final db = await database;
+    final batch = db.batch();
+
+    for (final reading in readings) {
+      batch.insert('blood_pressure_readings', reading);
+    }
+
+    await batch.commit();
+  }
+
+  /// Replaces all readings with new readings in a single atomic operation
+  Future<void> replaceAllReadings(List<Map<String, dynamic>> readings) async {
+    final db = await database;
+
+    await db.transaction((txn) async {
+      // Clear existing readings
+      await txn.delete('blood_pressure_readings');
+
+      // Insert new readings if any
+      if (readings.isNotEmpty) {
+        final batch = txn.batch();
+        for (final reading in readings) {
+          batch.insert('blood_pressure_readings', reading);
+        }
+        await batch.commit();
+      }
+    });
+  }
 }

@@ -154,4 +154,26 @@ class BloodPressureRepositoryImpl implements BloodPressureRepository {
       return Left(DatabaseFailure('Failed to rebuild database: ${e.toString()}'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> batchInsertReadings(List<BloodPressureReading> readings) async {
+    try {
+      final readingsMap = readings.map(_mapFromReading).toList();
+      await dataSource.batchInsertReadings(readingsMap);
+      return const Right(null);
+    } catch (e) {
+      return Left(DatabaseFailure('Failed to batch insert readings: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> replaceAllReadings(List<BloodPressureReading> readings) async {
+    try {
+      final readingsMap = readings.map(_mapFromReading).toList();
+      await dataSource.replaceAllReadings(readingsMap);
+      return const Right(null);
+    } catch (e) {
+      return Left(DatabaseFailure('Failed to replace all readings: ${e.toString()}'));
+    }
+  }
 }

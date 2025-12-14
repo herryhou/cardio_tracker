@@ -11,20 +11,20 @@ import '../theme/app_theme.dart';
 // ============================================================================
 
 // Bar styling
-const double _barWidth = 13.0;
+const double _barWidth = 9.0;
 // const double _barSpacing = 20.0;
 
 // Y-axis bounds
 const double _minY = 60.0;
-const double _maxY = 170.0;
+const double _maxY = 160.0;
 const double _yAxisInterval = 20.0;
 
 // Text styling
-const double _xAxisLabelFontSize = 9.0;
+const double _xAxisLabelFontSize = 10.0;
 const double _yAxisLabelFontSize = 10.0;
 const double _labelRotationAngle = 0.0; // Horizontal labels
-const double _xAxisReservedSize = 40.0;
-const double _yAxisReservedSize = 40.0;
+const double _xAxisReservedSize = 20.0; // Increased from 40.0
+const double _yAxisReservedSize = 20.0; // Increased from 40.0
 
 // Grid styling
 const double _gridAlpha = 0.3;
@@ -197,10 +197,18 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
   }
 
   Widget _buildChart() {
-    return SizedBox(
-      height: 450,
-      child: BarChart(
-        _buildBarChartData(),
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 0.0, // Extra space for Y-axis labels
+        right: 20.0,
+        bottom: 0.0, // Extra space for X-axis labels
+        top: 0.0,
+      ),
+      child: SizedBox(
+        height: 450,
+        child: BarChart(
+          _buildBarChartData(),
+        ),
       ),
     );
   }
@@ -346,7 +354,7 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: _xAxisReservedSize,
-          interval: 3.0, // Show every 3rd index
+          interval: 1.0, // Show every 3rd index
           getTitlesWidget: (value, meta) {
             final index = value.toInt();
             return _buildXAxisLabel(index);

@@ -222,4 +222,40 @@ class MockBloodPressureRepository extends _i1.Mock
           ),
         )),
       ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> batchInsertReadings(
+          List<_i6.BloodPressureReading>? readings) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #batchInsertReadings,
+          [readings],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #batchInsertReadings,
+            [readings],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> replaceAllReadings(
+          List<_i6.BloodPressureReading>? readings) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #replaceAllReadings,
+          [readings],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
+          this,
+          Invocation.method(
+            #replaceAllReadings,
+            [readings],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
 }
