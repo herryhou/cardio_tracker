@@ -5,7 +5,6 @@ import '../providers/blood_pressure_provider.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
 import '../../domain/entities/chart_types.dart';
 import '../../theme/app_theme.dart';
-import 'add_reading_screen.dart';
 import '../../widgets/recent_reading_item.dart';
 import '../../widgets/reading_card_neu.dart';
 import '../../widgets/neumorphic_container.dart';
@@ -13,139 +12,81 @@ import '../../widgets/neumorphic_button.dart';
 import '../../widgets/export_bottom_sheet.dart';
 import '../../widgets/horizontal_charts_container.dart';
 import '../../widgets/bp_legend.dart';
+import '../../widgets/status_summary_card.dart';
 import '../providers/dual_chart_provider.dart';
+import 'add_reading_screen.dart';
 import '../../widgets/app_actions/sync_status_indicator.dart';
-import '../../widgets/app_actions/export_action_buttons.dart';
-import '../../widgets/app_actions/main_menu_button.dart';
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+class DashboardContent extends StatefulWidget {
+  const DashboardContent({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<DashboardContent> createState() => _DashboardContentState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardContentState extends State<DashboardContent> {
   ExtendedTimeRange _currentTimeRange = ExtendedTimeRange.month;
 
   @override
-  void initState() {
-    super.initState();
-    // Load readings when screen initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BloodPressureProvider>().loadReadings();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: _buildAppBar(context),
-      body: Consumer<BloodPressureProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return Consumer<BloodPressureProvider>(
+      builder: (context, provider, child) {
+        return RefreshIndicator(
+          onRefresh: () => provider.loadReadings(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                // Minimalist Header with extra spacing
+                const SizedBox(height: AppSpacing.xl),
 
-          if (provider.error != null) {
-            return _buildErrorState(context, provider.error!);
-          }
+                // Centered Reading Card - Main Feature
+                if (provider.latestReading != null) ...[
+                  _buildCenteredReadingCard(context, provider.latestReading!),
+                  const SizedBox(height: AppSpacing.xl),
+                ] else ...[
+                  _buildEmptyStateCard(context),
+                  const SizedBox(height: AppSpacing.xl),
+                ],
 
-          return MultiProvider(
-            providers: [
-              ChangeNotifierProvider(create: (_) => DualChartProvider()),
-            ],
-            child: RefreshIndicator(
-              onRefresh: () => provider.loadReadings(),
-              child: GestureDetector(
-                onLongPress: () async {
-                  await HapticFeedback.mediumImpact();
-                  showExportBottomSheet(
-                    context,
-                    readings: provider.readings,
-                  );
-                },
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.zero,
-                  child: Column(
-                    children: [
-                      // Minimalist Header with extra spacing
-                      const SizedBox(height: AppSpacing.xl),
-
-                      // Centered Reading Card - Main Feature
-                      if (provider.latestReading != null) ...[
-                        _buildCenteredReadingCard(
-                            context, provider.latestReading!),
-                        const SizedBox(height: AppSpacing.xl),
-                      ] else ...[
-                        _buildEmptyStateCard(context),
-                        const SizedBox(height: AppSpacing.xl),
-                      ],
-
-                      // Horizontal Charts Section
-                      HorizontalChartsContainer(
-                        readings: provider.readings,
-                        onTimeRangeChanged: (ExtendedTimeRange newRange) {
-                          setState(() {
-                            _currentTimeRange = newRange;
-                          });
-                        },
-                        initialTimeRange: _currentTimeRange,
-                      ),
-
-                      const SizedBox(height: AppSpacing.sm),
-
-                      // Blood Pressure Legend (common for both charts)
-                      const BPLegend(),
-
-                      const SizedBox(height: AppSpacing.lg),
-
-                      // Recent Readings Section with neumorphic styling
-                      Padding(
-                        padding: AppSpacing.screenMargins,
-                        child: _buildRecentReadingsSection(
-                            context, _filterReadingsByTimeRange(provider.readings)),
-                      ),
-
-                      // Extra bottom spacing for minimalist feel
-                      const SizedBox(height: AppSpacing.xxl),
-                    ],
-                  ),
+                // Horizontal Charts Section
+                HorizontalChartsContainer(
+                  readings: provider.readings,
+                  onTimeRangeChanged: (ExtendedTimeRange newRange) {
+                    setState(() {
+                      _currentTimeRange = newRange;
+                    });
+                  },
+                  initialTimeRange: _currentTimeRange,
                 ),
-              ),
-            ),
-          ); // RefreshIndicator
-        },
-      ),
-      floatingActionButton: _buildNeumorphicFAB(context),
-    );
-  }
 
-  // Neumorphic AppBar with minimalist design
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: Text(
-        'Cardio Tracker',
-        style: TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-      ),
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      foregroundColor: Theme.of(context).colorScheme.primary,
-      centerTitle: false,
-      actions: const [
-        // Sync Status Indicator with dropdown menu
-        SyncStatusIndicator(),
-        // Export Actions
-        ExportActionButtons(),
-        // Main Menu
-        MainMenuButton(),
-      ],
+                const SizedBox(height: AppSpacing.sm),
+
+                // Blood Pressure Legend (common for both charts)
+                const BPLegend(),
+
+                const SizedBox(height: AppSpacing.lg),
+
+                // Status Summary Card
+                const StatusSummaryCard(),
+
+                const SizedBox(height: AppSpacing.lg),
+
+                // Recent Readings Section with neumorphic styling
+                Padding(
+                  padding: AppSpacing.screenMargins,
+                  child: _buildRecentReadingsSection(
+                      context, _filterReadingsByTimeRange(provider.readings)),
+                ),
+
+                // Extra bottom spacing for FAB
+                const SizedBox(height: AppSpacing.xxl + 80),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -166,36 +107,58 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildEmptyStateCard(BuildContext context) {
     return Padding(
       padding: AppSpacing.screenMargins,
-      child: const NeumorphicContainer(
-        borderRadius: 30.0,
-        padding: EdgeInsets.all(AppSpacing.xl + AppSpacing.md),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.favorite_border,
-              size: 80,
-              color: Color(0xFF9CA3AF),
-            ),
-            SizedBox(height: AppSpacing.lg),
-            Text(
-              'No readings yet',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF6B7280),
+      child: GestureDetector(
+        onTap: () => _showAddReadingModal(context),
+        child: NeumorphicContainer(
+          borderRadius: 30.0,
+          padding: const EdgeInsets.all(AppSpacing.xl + AppSpacing.md),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.favorite_border,
+                size: 80,
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
               ),
-            ),
-            SizedBox(height: AppSpacing.sm),
-            Text(
-              'Tap the + button to add your first reading',
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFF9CA3AF),
+              const SizedBox(height: AppSpacing.lg),
+              Text(
+                'No readings yet',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Tap here to add your first reading',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 24, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  '+ Add Reading',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -214,7 +177,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Text(
                 'Recent Readings',
                 style: AppTheme.headerStyle.copyWith(
-                  color: const Color(0xFF1F2937),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const Spacer(),
@@ -280,20 +243,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     .withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Column(
+              child: Column(
                 children: [
                   Icon(
                     Icons.history,
                     size: 32,
-                    color: Color(0xFF9CA3AF),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.5),
                   ),
-                  SizedBox(height: AppSpacing.sm),
+                  const SizedBox(height: AppSpacing.sm),
                   Text(
                     'No recent readings',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF6B7280),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -333,86 +302,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // Plain Floating Action Button
-  Widget _buildNeumorphicFAB(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () {
-        _showAddReadingModal(context);
-      },
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      elevation: 8,
-      child: Icon(
-        Icons.add,
-        color: Theme.of(context).colorScheme.onPrimary,
-        size: 28,
-      ),
-    );
-  }
-
-  Widget _buildErrorState(BuildContext context, String error) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg + AppSpacing.md),
-        child: NeumorphicContainer(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.errorContainer,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Icon(
-                  Icons.error_outline,
-                  size: 48,
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              const Text(
-                'Unable to load data',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                error,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.7),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              NeumorphicButton(
-                onPressed: () =>
-                    context.read<BloodPressureProvider>().loadReadings(),
-                borderRadius: 12.0,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg, vertical: AppSpacing.md),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.refresh),
-                    SizedBox(width: AppSpacing.sm),
-                    Text('Retry'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  
   void _showAddReadingModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -501,7 +390,6 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        // color: Theme.of(context).colorScheme.surface,
         color: Color(0xFFF5F5F5),
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),

@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import '../../domain/entities/user_settings.dart';
 import '../../domain/value_objects/blood_pressure_category.dart';
 import '../../domain/repositories/user_settings_repository.dart';
-import '../../core/errors/failures.dart';
 
 class SettingsProvider extends ChangeNotifier {
   final UserSettingsRepository _repository;

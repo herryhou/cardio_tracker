@@ -21,6 +21,9 @@ class ManualSyncService {
   final LocalDatabaseSource _dataSource = LocalDatabaseSource();
   final CloudflareKVService _kvService = CloudflareKVService();
 
+  // Expose kvService for external access
+  CloudflareKVService get kvService => _kvService;
+
   Future<SyncResult> performSync() async {
     try {
       debugPrint('SyncService: Starting sync...');

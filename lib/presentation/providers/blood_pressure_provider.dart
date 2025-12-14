@@ -94,10 +94,10 @@ class BloodPressureProvider extends ChangeNotifier {
     bool success = false;
     result.fold(
       (failure) => _setError(_mapFailureToMessage(failure)),
-      (_) {
+      (_) async {
         success = true;
-        _readings.add(reading);
-        _computeStatistics();
+        // Reload readings to get the database-generated ID
+        await loadReadings();
       },
     );
 
@@ -114,14 +114,10 @@ class BloodPressureProvider extends ChangeNotifier {
     bool success = false;
     result.fold(
       (failure) => _setError(_mapFailureToMessage(failure)),
-      (_) {
+      (_) async {
         success = true;
-        final index = _readings.indexWhere((r) => r.id == reading.id);
-        if (index != -1) {
-          _readings[index] = reading;
-          _readings.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-          _computeStatistics();
-        }
+        // Reload readings to ensure consistency
+        await loadReadings();
       },
     );
 
@@ -138,10 +134,10 @@ class BloodPressureProvider extends ChangeNotifier {
     bool success = false;
     result.fold(
       (failure) => _setError(_mapFailureToMessage(failure)),
-      (_) {
+      (_) async {
         success = true;
-        _readings.removeWhere((reading) => reading.id == id);
-        _computeStatistics();
+        // Reload readings to ensure consistency
+        await loadReadings();
       },
     );
 
