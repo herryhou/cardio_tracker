@@ -57,8 +57,43 @@ class CsvImportService {
   /// Parse and validate CSV content
   Future<CsvImportResult> importFromCsv(String csvContent) async {
     try {
+      // Normalize CSV content by fixing common line-ending issues
+      String normalizedContent = csvContent.trim();
+
+      // Fix the specific issue where a date follows notes without proper line break
+      // Pattern: ...,notes,date,time,... where there should be a newline after notes
+      normalizedContent = normalizedContent.replaceAllMapped(
+        // Match: comma, optional notes (no commas), comma, date (YYYY-MM-DD)
+        RegExp(r',([^,\n]*),(\d{4}-\d{2}-\d{2})'),
+        (match) {
+          final notes = match.group(1)!;
+          final date = match.group(2)!;
+
+          // If notes field looks like it ate the next line (contains date-like pattern)
+          // or if notes is empty but we have a date right after,
+          // it means lines were concatenated
+          if (notes.contains(date) || (notes.isEmpty && match.group(0)!.startsWith(',,,'))) {
+            return ',\n$date';
+          }
+
+          // Check if this looks like concatenated rows (notes followed by date)
+          if (RegExp(r'\d{4}-\d{2}-\d{2}').hasMatch(notes)) {
+            // Split the concatenated data
+            final dateMatch = RegExp(r'(\d{4}-\d{2}-\d{2})(.*)').firstMatch(notes);
+            if (dateMatch != null) {
+              return ',\n${dateMatch.group(1)}${dateMatch.group(2)}';
+            }
+          }
+
+          return match.group(0)!;
+        },
+      );
+
+      print('[CSV Import] Normalized CSV content');
+      print('[CSV Import] Original length: ${csvContent.length}, Normalized length: ${normalizedContent.length}');
+
       // Parse CSV
-      List<List<dynamic>> rows = const CsvToListConverter().convert(csvContent);
+      List<List<dynamic>> rows = const CsvToListConverter().convert(normalizedContent);
 
       if (rows.isEmpty) {
         return CsvImportResult(

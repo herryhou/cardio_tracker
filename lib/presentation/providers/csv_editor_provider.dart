@@ -67,6 +67,11 @@ class CsvEditorProvider with ChangeNotifier {
           // Export to CSV
           _csvContent = _exportService.exportAllReadings(readings);
           _initialCsvContent = _csvContent;
+
+          // Debug: Show raw CSV with line endings visible
+          print('[CSV Editor] Raw CSV with line endings:');
+          print(_csvContent.replaceAll('\n', '\\n'));
+          print('--- End of raw CSV ---');
           _readingCount = readings.length;
           _hasUnsavedChanges = false;
           _setStatus(CsvEditorStatus.idle);

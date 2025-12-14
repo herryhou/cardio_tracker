@@ -29,8 +29,19 @@ class CsvExportService {
       ]);
     }
 
-    // Convert to CSV string
-    return const ListToCsvConverter().convert(csvData);
+    // Convert to CSV string with explicit line endings
+    final csvString = const ListToCsvConverter().convert(csvData);
+
+    // Ensure proper line endings and that the CSV ends with a newline
+    String normalized = csvString;
+    if (!normalized.endsWith('\n')) {
+      normalized += '\n';
+    }
+
+    // Normalize line endings to \n (not \r\n)
+    normalized = normalized.replaceAll('\r\n', '\n');
+
+    return normalized;
   }
 
   /// Export blood pressure readings to CSV file and share it
