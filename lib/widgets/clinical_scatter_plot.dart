@@ -429,8 +429,6 @@ class ClinicalBarDistributionPainter extends CustomPainter {
 class ClinicalScatterPainter extends CustomPainter {
   final List<BloodPressureReading> readings;
   final BloodPressureReading? selectedReading;
-  final double? zoomLevel;
-  final Offset? panOffset;
   final bool showTrendLine;
   final Color backgroundColor;
   final Color textColor;
@@ -443,8 +441,6 @@ class ClinicalScatterPainter extends CustomPainter {
   const ClinicalScatterPainter({
     required this.readings,
     this.selectedReading,
-    this.zoomLevel,
-    this.panOffset,
     this.showTrendLine = true,
     required this.backgroundColor,
     required this.textColor,
@@ -477,19 +473,6 @@ class ClinicalScatterPainter extends CustomPainter {
     // Draw axes and labels
     _drawAxes(canvas, drawArea);
 
-    // Apply transformations for data points only
-    canvas.save();
-    if (zoomLevel != null && zoomLevel! > 1.0) {
-      final center = drawArea.center;
-      canvas.translate(center.dx, center.dy);
-      canvas.scale(zoomLevel!, zoomLevel!);
-      canvas.translate(-center.dx, -center.dy);
-    }
-
-    if (panOffset != null) {
-      canvas.translate(panOffset!.dx, panOffset!.dy);
-    }
-
     // Draw data points
     _drawDataPoints(canvas, drawArea);
 
@@ -497,8 +480,6 @@ class ClinicalScatterPainter extends CustomPainter {
     if (selectedReading != null) {
       _drawSelectionHighlight(canvas, drawArea, selectedReading!);
     }
-
-    canvas.restore();
   }
 
   void _drawBackground(Canvas canvas, Rect drawArea) {
@@ -636,14 +617,21 @@ class ClinicalScatterPainter extends CustomPainter {
     );
 
     // X-axis title (now Diastolic)
-    _drawText(canvas, 'Diastolic (mmHg)',
-        Offset(drawArea.center.dx, drawArea.bottom + 35), titleStyle, // Reduced from 45
+    _drawText(
+        canvas,
+        'Diastolic (mmHg)',
+        Offset(drawArea.center.dx, drawArea.bottom + 35),
+        titleStyle, // Reduced from 45
         align: TextAlign.center);
 
     // Y-axis title (now Systolic)
-    _drawText(canvas, 'Systolic (mmHg)',
-        Offset(drawArea.left - 45, drawArea.center.dy), titleStyle, // Reduced from 55
-        align: TextAlign.center, isVertical: true);
+    _drawText(
+        canvas,
+        'Systolic (mmHg)',
+        Offset(drawArea.left - 45, drawArea.center.dy),
+        titleStyle, // Reduced from 55
+        align: TextAlign.center,
+        isVertical: true);
   }
 
   void _drawDataPoints(Canvas canvas, Rect drawArea) {
@@ -793,10 +781,6 @@ class ClinicalScatterPainter extends CustomPainter {
   bool shouldRepaint(ClinicalScatterPainter oldDelegate) {
     if (readings.length != oldDelegate.readings.length) return true;
     if (selectedReading != oldDelegate.selectedReading) return true;
-    if (zoomLevel != oldDelegate.zoomLevel ||
-        panOffset != oldDelegate.panOffset) {
-      return true;
-    }
     if (showTrendLine != oldDelegate.showTrendLine) return true;
     if (backgroundColor != oldDelegate.backgroundColor) return true;
     if (textColor != oldDelegate.textColor) return true;
@@ -807,30 +791,8 @@ class ClinicalScatterPainter extends CustomPainter {
   }
 }
 
-/// Interactive Clinical Scatter Plot Widget with zoom and pan
-class InteractiveScatterPlot extends StatefulWidget {
-  const InteractiveScatterPlot({
-    super.key,
-    required this.readings,
-    this.selectedReading,
-    this.onReadingSelected,
-    this.showTrendLine = true,
-    this.showResetButton = true,
-    this.onInteractionUpdate,
-  });
 
-  final List<BloodPressureReading> readings;
-  final BloodPressureReading? selectedReading;
-  final Function(BloodPressureReading?)? onReadingSelected;
-  final bool showTrendLine;
-  final bool showResetButton;
-  final Function(ScaleUpdateDetails)? onInteractionUpdate;
-
-  @override
-  State<InteractiveScatterPlot> createState() => _InteractiveScatterPlotState();
-}
-
-/// Clinical Scatter Plot Widget (non-interactive version for backward compatibility)
+/// Clinical Scatter Plot Widget
 class ClinicalScatterPlot extends StatefulWidget {
   const ClinicalScatterPlot({
     super.key,
@@ -849,342 +811,8 @@ class ClinicalScatterPlot extends StatefulWidget {
   State<ClinicalScatterPlot> createState() => _ClinicalScatterPlotState();
 }
 
-class _InteractiveScatterPlotState extends State<InteractiveScatterPlot> {
-  final TransformationController _transformationController =
-      TransformationController();
-  BloodPressureReading? _selectedReading;
-  OverlayEntry? _tooltipEntry;
-  bool _isDetailsVisible = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedReading = widget.selectedReading;
-  }
-
-  @override
-  void dispose() {
-    _tooltipEntry?.remove();
-    _transformationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(InteractiveScatterPlot oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.selectedReading != oldWidget.selectedReading) {
-      _selectedReading = widget.selectedReading;
-      if (widget.selectedReading != null) {
-        _showDetailsAnimation();
-      }
-    }
-  }
-
-  void _resetView() {
-    _transformationController.value = Matrix4.identity();
-    HapticFeedback.lightImpact();
-  }
-
-  void _showDetailsAnimation() {
-    setState(() {
-      _isDetailsVisible = true;
-    });
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) {
-        setState(() {
-          _isDetailsVisible = false;
-        });
-      }
-    });
-  }
-
-  void _handleInteractionUpdate(ScaleUpdateDetails details) {
-    widget.onInteractionUpdate?.call(details);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      padding: EdgeInsets.zero,
-      decoration: BoxDecoration(
-        color: AppTheme.getChartBackground(context),
-        borderRadius: BorderRadius.circular(16),
-        // Neumorphic design
-        boxShadow: isDark
-            ? [
-                // Dark theme neumorphic shadows
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  blurRadius: 15,
-                  offset: const Offset(5, 5),
-                ),
-                BoxShadow(
-                  color: Colors.white.withValues(alpha: 0.05),
-                  blurRadius: 15,
-                  offset: const Offset(-5, -5),
-                ),
-              ]
-            : [
-                // Light theme neumorphic shadows
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 10,
-                  offset: const Offset(4, 4),
-                ),
-                const BoxShadow(
-                  color: Colors.white,
-                  blurRadius: 10,
-                  offset: Offset(-4, -4),
-                ),
-              ],
-      ),
-      child: Column(
-        children: [
-          // Interactive chart area (without legend)
-          Expanded(
-            child: Stack(
-              children: [
-                // InteractiveViewer for zoom and pan - only for chart area
-                InteractiveViewer(
-                  transformationController: _transformationController,
-                  minScale: 1.0,
-                  maxScale: 3.0,
-                  boundaryMargin: const EdgeInsets.all(100),
-                  onInteractionUpdate: _handleInteractionUpdate,
-                  child: ClinicalScatterPlot(
-                    readings: widget.readings,
-                    selectedReading: _selectedReading,
-                    onReadingSelected: (reading) {
-                      setState(() {
-                        _selectedReading = reading;
-                      });
-                      widget.onReadingSelected?.call(reading);
-                      if (reading != null) {
-                        _showDetailsAnimation();
-                      }
-                    },
-                    showTrendLine: widget.showTrendLine,
-                  ),
-                ),
-
-                // Reset button
-                if (widget.showResetButton)
-                  Positioned(
-                    top: 16,
-                    right: 16,
-                    child: AnimatedOpacity(
-                      opacity:
-                          _transformationController.value != Matrix4.identity()
-                              ? 1.0
-                              : 0.0,
-                      duration: const Duration(milliseconds: 200),
-                      child: FloatingActionButton.small(
-                        onPressed: _resetView,
-                        backgroundColor: Theme.of(context).colorScheme.surface,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onSurface,
-                        elevation: 4,
-                        child: const Icon(Icons.refresh),
-                      ),
-                    ),
-                  ),
-
-                // Animated details container
-                if (_isDetailsVisible && _selectedReading != null)
-                  Positioned(
-                    bottom: 80,
-                    left: 16,
-                    right: 16,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      padding: const EdgeInsets.all(16),
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: _buildDetailsCard(_selectedReading!),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-
-          // Legend - separate from interactive area with its own gesture detector
-          /*
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              // Prevent tap events from affecting the interactive viewer
-            },
-            child: Container(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Theme.of(context).colorScheme.surfaceContainer
-                    : Colors.grey[50],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Theme.of(context)
-                          .colorScheme
-                          .outline
-                          .withValues(alpha: 0.3)
-                      : Colors.grey[300]!,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: Wrap(
-                      spacing: 20,
-                      runSpacing: 12,
-                      children: ClinicalZones.zones
-                          .map((zone) => _buildEnhancedLegendItem(zone))
-                          .toList(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),*/
-        ],
-      ),
-    );
-  }
-
-  /*
-  Widget _buildEnhancedLegendItem(ClinicalZone zone) {
-    return Container(
-      constraints: const BoxConstraints(minWidth: 120),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Color indicator
-          Container(
-            width: 16,
-            height: 16,
-            margin: const EdgeInsets.only(top: AppSpacing.xs / 2),
-            decoration: BoxDecoration(
-              color: zone.color,
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(
-                color: zone.color.withValues(alpha: 0.8),
-                width: 1,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          // Legend text
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  zone.name,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: _getZoneTextColor(zone.category),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs / 2),
-                Text(
-                  zone.description,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Colors.grey[600],
-                    height: 1.3,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _getZoneTextColor(BloodPressureCategory category) {
-    switch (category) {
-      case BloodPressureCategory.low:
-        return const Color(0xFF1E40AF); // Dark blue
-      case BloodPressureCategory.normal:
-        return const Color(0xFF065F46); // Dark green
-      case BloodPressureCategory.elevated:
-        return const Color(0xFF92400E); // Dark amber
-      case BloodPressureCategory.stage1:
-        return const Color(0xFFDC2626); // Red
-      case BloodPressureCategory.stage2:
-        return const Color(0xFF991B1B); // Dark red
-      case BloodPressureCategory.crisis:
-        return const Color(0xFF7F1D1D); // Very dark red
-    }
-  }*/
-
-  Widget _buildDetailsCard(BloodPressureReading reading) {
-    final color = ClinicalZones.getCategoryColor(reading.category);
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              width: 12,
-              height: 12,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Selected Reading',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Blood Pressure: ${formatBloodPressure(reading.systolic, reading.diastolic)}',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        Text(
-          'Heart Rate: ${reading.heartRate} bpm',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        Text(
-          'Category: ${ClinicalZones.getCategoryDescription(reading.category)}',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-      ],
-    );
-  }
-}
 
 class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
-  final double _zoomLevel = 1.0;
-  final Offset _panOffset = Offset.zero;
   BloodPressureReading? _selectedReading;
   OverlayEntry? _tooltipEntry;
 
@@ -1409,10 +1037,16 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
   }
 
   BloodPressureReading? _findReadingAtPosition(Offset position, Size size) {
-    const padding = 50.0;
-    const leftPadding = 70.0;
-    final drawArea = Rect.fromLTWH(leftPadding, padding,
-        size.width - leftPadding - padding, size.height - 2 * padding);
+    // Use the SAME padding values as in the paint method to ensure coordinates match
+    const padding = 0.0;
+    const leftPadding = 50.0; // Same as paint method
+    const rightPadding = 20.0; // Same as paint method
+    const bottomPadding = 40.0; // Same as paint method
+    final drawArea = Rect.fromLTWH(
+        leftPadding,
+        padding,
+        size.width - leftPadding - rightPadding,
+        size.height - padding - bottomPadding);
 
     // SWAPPED: Reverse calculate data coordinates from tap position
     // X-axis is now diastolic (50-120), Y-axis is now systolic (70-170)
@@ -1454,7 +1088,7 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
   }
 
   void _showTooltip(BloodPressureReading reading, Offset globalPosition) {
-    _tooltipEntry?.remove();
+    _hideTooltip(); // Use the safer method that checks mounted status
 
     // Format date/time for display
     final dateFormat = DateTime.now().year == reading.timestamp.year
@@ -1594,8 +1228,6 @@ class _ClinicalScatterPlotState extends State<ClinicalScatterPlot> {
                   painter: ClinicalScatterPainter(
                     readings: widget.readings,
                     selectedReading: _selectedReading,
-                    zoomLevel: _zoomLevel,
-                    panOffset: _panOffset,
                     showTrendLine: widget.showTrendLine,
                     backgroundColor: AppTheme.getChartBackground(context),
                     textColor: AppTheme.getChartTextColor(context),

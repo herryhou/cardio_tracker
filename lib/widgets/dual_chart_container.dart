@@ -171,11 +171,11 @@ class _DualChartContainerState extends State<DualChartContainer> {
                         ),
                         const SizedBox(height: 16),
                         Expanded(
-                          child: InteractiveScatterPlot(
+                          child: ClinicalScatterPlot(
                             readings: widget.readings,
                             selectedReading: chartProvider.selectedReading,
                             onReadingSelected: chartProvider.selectReading,
-                            showResetButton: true,
+                            showTrendLine: true,
                           ),
                         ),
                       ],
