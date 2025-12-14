@@ -63,6 +63,7 @@ class CsvEditorProvider with ChangeNotifier {
           // Sort by timestamp for consistent export
           readings.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
+          print('[CSV Editor] Loaded ${readings.length} readings from database');
           // Export to CSV
           _csvContent = _exportService.exportAllReadings(readings);
           _initialCsvContent = _csvContent;
@@ -148,6 +149,11 @@ class CsvEditorProvider with ChangeNotifier {
       }
 
       // Replace all readings in database
+      print('[CSV Editor] Saving ${result.readings.length} readings to database');
+      for (int i = 0; i < result.readings.length; i++) {
+        final reading = result.readings[i];
+        print('  [${i + 1}] ${reading.timestamp} - ${reading.systolic}/${reading.diastolic}/${reading.heartRate}');
+      }
       final saveResult = await _repository.replaceAllReadings(result.readings);
 
       saveResult.fold(
