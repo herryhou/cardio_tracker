@@ -93,8 +93,23 @@ class CsvEditorProvider with ChangeNotifier {
     if (_csvContent.trim().isEmpty) {
       _errorMessage = 'CSV content cannot be empty';
       _validationErrors = ['CSV content cannot be empty'];
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
       return false;
+    }
+
+    // Check for common CSV formatting issues
+    final lines = _csvContent.split('\n');
+    print('[CSV Editor] Validating ${lines.length} lines');
+
+    // Check for lines that look concatenated (missing line breaks)
+    for (int i = 0; i < lines.length; i++) {
+      final line = lines[i].trim();
+      if (line.isNotEmpty) {
+        final fields = line.split(',');
+        if (fields.length > 7) {
+          print('[CSV Editor] Warning: Line ${i + 1} has ${fields.length} fields, expected 7');
+        }
+      }
     }
 
     _setStatus(CsvEditorStatus.validating);
@@ -102,6 +117,11 @@ class CsvEditorProvider with ChangeNotifier {
     _validationErrors.clear();
 
     try {
+      // Debug: print first 500 characters of CSV
+      print('[CSV Editor] CSV content preview:');
+      print(_csvContent.length > 500 ? _csvContent.substring(0, 500) + '...' : _csvContent);
+      print('--- End of preview ---');
+
       final result = await _importService.importFromCsv(_csvContent);
 
       if (result.isValid) {

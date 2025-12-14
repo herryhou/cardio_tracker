@@ -93,6 +93,25 @@ class CsvImportService {
           continue;
         }
 
+        // Validate row has correct number of columns
+        if (row.length < 7) {
+          errors.add(LineValidationError(
+            lineNum,
+            CsvImportError.invalidFormat,
+            'Row has ${row.length} columns, expected at least 7. Missing values will be treated as empty.',
+          ));
+          // Pad the row if it's too short
+          while (row.length < 7) {
+            row.add('');
+          }
+        } else if (row.length > 7) {
+          errors.add(LineValidationError(
+            lineNum,
+            CsvImportError.invalidFormat,
+            'Row has ${row.length} columns, expected exactly 7. Extra data may indicate malformed CSV.',
+          ));
+        }
+
         try {
           final reading = _parseRow(lineNum, row, timestampSet);
           readings.add(reading);
