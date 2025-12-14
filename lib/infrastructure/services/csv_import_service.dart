@@ -64,6 +64,11 @@ class CsvImportService {
       // Parse CSV
       List<List<dynamic>> rows = const CsvToListConverter().convert(normalizedContent);
 
+      print('[CSV Import] Total rows parsed: ${rows.length}');
+      for (int i = 0; i < rows.length; i++) {
+        print('[CSV Import] Row $i: ${rows[i]} (length: ${rows[i].length})');
+      }
+
       if (rows.isEmpty) {
         return CsvImportResult(
           isValid: false,

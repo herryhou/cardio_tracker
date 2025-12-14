@@ -90,6 +90,11 @@ class CsvEditorProvider with ChangeNotifier {
     _hasUnsavedChanges = content != _initialCsvContent;
     _validationErrors.clear(); // Clear previous validation errors
     _errorMessage = '';
+
+    // Debug: Log when content changes
+    print('[CSV Editor] Content updated. Length: ${content.length}');
+    print('First 200 chars: ${content.length > 200 ? content.substring(0, 200) + '...' : content}');
+
     notifyListeners();
   }
 
@@ -153,9 +158,13 @@ class CsvEditorProvider with ChangeNotifier {
 
   /// Save the validated CSV content to database
   Future<bool> save() async {
+    print('[CSV Editor] Save called. Current content length: ${_csvContent.length}');
+    print('[CSV Editor] Current content start: ${_csvContent.substring(0, _csvContent.length > 100 ? 100 : _csvContent.length)}');
+
     // First validate
     final isValid = await validate();
     if (!isValid) {
+      print('[CSV Editor] Validation failed with ${_validationErrors.length} errors');
       return false;
     }
 
