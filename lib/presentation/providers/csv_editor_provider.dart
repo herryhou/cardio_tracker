@@ -78,6 +78,7 @@ class CsvEditorProvider with ChangeNotifier {
 
   /// Update CSV content from editor
   void updateContent(String content) {
+    if (isDisposed) return;
     _csvContent = content;
     _hasUnsavedChanges = content != _initialCsvContent;
     _validationErrors.clear(); // Clear previous validation errors
@@ -111,14 +112,14 @@ class CsvEditorProvider with ChangeNotifier {
         _validationErrors = result.errors.map((e) => e.toString()).toList();
         _errorMessage = 'Validation failed with ${_validationErrors.length} error(s)';
         _setStatus(CsvEditorStatus.idle);
-        notifyListeners();
+        if (!isDisposed) notifyListeners();
         return false;
       }
     } catch (e) {
       _errorMessage = 'Validation error: $e';
       _validationErrors = ['Unexpected validation error: $e'];
       _setStatus(CsvEditorStatus.error);
-      notifyListeners();
+      if (!isDisposed) notifyListeners();
       return false;
     }
   }
@@ -141,7 +142,7 @@ class CsvEditorProvider with ChangeNotifier {
       if (!result.isValid) {
         _errorMessage = 'Validation failed during save';
         _setStatus(CsvEditorStatus.error);
-        notifyListeners();
+        if (!isDisposed) notifyListeners();
         return false;
       }
 
@@ -162,25 +163,27 @@ class CsvEditorProvider with ChangeNotifier {
 
           // Return to idle after a short delay
           Future.delayed(const Duration(seconds: 2), () {
-            if (_status == CsvEditorStatus.success) {
+            // Check if not disposed before updating
+            if (!isDisposed && _status == CsvEditorStatus.success) {
               _setStatus(CsvEditorStatus.idle);
             }
           });
         },
       );
 
-      notifyListeners();
+      if (!isDisposed) notifyListeners();
       return _status == CsvEditorStatus.success;
     } catch (e) {
       _errorMessage = 'Save error: $e';
       _setStatus(CsvEditorStatus.error);
-      notifyListeners();
+      if (!isDisposed) notifyListeners();
       return false;
     }
   }
 
   /// Discard changes and reset to initial content
   void discardChanges() {
+    if (isDisposed) return;
     _csvContent = _initialCsvContent;
     _hasUnsavedChanges = false;
     _validationErrors.clear();
@@ -191,6 +194,7 @@ class CsvEditorProvider with ChangeNotifier {
 
   /// Clear all errors
   void clearErrors() {
+    if (isDisposed) return;
     _errorMessage = '';
     _validationErrors.clear();
     notifyListeners();
@@ -198,8 +202,11 @@ class CsvEditorProvider with ChangeNotifier {
 
   /// Set status and notify listeners
   void _setStatus(CsvEditorStatus status) {
-    _status = status;
-    notifyListeners();
+    // Don't update if disposed
+    if (!isDisposed) {
+      _status = status;
+      notifyListeners();
+    }
   }
 
   /// Get formatted reading count
@@ -233,4 +240,9 @@ class CsvEditorProvider with ChangeNotifier {
 
   /// Check if there are validation errors to show
   bool get hasValidationErrors => _validationErrors.isNotEmpty;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 }
