@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/blood_pressure_provider.dart';
 import 'cloudflare_settings_screen.dart';
 import '../../widgets/neumorphic_container.dart';
 import '../../widgets/neumorphic_tile.dart';
@@ -121,6 +122,48 @@ class SettingsScreen extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   color: theme.colorScheme.outline.withValues(alpha: 0.2),
                 ),
+                Consumer<BloodPressureProvider>(
+                  builder: (context, provider, child) {
+                    return NeumorphicTile(
+                      leading: Icon(
+                        Icons.delete_outline,
+                        color: Colors.orange[600],
+                      ),
+                      title: const Text('Clear All Readings'),
+                      subtitle: const Text('Remove all blood pressure readings'),
+                      onTap: () {
+                        HapticFeedback.mediumImpact();
+                        _showClearReadingsConfirmation(context, provider);
+                      },
+                    );
+                  },
+                ),
+                Container(
+                  height: 1,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                ),
+                Consumer<BloodPressureProvider>(
+                  builder: (context, provider, child) {
+                    return NeumorphicTile(
+                      leading: Icon(
+                        Icons.restore,
+                        color: Colors.red[600],
+                      ),
+                      title: const Text('Rebuild Database'),
+                      subtitle: const Text('Delete all data and recreate database'),
+                      onTap: () {
+                        HapticFeedback.heavyImpact();
+                        _showRebuildDatabaseConfirmation(context, provider);
+                      },
+                    );
+                  },
+                ),
+                Container(
+                  height: 1,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                ),
                 NeumorphicTile(
                   leading: Icon(
                     Icons.info_outline,
@@ -193,5 +236,154 @@ class SettingsScreen extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void _showClearReadingsConfirmation(BuildContext context, BloodPressureProvider provider) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Clear All Readings?'),
+          content: const Text(
+            'This will permanently delete all your blood pressure readings. This action cannot be undone.\n\n'
+            'Your settings will remain intact.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _clearAllReadings(context, provider);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange[600],
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Clear All'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showRebuildDatabaseConfirmation(BuildContext context, BloodPressureProvider provider) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Rebuild Database?'),
+          content: const Text(
+            '⚠️ WARNING: This is a drastic action!\n\n'
+            'This will delete ALL data including:\n'
+            '• All blood pressure readings\n'
+            '• All user settings\n'
+            '• Cloudflare sync configurations\n\n'
+            'The database will be recreated with a fresh schema. This action cannot be undone.\n\n'
+            'Only do this if you are experiencing database corruption or sync issues.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _rebuildDatabase(context, provider);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[600],
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Rebuild'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _clearAllReadings(BuildContext context, BloodPressureProvider provider) async {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text('Clearing all readings...'),
+            ],
+          ),
+        );
+      },
+    );
+
+    try {
+      await provider.clearAllReadings();
+      Navigator.of(context).pop(); // Close loading dialog
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('All readings cleared successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      Navigator.of(context).pop(); // Close loading dialog
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to clear readings: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _rebuildDatabase(BuildContext context, BloodPressureProvider provider) async {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text('Rebuilding database...'),
+            ],
+          ),
+        );
+      },
+    );
+
+    try {
+      await provider.rebuildDatabase();
+      Navigator.of(context).pop(); // Close loading dialog
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Database rebuilt successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      Navigator.of(context).pop(); // Close loading dialog
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to rebuild database: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

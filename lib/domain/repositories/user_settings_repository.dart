@@ -33,4 +33,8 @@ abstract class UserSettingsRepository {
 
   /// Checks if settings exist
   Future<Either<Failure, bool>> hasSettings();
+
+  // Database management methods
+  /// Clears all user settings from the database
+  Future<Either<Failure, void>> clearAllSettings();
 }

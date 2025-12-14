@@ -8,6 +8,8 @@ import '../../application/use_cases/add_reading.dart';
 import '../../application/use_cases/update_reading.dart';
 import '../../application/use_cases/delete_reading.dart';
 import '../../application/use_cases/get_reading_statistics.dart';
+import '../../application/use_cases/clear_all_readings.dart';
+import '../../application/use_cases/rebuild_database.dart';
 import '../../core/usecases/usecase.dart';
 import '../../core/errors/failures.dart';
 
@@ -17,6 +19,8 @@ class BloodPressureProvider extends ChangeNotifier {
   final UpdateReading _updateReading;
   final DeleteReading _deleteReading;
   final GetReadingStatistics _getReadingStatistics;
+  final ClearAllReadings _clearAllReadings;
+  final RebuildDatabase _rebuildDatabase;
 
   List<BloodPressureReading> _readings = [];
   bool _isLoading = false;
@@ -29,11 +33,15 @@ class BloodPressureProvider extends ChangeNotifier {
     required UpdateReading updateReading,
     required DeleteReading deleteReading,
     required GetReadingStatistics getReadingStatistics,
+    required ClearAllReadings clearAllReadings,
+    required RebuildDatabase rebuildDatabase,
   })  : _getAllReadings = getAllReadings,
         _addReading = addReading,
         _updateReading = updateReading,
         _deleteReading = deleteReading,
-        _getReadingStatistics = getReadingStatistics;
+        _getReadingStatistics = getReadingStatistics,
+        _clearAllReadings = clearAllReadings,
+        _rebuildDatabase = rebuildDatabase;
 
   // Getters
   List<BloodPressureReading> get readings => List.unmodifiable(_readings);
@@ -236,5 +244,40 @@ class BloodPressureProvider extends ChangeNotifier {
   void clearError() {
     _clearError();
     notifyListeners();
+  }
+
+  // Database management methods
+  Future<void> clearAllReadings() async {
+    _setLoading(true);
+    _clearError();
+
+    final result = await _clearAllReadings(NoParams());
+
+    result.fold(
+      (failure) => _setError(_mapFailureToMessage(failure)),
+      (_) {
+        _readings.clear();
+        _statistics = null;
+      },
+    );
+
+    _setLoading(false);
+  }
+
+  Future<void> rebuildDatabase() async {
+    _setLoading(true);
+    _clearError();
+
+    final result = await _rebuildDatabase(NoParams());
+
+    result.fold(
+      (failure) => _setError(_mapFailureToMessage(failure)),
+      (_) {
+        _readings.clear();
+        _statistics = null;
+      },
+    );
+
+    _setLoading(false);
   }
 }

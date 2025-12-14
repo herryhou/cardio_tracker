@@ -243,4 +243,14 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
       return Left(DatabaseFailure('Failed to check settings: ${e.toString()}'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> clearAllSettings() async {
+    try {
+      await _dataSource.clearAllSettings();
+      return const Right(null);
+    } catch (e) {
+      return Left(DatabaseFailure('Failed to clear all settings: ${e.toString()}'));
+    }
+  }
 }

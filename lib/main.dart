@@ -12,6 +12,8 @@ import 'application/use_cases/add_reading.dart';
 import 'application/use_cases/update_reading.dart';
 import 'application/use_cases/delete_reading.dart';
 import 'application/use_cases/get_reading_statistics.dart';
+import 'application/use_cases/clear_all_readings.dart';
+import 'application/use_cases/rebuild_database.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +39,8 @@ class CardioTrackerApp extends StatelessWidget {
             updateReading: getIt<UpdateReading>(),
             deleteReading: getIt<DeleteReading>(),
             getReadingStatistics: getIt<GetReadingStatistics>(),
+            clearAllReadings: getIt<ClearAllReadings>(),
+            rebuildDatabase: getIt<RebuildDatabase>(),
           ),
         ),
         // Keep existing providers for now until migration

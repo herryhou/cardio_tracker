@@ -20,13 +20,13 @@ extension BloodPressureReadingMapper on BloodPressureReading {
 
   static BloodPressureReading fromJson(Map<String, dynamic> json) {
     return BloodPressureReading(
-      id: json['id'] as String,
+      id: json['id'].toString(), // Convert ID to string safely
       systolic: _toInt(json['systolic']),
       diastolic: _toInt(json['diastolic']),
       heartRate: _toInt(json['heartRate']),
-      timestamp: DateTime.parse(json['timestamp'] as String),
-      notes: json['notes'] as String?,
-      lastModified: DateTime.parse(json['lastModified'] as String),
+      timestamp: _toDateTime(json['timestamp']),
+      notes: json['notes']?.toString(), // Convert notes to string safely
+      lastModified: _toDateTime(json['lastModified']),
       isDeleted: _toBool(json['isDeleted']) ?? false,
     );
   }
@@ -37,6 +37,27 @@ extension BloodPressureReadingMapper on BloodPressureReading {
     if (value is String) return int.tryParse(value) ?? 0;
     if (value is double) return value.toInt();
     return 0;
+  }
+
+  /// Safely convert dynamic value to DateTime
+  static DateTime _toDateTime(dynamic value) {
+    if (value is DateTime) return value;
+    if (value is String) {
+      try {
+        return DateTime.parse(value);
+      } catch (e) {
+        // If parsing fails, try to parse as milliseconds
+        final milliseconds = int.tryParse(value);
+        if (milliseconds != null) {
+          return DateTime.fromMillisecondsSinceEpoch(milliseconds);
+        }
+      }
+    }
+    if (value is int) {
+      return DateTime.fromMillisecondsSinceEpoch(value);
+    }
+    // Default to now if all conversions fail
+    return DateTime.now();
   }
 
   /// Safely convert dynamic value to bool

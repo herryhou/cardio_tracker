@@ -28,4 +28,11 @@ abstract class BloodPressureRepository {
   Future<Either<Failure, List<BloodPressureReading>>> getRecentReadings({
     int days = 30,
   });
+
+  // Database management methods
+  /// Clears all blood pressure readings from the database
+  Future<Either<Failure, void>> clearAllReadings();
+
+  /// Rebuilds the entire database (use with caution!)
+  Future<Either<Failure, void>> rebuildDatabase();
 }

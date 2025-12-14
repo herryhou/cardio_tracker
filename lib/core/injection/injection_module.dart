@@ -9,6 +9,8 @@ import '../../application/use_cases/add_reading.dart';
 import '../../application/use_cases/update_reading.dart';
 import '../../application/use_cases/delete_reading.dart';
 import '../../application/use_cases/get_reading_statistics.dart';
+import '../../application/use_cases/clear_all_readings.dart';
+import '../../application/use_cases/rebuild_database.dart';
 
 @module
 abstract class InjectionModule {
@@ -51,5 +53,15 @@ abstract class InjectionModule {
   @lazySingleton
   GetReadingStatistics getReadingStatistics(BloodPressureRepository repository) {
     return GetReadingStatistics(repository);
+  }
+
+  @lazySingleton
+  ClearAllReadings clearAllReadings(BloodPressureRepository repository) {
+    return ClearAllReadings(repository);
+  }
+
+  @lazySingleton
+  RebuildDatabase rebuildDatabase(BloodPressureRepository repository) {
+    return RebuildDatabase(repository);
   }
 }

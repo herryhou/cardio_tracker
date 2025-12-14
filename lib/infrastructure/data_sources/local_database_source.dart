@@ -199,4 +199,30 @@ class LocalDatabaseSource {
       _initialized = false;
     }
   }
+
+  /// Rebuilds the database by deleting it and creating a fresh one
+  Future<void> rebuildDatabase() async {
+    final dbPath = await _getDatabasePath();
+
+    // Close the database first
+    await closeDatabase();
+
+    // Delete the database file
+    await deleteDatabase(dbPath);
+
+    // Reinitialize with a fresh database
+    await initDatabase();
+  }
+
+  /// Clears all data from blood_pressure_readings table (but keeps the schema)
+  Future<void> clearAllReadings() async {
+    final db = await database;
+    await db.delete('blood_pressure_readings');
+  }
+
+  /// Clears all user settings (but keeps the schema)
+  Future<void> clearAllSettings() async {
+    final db = await database;
+    await db.delete('user_settings');
+  }
 }

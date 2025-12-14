@@ -134,4 +134,24 @@ class BloodPressureRepositoryImpl implements BloodPressureRepository {
       'isDeleted': reading.isDeleted ? 1 : 0,
     };
   }
+
+  @override
+  Future<Either<Failure, void>> clearAllReadings() async {
+    try {
+      await dataSource.clearAllReadings();
+      return const Right(null);
+    } catch (e) {
+      return Left(DatabaseFailure('Failed to clear all readings: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> rebuildDatabase() async {
+    try {
+      await dataSource.rebuildDatabase();
+      return const Right(null);
+    } catch (e) {
+      return Left(DatabaseFailure('Failed to rebuild database: ${e.toString()}'));
+    }
+  }
 }
