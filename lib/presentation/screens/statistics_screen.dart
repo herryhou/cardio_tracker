@@ -210,41 +210,49 @@ class StatisticsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildBPStat(
-                  context,
-                  'Systolic',
-                  '${stats.averageSystolic}',
-                  'mmHg',
-                  Colors.red[400]!,
+                Expanded(
+                  child: _buildBPStat(
+                    context,
+                    'Systolic',
+                    '${stats.averageSystolic}',
+                    'mmHg',
+                    Colors.red[400]!,
+                  ),
                 ),
-                _buildBPStat(
-                  context,
-                  'Diastolic',
-                  '${stats.averageDiastolic}',
-                  'mmHg',
-                  Colors.blue[400]!,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildBPStat(
+                    context,
+                    'Diastolic',
+                    '${stats.averageDiastolic}',
+                    'mmHg',
+                    Colors.blue[400]!,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildBPStat(
-                  context,
-                  'Min',
-                  '${stats.minSystolic}/${stats.minDiastolic}',
-                  'mmHg',
-                  Colors.green[400]!,
+                Expanded(
+                  child: _buildBPStat(
+                    context,
+                    'Min',
+                    '${stats.minSystolic}/${stats.minDiastolic}',
+                    'mmHg',
+                    Colors.green[400]!,
+                  ),
                 ),
-                _buildBPStat(
-                  context,
-                  'Max',
-                  '${stats.maxSystolic}/${stats.maxDiastolic}',
-                  'mmHg',
-                  Colors.orange[400]!,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildBPStat(
+                    context,
+                    'Max',
+                    '${stats.maxSystolic}/${stats.maxDiastolic}',
+                    'mmHg',
+                    Colors.orange[400]!,
+                  ),
                 ),
               ],
             ),
@@ -270,11 +278,15 @@ class StatisticsScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              value,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
+            Flexible(
+              child: Text(
+                value,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
             const SizedBox(width: 4),
@@ -450,10 +462,13 @@ class StatisticsScreen extends StatelessWidget {
                   size: 24,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Blood Pressure Categories',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Text(
+                    'Blood Pressure Categories',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -486,22 +501,27 @@ class StatisticsScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: categoryColor,
-                    borderRadius: BorderRadius.circular(3),
+            Expanded(
+              child: Row(
+                children: [
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: categoryColor,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  category,
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      category,
+                      style: theme.textTheme.bodyMedium,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Text(
               '$count readings ($percentage%)',

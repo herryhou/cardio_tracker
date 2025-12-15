@@ -32,20 +32,6 @@ class EnhancedSettingsScreen extends StatelessWidget {
           // Personalization Section
           _buildSection(context, 'Personalization', [
             _ThemeTile(),
-            _buildTile(
-              context,
-              icon: Icons.notifications_outlined,
-              title: 'Reminders',
-              subtitle: 'Daily reading reminders',
-              onTap: () => _showComingSoon(context, 'Reminders'),
-            ),
-            _buildTile(
-              context,
-              icon: Icons.straighten,
-              title: 'Units',
-              subtitle: 'mmHg, kPa',
-              onTap: () => _showComingSoon(context, 'Units'),
-            ),
           ]),
 
           const SizedBox(height: 32),
@@ -69,13 +55,6 @@ class EnhancedSettingsScreen extends StatelessWidget {
               title: 'Backup & Export',
               subtitle: 'Export your data',
               onTap: () => SettingsSections.showBackupExportOptions(context),
-            ),
-            _buildTile(
-              context,
-              icon: Icons.file_download_outlined,
-              title: 'Import Data',
-              subtitle: 'Restore from backup',
-              onTap: () => _showComingSoon(context, 'Import'),
             ),
           ]),
 
@@ -120,20 +99,6 @@ class EnhancedSettingsScreen extends StatelessWidget {
               title: 'About',
               subtitle: 'Version 1.0.0',
               onTap: () => SettingsSections.showAbout(context),
-            ),
-            _buildTile(
-              context,
-              icon: Icons.help_outline,
-              title: 'Help & Support',
-              subtitle: 'Get help and tutorials',
-              onTap: () => _showComingSoon(context, 'Help'),
-            ),
-            _buildTile(
-              context,
-              icon: Icons.privacy_tip_outlined,
-              title: 'Privacy Policy',
-              subtitle: 'How we protect your data',
-              onTap: () => _showComingSoon(context, 'Privacy'),
             ),
           ]),
 
@@ -289,15 +254,6 @@ class EnhancedSettingsScreen extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-
-  void _showComingSoon(BuildContext context, String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$feature coming soon!'),
-        behavior: SnackBarBehavior.floating,
-      ),
     );
   }
 

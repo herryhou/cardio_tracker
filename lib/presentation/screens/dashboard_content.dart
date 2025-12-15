@@ -12,7 +12,6 @@ import '../../widgets/neumorphic_button.dart';
 import '../../widgets/export_bottom_sheet.dart';
 import '../../widgets/horizontal_charts_container.dart';
 import '../../widgets/bp_legend.dart';
-import '../../widgets/status_summary_card.dart';
 import '../providers/dual_chart_provider.dart';
 import 'add_reading_screen.dart';
 import '../../widgets/app_actions/sync_status_indicator.dart';
@@ -65,11 +64,6 @@ class _DashboardContentState extends State<DashboardContent> {
 
                 // Blood Pressure Legend (common for both charts)
                 const BPLegend(),
-
-                const SizedBox(height: AppSpacing.lg),
-
-                // Status Summary Card
-                const StatusSummaryCard(),
 
                 const SizedBox(height: AppSpacing.lg),
 
@@ -174,63 +168,36 @@ class _DashboardContentState extends State<DashboardContent> {
         children: [
           Row(
             children: [
-              Text(
-                'Recent Readings',
-                style: AppTheme.headerStyle.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
+              Expanded(
+                child: Text(
+                  'Recent Readings',
+                  style: AppTheme.headerStyle.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               // Show count of filtered readings
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${recentReadings.length} reading${recentReadings.length == 1 ? '' : 's'}',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.w500,
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${recentReadings.length} reading${recentReadings.length == 1 ? '' : 's'}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-
-          // Time range selector for recent readings
-          Container(
-            margin: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: SegmentedButton<ExtendedTimeRange>(
-              segments: const [
-                ButtonSegment<ExtendedTimeRange>(
-                  value: ExtendedTimeRange.week,
-                  label: Text('Week'),
-                ),
-                ButtonSegment<ExtendedTimeRange>(
-                  value: ExtendedTimeRange.month,
-                  label: Text('Month'),
-                ),
-                ButtonSegment<ExtendedTimeRange>(
-                  value: ExtendedTimeRange.season,
-                  label: Text('Season'),
-                ),
-                ButtonSegment<ExtendedTimeRange>(
-                  value: ExtendedTimeRange.year,
-                  label: Text('Year'),
-                ),
-              ],
-              selected: {_currentTimeRange},
-              onSelectionChanged: (Set<ExtendedTimeRange> selection) {
-                if (selection.isNotEmpty) {
-                  setState(() {
-                    _currentTimeRange = selection.first;
-                  });
-                }
-              },
-            ),
           ),
           if (recentReadings.isEmpty)
             Container(

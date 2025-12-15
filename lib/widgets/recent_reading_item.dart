@@ -70,7 +70,7 @@ class RecentReadingItem extends StatelessWidget {
           child: Row(
             children: [
               // Date/Time (left)
-              Expanded(
+              Flexible(
                 flex: 3,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,28 +84,20 @@ class RecentReadingItem extends StatelessWidget {
                         color: Color(0xFF1F2937),
                       ),
                       overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                    // const SizedBox(height: 2),
-                    // Text(
-                    //   _formatTime(reading.timestamp),
-                    //   style: const TextStyle(
-                    //     fontSize: 12,
-                    //     color: Color(0xFF6B7280),
-                    //   ),
-                    //   overflow: TextOverflow.ellipsis,
-                    // ),
                   ],
                 ),
               ),
 
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
 
               // Reading (center) - with colored background badge only
-              Expanded(
+              Flexible(
                 flex: 3,
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     color: _getCategoryBackgroundColor(reading.category),
                     borderRadius: BorderRadius.circular(12),
@@ -119,14 +111,15 @@ class RecentReadingItem extends StatelessWidget {
                       color: categoryColor,
                     ),
                     overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
               ),
 
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
 
               // Pulse (right) - only show if heart rate is available
-              Expanded(
+              Flexible(
                 flex: 2,
                 child: reading.hasHeartRate
                     ? Row(
@@ -138,15 +131,18 @@ class RecentReadingItem extends StatelessWidget {
                             size: 16,
                             color: Color(0xFFEF4444),
                           ),
-                          const SizedBox(width: 6),
-                          Text(
-                            '${reading.heartRate}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFFEF4444),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              '${reading.heartRate}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFFEF4444),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       )

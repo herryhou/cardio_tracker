@@ -96,10 +96,9 @@ class _MainContainerScreenState extends State<MainContainerScreen> {
         animationDuration: const Duration(milliseconds: 300),
       ),
       floatingActionButton: _currentIndex == 0
-          ? FloatingActionButton.extended(
+          ? FloatingActionButton(
               onPressed: () => SettingsSections.showAddReading(context),
-              icon: const Icon(Icons.add),
-              label: const Text('Add Reading'),
+              child: const Icon(Icons.add),
               elevation: 8,
             )
           : null,
