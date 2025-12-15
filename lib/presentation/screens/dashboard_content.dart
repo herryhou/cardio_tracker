@@ -10,6 +10,7 @@ import '../../widgets/neumorphic_container.dart';
 import '../../widgets/horizontal_charts_container.dart';
 import '../../widgets/bp_legend.dart';
 import 'add_reading_screen.dart';
+import '../../infrastructure/utils/reading_id_generator.dart';
 
 class DashboardContent extends StatefulWidget {
   const DashboardContent({super.key});
@@ -532,7 +533,13 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
 
     // Create the reading
     final reading = BloodPressureReading(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: ReadingIdGenerator.generateId(
+        systolic: systolic,
+        diastolic: diastolic,
+        heartRate: heartRate,
+        timestamp: _selectedDateTime,
+        notes: _notesController.text.trim(),
+      ),
       systolic: systolic,
       diastolic: diastolic,
       heartRate: heartRate,

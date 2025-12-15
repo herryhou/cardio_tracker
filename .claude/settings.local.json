@@ -64,7 +64,9 @@
       "Bash(dart pub add:*)",
       "Bash(dart run build_runner build:*)",
       "Bash(cat:*)",
-      "Bash(dart format:*)"
+      "Bash(dart format:*)",
+      "Bash(gh issue edit:*)",
+      "Bash(gh issue comment:*)"
     ],
     "deny": [],
     "ask": []
