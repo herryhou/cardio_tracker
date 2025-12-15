@@ -26,7 +26,8 @@ class RecentReadingItem extends StatelessWidget {
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Delete Reading'),
-            content: Text('Are you sure you want to delete the reading from ${_formatDate(reading.timestamp)}?'),
+            content: Text(
+                'Are you sure you want to delete the reading from ${_formatDate(reading.timestamp)}?'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),

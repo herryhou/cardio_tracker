@@ -4,7 +4,8 @@ import 'package:cardio_tracker/presentation/screens/add_reading_screen.dart';
 
 void main() {
   group('Save Button Behavior', () {
-    testWidgets('Save button should be disabled by default (onSave is null)', (WidgetTester tester) async {
+    testWidgets('Save button should be disabled by default (onSave is null)',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -29,7 +30,8 @@ void main() {
       expect(find.text('Save Reading'), findsOneWidget);
     });
 
-    testWidgets('Save button can be disabled when onSave is null', (WidgetTester tester) async {
+    testWidgets('Save button can be disabled when onSave is null',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

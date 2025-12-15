@@ -8,7 +8,9 @@ const Duration kLongPressTimeout = Duration(milliseconds: 500);
 
 void main() {
   group('BPRangeBarChart', () {
-    testWidgets('should display vertical bars for blood pressure ranges with correct colors', (WidgetTester tester) async {
+    testWidgets(
+        'should display vertical bars for blood pressure ranges with correct colors',
+        (WidgetTester tester) async {
       // Create test data
       final now = DateTime.now();
       final readings = [
@@ -76,7 +78,8 @@ void main() {
       expect(find.byType(BarChart), findsOneWidget);
 
       // Verify bar groups are created for each reading
-      expect(find.byType(BarChartGroupData), findsNothing); // Internal to fl_chart
+      expect(
+          find.byType(BarChartGroupData), findsNothing); // Internal to fl_chart
 
       // Test that bars show different colors based on categories
       // Normal reading (118/78) should have green color
@@ -85,7 +88,8 @@ void main() {
       // Stage 2 reading (145/95) should have red color
     });
 
-    testWidgets('should handle empty readings list', (WidgetTester tester) async {
+    testWidgets('should handle empty readings list',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -102,10 +106,12 @@ void main() {
 
       // Should show empty state message
       expect(find.text('No data available'), findsOneWidget);
-      expect(find.text('Start recording blood pressure to see ranges here'), findsOneWidget);
+      expect(find.text('Start recording blood pressure to see ranges here'),
+          findsOneWidget);
     });
 
-    testWidgets('should call onReadingSelected when bar is tapped', (WidgetTester tester) async {
+    testWidgets('should call onReadingSelected when bar is tapped',
+        (WidgetTester tester) async {
       final now = DateTime.now();
       final readings = [
         BloodPressureReading(
@@ -148,7 +154,8 @@ void main() {
       expect(find.byType(BarChart), findsOneWidget);
     });
 
-    testWidgets('should display tooltips with systolic and diastolic values', (WidgetTester tester) async {
+    testWidgets('should display tooltips with systolic and diastolic values',
+        (WidgetTester tester) async {
       final now = DateTime.now();
       final readings = [
         BloodPressureReading(
@@ -191,7 +198,8 @@ void main() {
       expect(find.byType(BarChart), findsOneWidget);
     });
 
-    testWidgets('should display bars with correct width (5px) and spacing', (WidgetTester tester) async {
+    testWidgets('should display bars with correct width (5px) and spacing',
+        (WidgetTester tester) async {
       final now = DateTime.now();
       final readings = [
         BloodPressureReading(
@@ -225,7 +233,8 @@ void main() {
       expect(find.byType(BarChart), findsOneWidget);
     });
 
-    testWidgets('should handle reading selection correctly', (WidgetTester tester) async {
+    testWidgets('should handle reading selection correctly',
+        (WidgetTester tester) async {
       final now = DateTime.now();
       final readings = [
         BloodPressureReading(

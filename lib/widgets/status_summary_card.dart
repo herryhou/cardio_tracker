@@ -101,7 +101,8 @@ class StatusSummaryCard extends StatelessWidget {
                             ? '$daysSinceLastReading day${daysSinceLastReading == 1 ? '' : 's'} ago'
                             : 'No readings',
                         Icons.calendar_today,
-                        daysSinceLastReading != null && daysSinceLastReading <= 7
+                        daysSinceLastReading != null &&
+                                daysSinceLastReading <= 7
                             ? colorScheme.primary
                             : colorScheme.onSurface.withValues(alpha: 0.6),
                       ),

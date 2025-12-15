@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:csv/csv.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
 import '../../core/validators/reading_validator.dart';
-import '../../domain/value_objects/blood_pressure_category.dart';
 
 /// Error type for CSV import operations
 enum CsvImportError {
@@ -76,13 +74,14 @@ class CsvImportService {
         if (line.isNotEmpty) {
           // Parse each line separately
           try {
-            final lineRows = CsvToListConverter(
+            final lineRows = const CsvToListConverter(
               shouldParseNumbers: false,
               allowInvalid: true,
             ).convert(line);
 
             if (lineRows.isNotEmpty) {
-              rows.add(lineRows[0]); // Take the first (and only) row from each line
+              rows.add(
+                  lineRows[0]); // Take the first (and only) row from each line
             }
           } catch (e) {
             print('[CSV Import] Failed to parse line $i: $e');
@@ -104,7 +103,10 @@ class CsvImportService {
         return CsvImportResult(
           isValid: false,
           readings: [],
-          errors: [LineValidationError(1, CsvImportError.emptyFile, 'CSV file is empty')],
+          errors: [
+            LineValidationError(
+                1, CsvImportError.emptyFile, 'CSV file is empty')
+          ],
         );
       }
 
@@ -129,7 +131,8 @@ class CsvImportService {
         final row = rows[i];
 
         // Skip empty rows
-        if (row.every((cell) => cell == null || cell.toString().trim().isEmpty)) {
+        if (row
+            .every((cell) => cell == null || cell.toString().trim().isEmpty)) {
           continue;
         }
 
@@ -160,19 +163,21 @@ class CsvImportService {
           if (e is LineValidationError) {
             errors.add(e);
           } else {
-            errors.add(LineValidationError(lineNum, CsvImportError.invalidFormat, 'Unexpected error: $e'));
+            errors.add(LineValidationError(
+                lineNum, CsvImportError.invalidFormat, 'Unexpected error: $e'));
           }
         }
       }
 
       // Check reading count constraints
       if (readings.length < minReadings) {
-        errors.add(LineValidationError(0, CsvImportError.tooFewReadings, 'At least one reading is required'));
+        errors.add(LineValidationError(0, CsvImportError.tooFewReadings,
+            'At least one reading is required'));
       }
 
       if (readings.length > maxReadings) {
         errors.add(LineValidationError(0, CsvImportError.tooManyReadings,
-          'Maximum $maxReadings readings allowed (found ${readings.length})'));
+            'Maximum $maxReadings readings allowed (found ${readings.length})'));
       }
 
       // Sort readings by timestamp
@@ -183,12 +188,14 @@ class CsvImportService {
         readings: readings,
         errors: errors,
       );
-
     } catch (e) {
       return CsvImportResult(
         isValid: false,
         readings: [],
-        errors: [LineValidationError(0, CsvImportError.invalidFormat, 'Failed to parse CSV: $e')],
+        errors: [
+          LineValidationError(
+              0, CsvImportError.invalidFormat, 'Failed to parse CSV: $e')
+        ],
       );
     }
   }
@@ -207,7 +214,8 @@ class CsvImportService {
 
     // Check if we have all required headers
     final missingHeaders = <String>[];
-    for (int i = 0; i < 5; i++) { // First 5 headers are required
+    for (int i = 0; i < 5; i++) {
+      // First 5 headers are required
       if (headers.length <= i || headers[i] != expectedHeaders[i]) {
         missingHeaders.add(expectedHeaders[i]);
       }
@@ -216,8 +224,10 @@ class CsvImportService {
     if (missingHeaders.isNotEmpty) {
       return _HeaderValidationResult(
         isValid: false,
-        errors: [LineValidationError(1, CsvImportError.invalidHeaders,
-          'Missing or incorrect headers. Expected: ${expectedHeaders.take(5).join(', ')}')],
+        errors: [
+          LineValidationError(1, CsvImportError.invalidHeaders,
+              'Missing or incorrect headers. Expected: ${expectedHeaders.take(5).join(', ')}')
+        ],
       );
     }
 
@@ -225,7 +235,8 @@ class CsvImportService {
   }
 
   /// Parse a single CSV row into a BloodPressureReading
-  BloodPressureReading _parseRow(int lineNum, List<dynamic> row, Set<DateTime> existingTimestamps) {
+  BloodPressureReading _parseRow(
+      int lineNum, List<dynamic> row, Set<DateTime> existingTimestamps) {
     // Extract values with defaults
     final dateStr = _getString(row, 0);
     final timeStr = _getString(row, 1) ?? '00:00';
@@ -250,7 +261,8 @@ class CsvImportService {
 
       // Also check if notes contains a date anywhere (may indicate concatenation)
       if (datePattern.hasMatch(notes)) {
-        print('[CSV Import] Warning: Line $lineNum notes contains date pattern: "$notes"');
+        print(
+            '[CSV Import] Warning: Line $lineNum notes contains date pattern: "$notes"');
       }
     }
 
@@ -260,13 +272,16 @@ class CsvImportService {
     // Check for duplicate timestamps
     if (existingTimestamps.contains(timestamp)) {
       throw LineValidationError(lineNum, CsvImportError.duplicateTimestamp,
-        'Duplicate timestamp: ${_formatDateTime(timestamp)}');
+          'Duplicate timestamp: ${_formatDateTime(timestamp)}');
     }
 
     // Parse numeric values
-    final systolic = _parseInt(lineNum, systolicStr, CsvImportError.invalidSystolic, 'Systolic');
-    final diastolic = _parseInt(lineNum, diastolicStr, CsvImportError.invalidDiastolic, 'Diastolic');
-    final heartRate = _parseInt(lineNum, heartRateStr, CsvImportError.invalidHeartRate, 'Heart Rate');
+    final systolic = _parseInt(
+        lineNum, systolicStr, CsvImportError.invalidSystolic, 'Systolic');
+    final diastolic = _parseInt(
+        lineNum, diastolicStr, CsvImportError.invalidDiastolic, 'Diastolic');
+    final heartRate = _parseInt(
+        lineNum, heartRateStr, CsvImportError.invalidHeartRate, 'Heart Rate');
 
     // Validate ranges and relationships
     _validator.validateSystolic(systolic);
@@ -302,13 +317,14 @@ class CsvImportService {
   /// Parse date and time from strings
   DateTime _parseDateTime(int lineNum, String? dateStr, String timeStr) {
     if (dateStr == null || dateStr.isEmpty) {
-      throw LineValidationError(lineNum, CsvImportError.invalidDate, 'Date is required');
+      throw LineValidationError(
+          lineNum, CsvImportError.invalidDate, 'Date is required');
     }
 
     try {
       final dateParts = dateStr.split('-');
       if (dateParts.length != 3) {
-        throw FormatException();
+        throw const FormatException();
       }
 
       final year = int.parse(dateParts[0]);
@@ -329,12 +345,13 @@ class CsvImportService {
       return DateTime(year, month, day, hour, minute);
     } catch (e) {
       throw LineValidationError(lineNum, CsvImportError.invalidDate,
-        'Invalid date format. Expected YYYY-MM-DD, got: $dateStr');
+          'Invalid date format. Expected YYYY-MM-DD, got: $dateStr');
     }
   }
 
   /// Parse integer value with validation
-  int _parseInt(int lineNum, String? valueStr, CsvImportError errorType, String fieldName) {
+  int _parseInt(int lineNum, String? valueStr, CsvImportError errorType,
+      String fieldName) {
     if (valueStr == null || valueStr.isEmpty) {
       throw LineValidationError(lineNum, errorType, '$fieldName is required');
     }
@@ -342,7 +359,7 @@ class CsvImportService {
     final value = int.tryParse(valueStr);
     if (value == null) {
       throw LineValidationError(lineNum, errorType,
-        'Invalid $fieldName value: $valueStr (must be a number)');
+          'Invalid $fieldName value: $valueStr (must be a number)');
     }
 
     return value;

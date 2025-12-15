@@ -5,7 +5,6 @@ import 'package:dartz/dartz.dart';
 import 'package:cardio_tracker/application/use_cases/get_reading_statistics.dart';
 import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
 import 'package:cardio_tracker/domain/repositories/blood_pressure_repository.dart';
-import 'package:cardio_tracker/domain/value_objects/reading_statistics.dart';
 import 'package:cardio_tracker/core/errors/failures.dart';
 
 import 'get_reading_statistics_test.mocks.dart';
@@ -21,7 +20,8 @@ void main() {
       useCase = GetReadingStatistics(mockRepository);
     });
 
-    test('should calculate statistics correctly for multiple readings', () async {
+    test('should calculate statistics correctly for multiple readings',
+        () async {
       // Arrange
       final now = DateTime.now();
       final readings = [
@@ -74,7 +74,7 @@ void main() {
     test('should return empty statistics when no readings exist', () async {
       // Arrange
       when(mockRepository.getReadingsByDateRange(any, any))
-          .thenAnswer((_) async => Right([]));
+          .thenAnswer((_) async => const Right([]));
 
       // Act
       final result = await useCase(const StatisticsParams(days: 30));
@@ -109,7 +109,8 @@ void main() {
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should calculate date range correctly based on days parameter', () async {
+    test('should calculate date range correctly based on days parameter',
+        () async {
       // Arrange
       final now = DateTime.now();
       final readings = [
@@ -130,11 +131,14 @@ void main() {
       await useCase(const StatisticsParams(days: 7));
 
       // Assert
-      final captured = verify(mockRepository.getReadingsByDateRange(captureAny, captureAny)).captured;
+      final captured =
+          verify(mockRepository.getReadingsByDateRange(captureAny, captureAny))
+              .captured;
       final startDate = captured[0] as DateTime;
       final endDate = captured[1] as DateTime;
 
-      expect(endDate.difference(now).inSeconds, lessThan(5)); // Within 5 seconds of now
+      expect(endDate.difference(now).inSeconds,
+          lessThan(5)); // Within 5 seconds of now
       expect(endDate.difference(startDate).inDays, 7);
     });
 

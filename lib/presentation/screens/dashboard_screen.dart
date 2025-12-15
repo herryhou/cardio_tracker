@@ -105,8 +105,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       // Recent Readings Section with neumorphic styling
                       Padding(
                         padding: AppSpacing.screenMargins,
-                        child: _buildRecentReadingsSection(
-                            context, _filterReadingsByTimeRange(provider.readings)),
+                        child: _buildRecentReadingsSection(context,
+                            _filterReadingsByTimeRange(provider.readings)),
                       ),
 
                       // Extra bottom spacing for minimalist feel
@@ -228,9 +228,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Text(
                   '${recentReadings.length} reading${recentReadings.length == 1 ? '' : 's'}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.w500,
-                  ),
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
               ),
             ],
@@ -412,7 +412,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  
   void _showAddReadingModal(BuildContext context) {
     showModalBottomSheet(
       context: context,

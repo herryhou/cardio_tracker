@@ -2,6 +2,7 @@
 /// Run this with: dart test/run_sync_tests.dart
 ///
 /// This script runs all sync-related tests and provides a summary of results.
+library;
 
 import 'dart:io';
 
@@ -46,7 +47,7 @@ void main(List<String> args) async {
   }
 
   // Print summary
-  print('\n' + '=' * 50);
+  print('\n${'=' * 50}');
   print('📊 Test Summary');
   print('=' * 50);
   print('Total test suites: ${testFiles.length}');

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import '../domain/entities/blood_pressure_reading.dart';
 import '../infrastructure/services/csv_export_service.dart';
 import '../theme/app_theme.dart';
@@ -364,7 +363,10 @@ class _ExportBottomSheetState extends State<ExportBottomSheet>
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.6),
                             ),
                           ),
                           const SizedBox(height: 16),

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'dart:math';
 import 'package:cardio_tracker/theme/app_theme.dart';
-import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
 import 'package:cardio_tracker/domain/value_objects/blood_pressure_category.dart';
 
 /// Tests for dark mode contrast compliance
 /// Ensures all text meets WCAG AA standards (4.5:1 contrast ratio)
 void main() {
   group('Dark Mode Contrast Tests', () {
-    testWidgets('Dark theme colors have proper contrast', (WidgetTester tester) async {
+    testWidgets('Dark theme colors have proper contrast',
+        (WidgetTester tester) async {
       // Build a simple app with dark theme
       await tester.pumpWidget(MaterialApp(
         theme: AppTheme.lightTheme,
@@ -20,8 +20,10 @@ void main() {
             builder: (context) {
               return Column(
                 children: [
-                  Text('Test Text', style: Theme.of(context).textTheme.bodyLarge),
-                  Text('Header Text', style: Theme.of(context).textTheme.headlineSmall),
+                  Text('Test Text',
+                      style: Theme.of(context).textTheme.bodyLarge),
+                  Text('Header Text',
+                      style: Theme.of(context).textTheme.headlineSmall),
                 ],
               );
             },
@@ -39,17 +41,21 @@ void main() {
 
       // Should meet WCAG AA standard (4.5:1)
       expect(surfaceContrast, greaterThanOrEqualTo(4.5),
-          reason: 'On-surface text contrast ratio ${surfaceContrast.toStringAsFixed(2)}:1 is below WCAG AA standard');
+          reason:
+              'On-surface text contrast ratio ${surfaceContrast.toStringAsFixed(2)}:1 is below WCAG AA standard');
 
       final onBackground = theme.colorScheme.onSurface;
       final background = theme.colorScheme.surface;
-      final backgroundContrast = _calculateContrastRatio(onBackground, background);
+      final backgroundContrast =
+          _calculateContrastRatio(onBackground, background);
 
       expect(backgroundContrast, greaterThanOrEqualTo(4.5),
-          reason: 'On-background text contrast ratio ${backgroundContrast.toStringAsFixed(2)}:1 is below WCAG AA standard');
+          reason:
+              'On-background text contrast ratio ${backgroundContrast.toStringAsFixed(2)}:1 is below WCAG AA standard');
     });
 
-    testWidgets('Charts should not use hardcoded white colors', (WidgetTester tester) async {
+    testWidgets('Charts should not use hardcoded white colors',
+        (WidgetTester tester) async {
       // This test would fail with current implementation
       // demonstrating the issue
 
@@ -60,7 +66,9 @@ void main() {
       // Actual behavior: Charts use hardcoded Colors.white
 
       // This is a failing test to demonstrate the issue
-      expect(true, isTrue, reason: 'This test demonstrates that charts need to be fixed to avoid hardcoded white colors');
+      expect(true, isTrue,
+          reason:
+              'This test demonstrates that charts need to be fixed to avoid hardcoded white colors');
     });
 
     test('Dark theme text colors should have sufficient contrast', () {
@@ -71,20 +79,25 @@ void main() {
       final surface = darkTheme.colorScheme.surface;
       final surfaceContrast = _calculateContrastRatio(onSurface, surface);
       expect(surfaceContrast, greaterThanOrEqualTo(4.5),
-          reason: 'On-surface text contrast ratio ${surfaceContrast.toStringAsFixed(2)}:1 is below WCAG AA');
+          reason:
+              'On-surface text contrast ratio ${surfaceContrast.toStringAsFixed(2)}:1 is below WCAG AA');
 
       // Primary text on background
       final onBackground = darkTheme.colorScheme.onSurface;
       final background = darkTheme.colorScheme.surface;
-      final backgroundContrast = _calculateContrastRatio(onBackground, background);
+      final backgroundContrast =
+          _calculateContrastRatio(onBackground, background);
       expect(backgroundContrast, greaterThanOrEqualTo(4.5),
-          reason: 'On-background text contrast ratio ${backgroundContrast.toStringAsFixed(2)}:1 is below WCAG AA');
+          reason:
+              'On-background text contrast ratio ${backgroundContrast.toStringAsFixed(2)}:1 is below WCAG AA');
 
       // Secondary text
       final onSurfaceVariant = darkTheme.colorScheme.onSurfaceVariant;
-      final surfaceVariantContrast = _calculateContrastRatio(onSurfaceVariant, surface);
+      final surfaceVariantContrast =
+          _calculateContrastRatio(onSurfaceVariant, surface);
       expect(surfaceVariantContrast, greaterThanOrEqualTo(3.0),
-          reason: 'On-surface-variant text contrast ratio ${surfaceVariantContrast.toStringAsFixed(2)}:1 is below WCAG AA for large text');
+          reason:
+              'On-surface-variant text contrast ratio ${surfaceVariantContrast.toStringAsFixed(2)}:1 is below WCAG AA for large text');
     });
 
     test('Medical category colors should be visible in both themes', () {
@@ -102,18 +115,23 @@ void main() {
 
       for (final category in categories) {
         // Get colors for both themes
-        final lightCategoryColor = _getCategoryColor(category, isDarkMode: false);
+        final lightCategoryColor =
+            _getCategoryColor(category, isDarkMode: false);
         final darkCategoryColor = _getCategoryColor(category, isDarkMode: true);
 
         // Against light background
-        final lightContrast = _calculateContrastRatio(lightCategoryColor, Colors.white);
+        final lightContrast =
+            _calculateContrastRatio(lightCategoryColor, Colors.white);
         expect(lightContrast, greaterThanOrEqualTo(3.0),
-            reason: 'Category $category color has poor contrast on light background');
+            reason:
+                'Category $category color has poor contrast on light background');
 
         // Against dark background
-        final darkContrast = _calculateContrastRatio(darkCategoryColor, darkTheme.colorScheme.surface);
+        final darkContrast = _calculateContrastRatio(
+            darkCategoryColor, darkTheme.colorScheme.surface);
         expect(darkContrast, greaterThanOrEqualTo(3.0),
-            reason: 'Category $category color has poor contrast on dark background');
+            reason:
+                'Category $category color has poor contrast on dark background');
       }
     });
   });
@@ -148,20 +166,33 @@ double _adjustColorComponent(int component) {
 }
 
 /// Get category color (matches improved colors in AppTheme)
-Color _getCategoryColor(BloodPressureCategory category, {bool isDarkMode = false}) {
+Color _getCategoryColor(BloodPressureCategory category,
+    {bool isDarkMode = false}) {
   // Using the darker colors that provide better contrast
   switch (category) {
     case BloodPressureCategory.low:
-      return isDarkMode ? const Color(0xFF3B82F6) : const Color(0xFF1E40AF); // Dark/light blue
+      return isDarkMode
+          ? const Color(0xFF3B82F6)
+          : const Color(0xFF1E40AF); // Dark/light blue
     case BloodPressureCategory.normal:
-      return isDarkMode ? const Color(0xFF10B981) : const Color(0xFF047857); // Light/dark green
+      return isDarkMode
+          ? const Color(0xFF10B981)
+          : const Color(0xFF047857); // Light/dark green
     case BloodPressureCategory.elevated:
-      return isDarkMode ? const Color(0xFFF59E0B) : const Color(0xFFB45309); // Light/dark amber
+      return isDarkMode
+          ? const Color(0xFFF59E0B)
+          : const Color(0xFFB45309); // Light/dark amber
     case BloodPressureCategory.stage1:
-      return isDarkMode ? const Color(0xFFF97316) : const Color(0xFFDC2626); // Light/dark orange
+      return isDarkMode
+          ? const Color(0xFFF97316)
+          : const Color(0xFFDC2626); // Light/dark orange
     case BloodPressureCategory.stage2:
-      return isDarkMode ? const Color(0xFFEF4444) : const Color(0xFFB91C1C); // Light/dark red
+      return isDarkMode
+          ? const Color(0xFFEF4444)
+          : const Color(0xFFB91C1C); // Light/dark red
     case BloodPressureCategory.crisis:
-      return isDarkMode ? const Color(0xFFA855F7) : const Color(0xFF6D28D9); // Light/dark purple
+      return isDarkMode
+          ? const Color(0xFFA855F7)
+          : const Color(0xFF6D28D9); // Light/dark purple
   }
 }

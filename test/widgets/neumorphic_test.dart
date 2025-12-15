@@ -26,7 +26,8 @@ void main() {
         expect(find.text('Test'), findsOneWidget);
       });
 
-      testWidgets('has soft shadows in light mode', (WidgetTester tester) async {
+      testWidgets('has soft shadows in light mode',
+          (WidgetTester tester) async {
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData.light(),
@@ -39,10 +40,12 @@ void main() {
         );
 
         final container = tester.widget<Container>(
-          find.descendant(
-            of: find.byType(NeumorphicContainer),
-            matching: find.byType(Container),
-          ).first,
+          find
+              .descendant(
+                of: find.byType(NeumorphicContainer),
+                matching: find.byType(Container),
+              )
+              .first,
         );
 
         final decoration = container.decoration as BoxDecoration;
@@ -75,10 +78,12 @@ void main() {
         );
 
         final container = tester.widget<Container>(
-          find.descendant(
-            of: find.byType(NeumorphicContainer),
-            matching: find.byType(Container),
-          ).first,
+          find
+              .descendant(
+                of: find.byType(NeumorphicContainer),
+                matching: find.byType(Container),
+              )
+              .first,
         );
 
         final decoration = container.decoration as BoxDecoration;
@@ -105,10 +110,12 @@ void main() {
         );
 
         final container = tester.widget<Container>(
-          find.descendant(
-            of: find.byType(NeumorphicContainer),
-            matching: find.byType(Container),
-          ).first,
+          find
+              .descendant(
+                of: find.byType(NeumorphicContainer),
+                matching: find.byType(Container),
+              )
+              .first,
         );
 
         final decoration = container.decoration as BoxDecoration;
@@ -128,10 +135,12 @@ void main() {
         );
 
         final container = tester.widget<Container>(
-          find.descendant(
-            of: find.byType(NeumorphicContainer),
-            matching: find.byType(Container),
-          ).first,
+          find
+              .descendant(
+                of: find.byType(NeumorphicContainer),
+                matching: find.byType(Container),
+              )
+              .first,
         );
 
         final decoration = container.decoration as BoxDecoration;
@@ -184,7 +193,8 @@ void main() {
         expect(wasPressed, true);
       });
 
-      testWidgets('shows pressed state on tap down', (WidgetTester tester) async {
+      testWidgets('shows pressed state on tap down',
+          (WidgetTester tester) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -225,7 +235,8 @@ void main() {
         expect(button.height, greaterThanOrEqualTo(48.0));
       });
 
-      testWidgets('supports custom width and height', (WidgetTester tester) async {
+      testWidgets('supports custom width and height',
+          (WidgetTester tester) async {
         const width = 200.0;
         const height = 60.0;
 
@@ -264,7 +275,8 @@ void main() {
         expect(find.byType(NeumorphicSlider), findsOneWidget);
       });
 
-      testWidgets('calls onChanged when value changes', (WidgetTester tester) async {
+      testWidgets('calls onChanged when value changes',
+          (WidgetTester tester) async {
         double newValue = 0.5;
 
         await tester.pumpWidget(
@@ -292,7 +304,8 @@ void main() {
         expect(newValue, closeTo(0.75, 0.1));
       });
 
-      testWidgets('has neumorphic track appearance', (WidgetTester tester) async {
+      testWidgets('has neumorphic track appearance',
+          (WidgetTester tester) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -318,7 +331,8 @@ void main() {
           final container = finder.widget as Container;
           if (container.decoration is BoxDecoration) {
             final decoration = container.decoration as BoxDecoration;
-            if (decoration.boxShadow != null && decoration.boxShadow!.isNotEmpty) {
+            if (decoration.boxShadow != null &&
+                decoration.boxShadow!.isNotEmpty) {
               hasNeumorphicShadow = true;
               break;
             }
@@ -328,7 +342,8 @@ void main() {
         expect(hasNeumorphicShadow, true);
       });
 
-      testWidgets('supports custom min and max values', (WidgetTester tester) async {
+      testWidgets('supports custom min and max values',
+          (WidgetTester tester) async {
         const min = 0.0;
         const max = 200.0;
         double capturedValue = min;
@@ -360,7 +375,8 @@ void main() {
         expect(capturedValue, greaterThan(min));
       });
 
-      testWidgets('thumb has neumorphic appearance', (WidgetTester tester) async {
+      testWidgets('thumb has neumorphic appearance',
+          (WidgetTester tester) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -400,7 +416,8 @@ void main() {
     });
 
     group('Animation Tests', () {
-      testWidgets('neumorphic button animates on press', (WidgetTester tester) async {
+      testWidgets('neumorphic button animates on press',
+          (WidgetTester tester) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(

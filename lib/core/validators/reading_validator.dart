@@ -112,7 +112,8 @@ class ReadingValidator {
 
   /// Checks if heart rate is reasonable for blood pressure values
   /// This is a soft check that returns a warning rather than an error
-  String? checkHeartRateReasonableness(int systolic, int diastolic, int heartRate) {
+  String? checkHeartRateReasonableness(
+      int systolic, int diastolic, int heartRate) {
     // Very high BP with low HR could indicate error
     if (systolic >= 180 && heartRate < 50) {
       return 'Warning: High blood pressure ($systolic/$diastolic) with low heart rate ($heartRate)';

@@ -209,9 +209,8 @@ void main() {
         expect(older.lastModified.isBefore(newer.lastModified), isTrue);
 
         // Test conflict resolution
-        BloodPressureReading winner = newer.lastModified.isAfter(older.lastModified)
-            ? newer
-            : older;
+        BloodPressureReading winner =
+            newer.lastModified.isAfter(older.lastModified) ? newer : older;
         expect(winner.id, equals('newer'));
       });
 
@@ -232,7 +231,8 @@ void main() {
         // Act - When timestamps are equal, current implementation
         // will treat remote as winner (since it doesn't push)
         // This is a documented limitation
-        final timestampsEqual = reading1.lastModified.isAtSameMomentAs(reading2.lastModified);
+        final timestampsEqual =
+            reading1.lastModified.isAtSameMomentAs(reading2.lastModified);
 
         // Assert
         expect(timestampsEqual, isTrue);
@@ -289,7 +289,8 @@ void main() {
         };
 
         // Act & Assert - Should handle type conversion errors
-        expect(() => BloodPressureReading.fromJson(invalidJson), throwsA(isA<TypeError>()));
+        expect(() => BloodPressureReading.fromJson(invalidJson),
+            throwsA(isA<TypeError>()));
       });
     });
 
@@ -332,7 +333,10 @@ void main() {
         final readings = TestHelpers.createTestReadingsList();
 
         // Act - Simulate checking which readings need sync
-        final remoteKeys = {'reading_1': 0, 'reading_3': 0}; // Existing remotely
+        final remoteKeys = {
+          'reading_1': 0,
+          'reading_3': 0
+        }; // Existing remotely
         final toSync = <BloodPressureReading>[];
 
         for (final reading in readings) {

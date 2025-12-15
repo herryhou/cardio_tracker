@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/blood_pressure_reading.dart';
 import '../../domain/repositories/blood_pressure_repository.dart';
 import '../../infrastructure/services/csv_export_service.dart';
 import '../../infrastructure/services/csv_import_service.dart';
@@ -63,7 +62,8 @@ class CsvEditorProvider with ChangeNotifier {
           // Sort by timestamp for consistent export
           readings.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
-          print('[CSV Editor] Loaded ${readings.length} readings from database');
+          print(
+              '[CSV Editor] Loaded ${readings.length} readings from database');
           // Export to CSV
           _csvContent = _exportService.exportAllReadings(readings);
           _initialCsvContent = _csvContent;
@@ -95,7 +95,8 @@ class CsvEditorProvider with ChangeNotifier {
 
     // Debug: Log when content changes
     print('[CSV Editor] Content updated. Length: ${content.length}');
-    print('First 200 chars: ${content.length > 200 ? content.substring(0, 200) + '...' : content}');
+    print(
+        'First 200 chars: ${content.length > 200 ? '${content.substring(0, 200)}...' : content}');
 
     notifyListeners();
   }
@@ -119,7 +120,8 @@ class CsvEditorProvider with ChangeNotifier {
       if (line.isNotEmpty) {
         final fields = line.split(',');
         if (fields.length > 7) {
-          print('[CSV Editor] Warning: Line ${i + 1} has ${fields.length} fields, expected 7');
+          print(
+              '[CSV Editor] Warning: Line ${i + 1} has ${fields.length} fields, expected 7');
         }
       }
     }
@@ -131,7 +133,9 @@ class CsvEditorProvider with ChangeNotifier {
     try {
       // Debug: print first 500 characters of CSV
       print('[CSV Editor] CSV content preview:');
-      print(_csvContent.length > 500 ? _csvContent.substring(0, 500) + '...' : _csvContent);
+      print(_csvContent.length > 500
+          ? '${_csvContent.substring(0, 500)}...'
+          : _csvContent);
       print('--- End of preview ---');
 
       final result = await _importService.importFromCsv(_csvContent);
@@ -144,7 +148,8 @@ class CsvEditorProvider with ChangeNotifier {
         return true;
       } else {
         _validationErrors = result.errors.map((e) => e.toString()).toList();
-        _errorMessage = 'Validation failed with ${_validationErrors.length} error(s)';
+        _errorMessage =
+            'Validation failed with ${_validationErrors.length} error(s)';
         _setStatus(CsvEditorStatus.idle);
         if (!_isDisposed) notifyListeners();
         return false;
@@ -160,13 +165,16 @@ class CsvEditorProvider with ChangeNotifier {
 
   /// Save the validated CSV content to database
   Future<bool> save() async {
-    print('[CSV Editor] Save called. Current content length: ${_csvContent.length}');
-    print('[CSV Editor] Current content start: ${_csvContent.substring(0, _csvContent.length > 100 ? 100 : _csvContent.length)}');
+    print(
+        '[CSV Editor] Save called. Current content length: ${_csvContent.length}');
+    print(
+        '[CSV Editor] Current content start: ${_csvContent.substring(0, _csvContent.length > 100 ? 100 : _csvContent.length)}');
 
     // First validate
     final isValid = await validate();
     if (!isValid) {
-      print('[CSV Editor] Validation failed with ${_validationErrors.length} errors');
+      print(
+          '[CSV Editor] Validation failed with ${_validationErrors.length} errors');
       return false;
     }
 
@@ -185,10 +193,12 @@ class CsvEditorProvider with ChangeNotifier {
       }
 
       // Replace all readings in database
-      print('[CSV Editor] Saving ${result.readings.length} readings to database');
+      print(
+          '[CSV Editor] Saving ${result.readings.length} readings to database');
       for (int i = 0; i < result.readings.length; i++) {
         final reading = result.readings[i];
-        print('  [${i + 1}] ${reading.timestamp} - ${reading.systolic}/${reading.diastolic}/${reading.heartRate}');
+        print(
+            '  [${i + 1}] ${reading.timestamp} - ${reading.systolic}/${reading.diastolic}/${reading.heartRate}');
       }
       final saveResult = await _repository.replaceAllReadings(result.readings);
 

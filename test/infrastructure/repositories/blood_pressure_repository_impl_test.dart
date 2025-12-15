@@ -98,15 +98,16 @@ void main() {
           lastModified: now,
         );
 
-        when(mockDataSource.insertReading(any))
-            .thenAnswer((_) async {});
+        when(mockDataSource.insertReading(any)).thenAnswer((_) async {});
 
         // Act
         final result = await repository.addReading(reading);
 
         // Assert
         expect(result, isA<Right>());
-        final capturedMap = verify(mockDataSource.insertReading(captureAny)).captured.first as Map<String, dynamic>;
+        final capturedMap = verify(mockDataSource.insertReading(captureAny))
+            .captured
+            .first as Map<String, dynamic>;
         expect(capturedMap['id'], '1');
         expect(capturedMap['systolic'], 120);
         expect(capturedMap['diastolic'], 80);
@@ -158,15 +159,16 @@ void main() {
           notes: 'Updated notes',
         );
 
-        when(mockDataSource.updateReading(any))
-            .thenAnswer((_) async {});
+        when(mockDataSource.updateReading(any)).thenAnswer((_) async {});
 
         // Act
         final result = await repository.updateReading(reading);
 
         // Assert
         expect(result, isA<Right>());
-        final capturedMap = verify(mockDataSource.updateReading(captureAny)).captured.first as Map<String, dynamic>;
+        final capturedMap = verify(mockDataSource.updateReading(captureAny))
+            .captured
+            .first as Map<String, dynamic>;
         expect(capturedMap['id'], '1');
         expect(capturedMap['systolic'], 125);
         expect(capturedMap['diastolic'], 82);
@@ -205,8 +207,7 @@ void main() {
     group('deleteReading', () {
       test('should delete reading successfully', () async {
         // Arrange
-        when(mockDataSource.deleteReading('1'))
-            .thenAnswer((_) async {});
+        when(mockDataSource.deleteReading('1')).thenAnswer((_) async {});
 
         // Act
         final result = await repository.deleteReading('1');
@@ -246,9 +247,11 @@ void main() {
             'systolic': 120,
             'diastolic': 80,
             'heartRate': 72,
-            'timestamp': startDate.add(const Duration(days: 1)).toIso8601String(),
+            'timestamp':
+                startDate.add(const Duration(days: 1)).toIso8601String(),
             'notes': null,
-            'lastModified': startDate.add(const Duration(days: 1)).toIso8601String(),
+            'lastModified':
+                startDate.add(const Duration(days: 1)).toIso8601String(),
             'isDeleted': 0,
           }
         ];
@@ -257,7 +260,8 @@ void main() {
             .thenAnswer((_) async => readingsMap);
 
         // Act
-        final result = await repository.getReadingsByDateRange(startDate, endDate);
+        final result =
+            await repository.getReadingsByDateRange(startDate, endDate);
 
         // Assert
         expect(result, isA<Right>());
@@ -277,13 +281,15 @@ void main() {
             .thenThrow(Exception('Query failed'));
 
         // Act
-        final result = await repository.getReadingsByDateRange(startDate, endDate);
+        final result =
+            await repository.getReadingsByDateRange(startDate, endDate);
 
         // Assert
         expect(result, isA<Left>());
         final failure = result.fold((l) => l, (r) => null)!;
         expect(failure, isA<DatabaseFailure>());
-        expect(failure.toString(), contains('Failed to get readings by date range'));
+        expect(failure.toString(),
+            contains('Failed to get readings by date range'));
         verify(mockDataSource.getReadingsByDateRange(startDate, endDate));
         verifyNoMoreInteractions(mockDataSource);
       });
@@ -323,8 +329,7 @@ void main() {
 
       test('should return null when no reading exists', () async {
         // Arrange
-        when(mockDataSource.getLatestReading())
-            .thenAnswer((_) async => null);
+        when(mockDataSource.getLatestReading()).thenAnswer((_) async => null);
 
         // Act
         final result = await repository.getLatestReading();
@@ -364,9 +369,13 @@ void main() {
             'systolic': 120,
             'diastolic': 80,
             'heartRate': 72,
-            'timestamp': DateTime.now().subtract(const Duration(days: 5)).toIso8601String(),
+            'timestamp': DateTime.now()
+                .subtract(const Duration(days: 5))
+                .toIso8601String(),
             'notes': null,
-            'lastModified': DateTime.now().subtract(const Duration(days: 5)).toIso8601String(),
+            'lastModified': DateTime.now()
+                .subtract(const Duration(days: 5))
+                .toIso8601String(),
             'isDeleted': 0,
           }
         ];
@@ -452,14 +461,15 @@ void main() {
           isDeleted: true,
         );
 
-        when(mockDataSource.insertReading(any))
-            .thenAnswer((_) async {});
+        when(mockDataSource.insertReading(any)).thenAnswer((_) async {});
 
         // Act
         await repository.addReading(reading);
 
         // Assert
-        final capturedMap = verify(mockDataSource.insertReading(captureAny)).captured.first as Map<String, dynamic>;
+        final capturedMap = verify(mockDataSource.insertReading(captureAny))
+            .captured
+            .first as Map<String, dynamic>;
         expect(capturedMap['isDeleted'], 1);
       });
     });

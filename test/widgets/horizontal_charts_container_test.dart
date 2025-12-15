@@ -50,16 +50,17 @@ void main() {
       mockRebuildDatabase = MockRebuildDatabase();
 
       // Setup default behavior for mocks to return empty data
-      when(mockGetAllReadings(any)).thenAnswer((_) async => Right([]));
+      when(mockGetAllReadings(any)).thenAnswer((_) async => const Right([]));
       when(mockGetReadingStatistics(any))
-          .thenAnswer((_) async => Right(const ReadingStatistics(
+          .thenAnswer((_) async => const Right(ReadingStatistics(
                 averageSystolic: 0,
                 averageDiastolic: 0,
                 averageHeartRate: 0,
                 totalReadings: 0,
                 categoryDistribution: {},
               )));
-      when(mockClearAllReadings(any)).thenAnswer((_) async => const Right(null));
+      when(mockClearAllReadings(any))
+          .thenAnswer((_) async => const Right(null));
       when(mockRebuildDatabase(any)).thenAnswer((_) async => const Right(null));
     });
 

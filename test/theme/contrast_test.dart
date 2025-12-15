@@ -12,8 +12,10 @@ void main() {
       final darkTheme = AppTheme.darkTheme;
 
       // Light theme - primary text should be #212121 against white background
-      expect(lightTheme.textTheme.bodyLarge?.color, equals(const Color(0xFF212121)));
-      expect(lightTheme.textTheme.bodyMedium?.color, equals(const Color(0xFF212121)));
+      expect(lightTheme.textTheme.bodyLarge?.color,
+          equals(const Color(0xFF212121)));
+      expect(lightTheme.textTheme.bodyMedium?.color,
+          equals(const Color(0xFF212121)));
 
       // Calculate contrast ratio
       final lightContrast = _calculateContrastRatio(
@@ -26,7 +28,8 @@ void main() {
           reason: 'Primary text must have at least 4.5:1 contrast ratio');
 
       // Dark theme - primary text against dark surface
-      expect(darkTheme.textTheme.bodyLarge?.color, equals(const Color(0xFFF2F2F7)));
+      expect(darkTheme.textTheme.bodyLarge?.color,
+          equals(const Color(0xFFF2F2F7)));
 
       final darkContrast = _calculateContrastRatio(
         const Color(0xFFF2F2F7),
@@ -41,7 +44,8 @@ void main() {
       final lightTheme = AppTheme.lightTheme;
 
       // Check secondary text color
-      expect(lightTheme.textTheme.bodySmall?.color, equals(const Color(0xFF212121)));
+      expect(lightTheme.textTheme.bodySmall?.color,
+          equals(const Color(0xFF212121)));
 
       // Calculate contrast against white background
       final contrast = _calculateContrastRatio(
@@ -65,7 +69,8 @@ void main() {
           reason: 'Stage 1 badge text must have at least 4.5:1 contrast ratio');
     });
 
-    test('All medical category colors have sufficient contrast with white text', () {
+    test('All medical category colors have sufficient contrast with white text',
+        () {
       final categories = [
         const Color(0xFF2E7D32), // Normal (darker green)
         const Color(0xFFBF360C), // Elevated (dark brown-orange for WCAG AA)
@@ -78,7 +83,8 @@ void main() {
       for (final color in categories) {
         final contrast = _calculateContrastRatio(Colors.white, color);
         expect(contrast, greaterThanOrEqualTo(4.5),
-            reason: 'White text on $color must have at least 4.5:1 contrast ratio');
+            reason:
+                'White text on $color must have at least 4.5:1 contrast ratio');
       }
     });
 
@@ -93,7 +99,8 @@ void main() {
 
       // This will likely fail and need to be updated
       expect(contrast, greaterThanOrEqualTo(3.0),
-          reason: 'Hint text should have at least 3:1 contrast ratio (large text exception)');
+          reason:
+              'Hint text should have at least 3:1 contrast ratio (large text exception)');
     });
   });
 }

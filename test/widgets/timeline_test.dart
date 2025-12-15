@@ -71,7 +71,9 @@ void main() {
       ];
     });
 
-    testWidgets('should display horizontal scrollable timeline with date labels', (WidgetTester tester) async {
+    testWidgets(
+        'should display horizontal scrollable timeline with date labels',
+        (WidgetTester tester) async {
       String? selectedDate;
 
       await tester.pumpWidget(
@@ -101,7 +103,9 @@ void main() {
       expect(find.text('12/10'), findsOneWidget);
     });
 
-    testWidgets('should display vertical bars with correct heights based on BP range', (WidgetTester tester) async {
+    testWidgets(
+        'should display vertical bars with correct heights based on BP range',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -132,7 +136,8 @@ void main() {
       expect(systolicValues.length, greaterThan(1));
     });
 
-    testWidgets('should show correct colors for different BP ranges', (WidgetTester tester) async {
+    testWidgets('should show correct colors for different BP ranges',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -157,7 +162,8 @@ void main() {
       expect(find.byKey(const Key('very_high_bar')), findsWidgets);
     });
 
-    testWidgets('should handle tap events with scale animation feedback', (WidgetTester tester) async {
+    testWidgets('should handle tap events with scale animation feedback',
+        (WidgetTester tester) async {
       String? selectedDate;
 
       await tester.pumpWidget(
@@ -186,7 +192,8 @@ void main() {
       expect(find.byType(AnimatedScale), findsWidgets);
     });
 
-    testWidgets('should support filtering by time range', (WidgetTester tester) async {
+    testWidgets('should support filtering by time range',
+        (WidgetTester tester) async {
       final startDate = now.subtract(const Duration(days: 4));
       final endDate = now.subtract(const Duration(days: 1));
 
@@ -218,7 +225,8 @@ void main() {
       expect(find.text('12/10'), findsNothing);
     });
 
-    testWidgets('should apply neumorphic design with soft shadows', (WidgetTester tester) async {
+    testWidgets('should apply neumorphic design with soft shadows',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -235,11 +243,13 @@ void main() {
       expect(containers, findsWidgets);
 
       // Verify NeumorphicContainer is used
-      final neumorphicWidget = tester.widget<NeumorphicContainer>(containers.first);
+      final neumorphicWidget =
+          tester.widget<NeumorphicContainer>(containers.first);
       expect(neumorphicWidget, isNotNull);
     });
 
-    testWidgets('should handle empty readings list', (WidgetTester tester) async {
+    testWidgets('should handle empty readings list',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -255,16 +265,19 @@ void main() {
       expect(find.text('No data available'), findsOneWidget);
     });
 
-    testWidgets('should scroll horizontally when content overflows', (WidgetTester tester) async {
+    testWidgets('should scroll horizontally when content overflows',
+        (WidgetTester tester) async {
       // Create more readings to ensure horizontal scroll
-      final manyReadings = List.generate(20, (index) => BloodPressureReading(
-        id: '$index',
-        systolic: 120 + index,
-        diastolic: 80 + index,
-        heartRate: 70,
-        timestamp: now.subtract(Duration(days: 19 - index)),
-        lastModified: now.subtract(Duration(days: 19 - index)),
-      ));
+      final manyReadings = List.generate(
+          20,
+          (index) => BloodPressureReading(
+                id: '$index',
+                systolic: 120 + index,
+                diastolic: 80 + index,
+                heartRate: 70,
+                timestamp: now.subtract(Duration(days: 19 - index)),
+                lastModified: now.subtract(Duration(days: 19 - index)),
+              ));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -284,11 +297,13 @@ void main() {
       expect(find.byType(SingleChildScrollView), findsOneWidget);
 
       // Verify scroll direction is horizontal
-      final scrollable = tester.widget<SingleChildScrollView>(find.byType(SingleChildScrollView));
+      final scrollable = tester
+          .widget<SingleChildScrollView>(find.byType(SingleChildScrollView));
       expect(scrollable.scrollDirection, Axis.horizontal);
     });
 
-    testWidgets('should update selection when tapped', (WidgetTester tester) async {
+    testWidgets('should update selection when tapped',
+        (WidgetTester tester) async {
       String? selectedDate;
 
       await tester.pumpWidget(

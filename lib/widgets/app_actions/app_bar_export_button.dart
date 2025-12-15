@@ -9,7 +9,6 @@ import '../../domain/entities/blood_pressure_reading.dart';
 import '../../domain/repositories/blood_pressure_repository.dart';
 import '../../core/injection/injection.dart';
 import '../../core/validators/reading_validator.dart';
-import '../../widgets/export_bottom_sheet.dart';
 import '../../presentation/screens/csv_editor_screen.dart';
 
 /// A visible export button in the AppBar for easy access
@@ -35,7 +34,8 @@ class AppBarExportButton extends StatelessWidget {
                   .withValues(alpha: 0.7),
             ),
             tooltip: 'Export Data',
-            onSelected: (value) => _handleExportAction(context, value, provider.readings),
+            onSelected: (value) =>
+                _handleExportAction(context, value, provider.readings),
             itemBuilder: (context) => [
               const PopupMenuItem<String>(
                 value: 'export_all',
@@ -85,8 +85,8 @@ class AppBarExportButton extends StatelessWidget {
     );
   }
 
-  Future<void> _handleExportAction(
-      BuildContext context, String action, List<BloodPressureReading> readings) async {
+  Future<void> _handleExportAction(BuildContext context, String action,
+      List<BloodPressureReading> readings) async {
     HapticFeedback.lightImpact();
 
     switch (action) {
@@ -116,8 +116,8 @@ class AppBarExportButton extends StatelessWidget {
     }
   }
 
-  Future<void> _exportCsv(
-      BuildContext context, List<BloodPressureReading> readings, String description) async {
+  Future<void> _exportCsv(BuildContext context,
+      List<BloodPressureReading> readings, String description) async {
     try {
       await CsvExportService.exportToCsv(readings);
       if (context.mounted) {
@@ -140,7 +140,8 @@ class AppBarExportButton extends StatelessWidget {
     }
   }
 
-  Future<void> _exportMonth(BuildContext context, List<BloodPressureReading> readings) async {
+  Future<void> _exportMonth(
+      BuildContext context, List<BloodPressureReading> readings) async {
     try {
       await CsvExportService.exportCurrentMonth(readings);
       if (context.mounted) {
@@ -163,7 +164,8 @@ class AppBarExportButton extends StatelessWidget {
     }
   }
 
-  Future<void> _exportSummary(BuildContext context, List<BloodPressureReading> readings) async {
+  Future<void> _exportSummary(
+      BuildContext context, List<BloodPressureReading> readings) async {
     try {
       await CsvExportService.exportSummaryStats(readings);
       if (context.mounted) {

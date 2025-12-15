@@ -160,7 +160,8 @@ class _NeumorphicTileState extends State<NeumorphicTile>
                                 style: theme.textTheme.titleMedium!.copyWith(
                                   color: widget.enabled
                                       ? theme.colorScheme.onSurface
-                                      : theme.colorScheme.onSurface.withValues(alpha: 0.38),
+                                      : theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.38),
                                 ),
                                 child: widget.title,
                               ),
@@ -169,8 +170,10 @@ class _NeumorphicTileState extends State<NeumorphicTile>
                                 DefaultTextStyle(
                                   style: theme.textTheme.bodyMedium!.copyWith(
                                     color: widget.enabled
-                                        ? theme.colorScheme.onSurface.withValues(alpha: 0.7)
-                                        : theme.colorScheme.onSurface.withValues(alpha: 0.28),
+                                        ? theme.colorScheme.onSurface
+                                            .withValues(alpha: 0.7)
+                                        : theme.colorScheme.onSurface
+                                            .withValues(alpha: 0.28),
                                   ),
                                   child: widget.subtitle!,
                                 ),

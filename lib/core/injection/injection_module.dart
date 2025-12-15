@@ -21,12 +21,14 @@ abstract class InjectionModule {
 
   // Repositories
   @lazySingleton
-  BloodPressureRepository getBloodPressureRepository(LocalDatabaseSource dataSource) {
+  BloodPressureRepository getBloodPressureRepository(
+      LocalDatabaseSource dataSource) {
     return BloodPressureRepositoryImpl(dataSource: dataSource);
   }
 
   @lazySingleton
-  UserSettingsRepository getUserSettingsRepository(LocalDatabaseSource dataSource) {
+  UserSettingsRepository getUserSettingsRepository(
+      LocalDatabaseSource dataSource) {
     return UserSettingsRepositoryImpl(dataSource: dataSource);
   }
 
@@ -52,7 +54,8 @@ abstract class InjectionModule {
   }
 
   @lazySingleton
-  GetReadingStatistics getReadingStatistics(BloodPressureRepository repository) {
+  GetReadingStatistics getReadingStatistics(
+      BloodPressureRepository repository) {
     return GetReadingStatistics(repository);
   }
 

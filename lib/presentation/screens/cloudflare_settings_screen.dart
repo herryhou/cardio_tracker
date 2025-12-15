@@ -201,8 +201,7 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
           SnackBar(
             content: Text(result.error != null
                 ? _lastSyncStatus ?? 'Sync failed'
-                : 'Sync complete and data refreshed'
-            ),
+                : 'Sync complete and data refreshed'),
             backgroundColor: result.error != null ? null : Colors.green,
           ),
         );
@@ -258,7 +257,8 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
       return Scaffold(
         backgroundColor: theme.colorScheme.surface,
         appBar: AppBar(
-          title: Text(widget.updateMode ? 'Update Credentials' : 'Cloudflare Sync'),
+          title: Text(
+              widget.updateMode ? 'Update Credentials' : 'Cloudflare Sync'),
           backgroundColor: theme.colorScheme.surface,
           elevation: 0,
         ),

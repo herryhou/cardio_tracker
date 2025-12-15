@@ -1,18 +1,19 @@
 import 'package:dartz/dartz.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
 import '../../domain/repositories/blood_pressure_repository.dart';
-import '../../domain/value_objects/blood_pressure_category.dart';
 import '../../domain/value_objects/reading_statistics.dart';
 import '../../core/errors/failures.dart';
 import '../../core/usecases/usecase.dart';
 
-class GetReadingStatistics implements UseCase<ReadingStatistics, StatisticsParams> {
+class GetReadingStatistics
+    implements UseCase<ReadingStatistics, StatisticsParams> {
   final BloodPressureRepository repository;
 
   GetReadingStatistics(this.repository);
 
   @override
-  Future<Either<Failure, ReadingStatistics>> call(StatisticsParams params) async {
+  Future<Either<Failure, ReadingStatistics>> call(
+      StatisticsParams params) async {
     final endDate = DateTime.now();
     final startDate = endDate.subtract(Duration(days: params.days));
 
@@ -47,7 +48,8 @@ class GetReadingStatistics implements UseCase<ReadingStatistics, StatisticsParam
     final categoryDistribution = <String, int>{};
     for (final reading in readings) {
       final category = reading.category.displayName;
-      categoryDistribution[category] = (categoryDistribution[category] ?? 0) + 1;
+      categoryDistribution[category] =
+          (categoryDistribution[category] ?? 0) + 1;
     }
 
     // Calculate average days between readings (if more than one reading)
@@ -55,7 +57,8 @@ class GetReadingStatistics implements UseCase<ReadingStatistics, StatisticsParam
     if (readings.length > 1) {
       int totalDays = 0;
       for (int i = 1; i < readings.length; i++) {
-        totalDays += readings[i].timestamp.difference(readings[i - 1].timestamp).inDays;
+        totalDays +=
+            readings[i].timestamp.difference(readings[i - 1].timestamp).inDays;
       }
       averageDaysBetweenReadings = totalDays ~/ (readings.length - 1);
     }

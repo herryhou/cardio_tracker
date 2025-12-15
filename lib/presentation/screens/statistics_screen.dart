@@ -138,7 +138,7 @@ class StatisticsScreen extends StatelessWidget {
                 _buildStatItem(
                   context,
                   'Avg/Day',
-                  '${stats.averagePerDay}',
+                  stats.averagePerDay,
                   Icons.trending_up,
                 ),
               ],
@@ -149,7 +149,8 @@ class StatisticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(BuildContext context, String label, String value, IconData icon) {
+  Widget _buildStatItem(
+      BuildContext context, String label, String value, IconData icon) {
     final theme = Theme.of(context);
     return Column(
       children: [
@@ -262,7 +263,8 @@ class StatisticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBPStat(BuildContext context, String label, String value, String unit, Color color) {
+  Widget _buildBPStat(BuildContext context, String label, String value,
+      String unit, Color color) {
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -338,7 +340,8 @@ class StatisticsScreen extends StatelessWidget {
                     Text(
                       'Average',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -362,7 +365,8 @@ class StatisticsScreen extends StatelessWidget {
                     Text(
                       'Min/Max',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -414,11 +418,13 @@ class StatisticsScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            _buildFrequencyItem(context, 'First Reading', stats.firstReadingDate),
+            _buildFrequencyItem(
+                context, 'First Reading', stats.firstReadingDate),
             const SizedBox(height: 12),
             _buildFrequencyItem(context, 'Last Reading', stats.lastReadingDate),
             const SizedBox(height: 12),
-            _buildFrequencyItem(context, 'Most Active Day', stats.mostActiveDay),
+            _buildFrequencyItem(
+                context, 'Most Active Day', stats.mostActiveDay),
           ],
         ),
       ),
@@ -446,7 +452,8 @@ class StatisticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryDistribution(BuildContext context, ReadingStatistics stats) {
+  Widget _buildCategoryDistribution(
+      BuildContext context, ReadingStatistics stats) {
     final theme = Theme.of(context);
     return NeumorphicContainer(
       borderRadius: 16,
@@ -491,7 +498,8 @@ class StatisticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryItem(BuildContext context, String category, int count, int total) {
+  Widget _buildCategoryItem(
+      BuildContext context, String category, int count, int total) {
     final theme = Theme.of(context);
     final percentage = total > 0 ? (count / total * 100).round() : 0;
     final categoryColor = _getCategoryColor(category);
@@ -567,10 +575,14 @@ class StatisticsScreen extends StatelessWidget {
     final sortedReadings = List<BloodPressureReading>.from(readings);
     sortedReadings.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
-    final totalSystolic = sortedReadings.fold<int>(0, (sum, r) => sum + r.systolic);
-    final totalDiastolic = sortedReadings.fold<int>(0, (sum, r) => sum + r.diastolic);
-    final readingsWithHR = sortedReadings.where((r) => r.heartRate > 0).toList();
-    final totalHeartRate = readingsWithHR.fold<int>(0, (sum, r) => sum + r.heartRate);
+    final totalSystolic =
+        sortedReadings.fold<int>(0, (sum, r) => sum + r.systolic);
+    final totalDiastolic =
+        sortedReadings.fold<int>(0, (sum, r) => sum + r.diastolic);
+    final readingsWithHR =
+        sortedReadings.where((r) => r.heartRate > 0).toList();
+    final totalHeartRate =
+        readingsWithHR.fold<int>(0, (sum, r) => sum + r.heartRate);
 
     final averageSystolic = (totalSystolic / sortedReadings.length).round();
     final averageDiastolic = (totalDiastolic / sortedReadings.length).round();
@@ -578,10 +590,14 @@ class StatisticsScreen extends StatelessWidget {
         ? (totalHeartRate / readingsWithHR.length).round()
         : 0;
 
-    final minSystolic = sortedReadings.map((r) => r.systolic).reduce((a, b) => a < b ? a : b);
-    final maxSystolic = sortedReadings.map((r) => r.systolic).reduce((a, b) => a > b ? a : b);
-    final minDiastolic = sortedReadings.map((r) => r.diastolic).reduce((a, b) => a < b ? a : b);
-    final maxDiastolic = sortedReadings.map((r) => r.diastolic).reduce((a, b) => a > b ? a : b);
+    final minSystolic =
+        sortedReadings.map((r) => r.systolic).reduce((a, b) => a < b ? a : b);
+    final maxSystolic =
+        sortedReadings.map((r) => r.systolic).reduce((a, b) => a > b ? a : b);
+    final minDiastolic =
+        sortedReadings.map((r) => r.diastolic).reduce((a, b) => a < b ? a : b);
+    final maxDiastolic =
+        sortedReadings.map((r) => r.diastolic).reduce((a, b) => a > b ? a : b);
 
     final minHeartRate = readingsWithHR.isNotEmpty
         ? readingsWithHR.map((r) => r.heartRate).reduce((a, b) => a < b ? a : b)
@@ -593,12 +609,15 @@ class StatisticsScreen extends StatelessWidget {
     final firstDate = sortedReadings.first.timestamp;
     final lastDate = sortedReadings.last.timestamp;
     final totalDays = lastDate.difference(firstDate).inDays + 1;
-    final averagePerDay = totalDays > 0 ? (sortedReadings.length / totalDays).toStringAsFixed(1) : '0';
+    final averagePerDay = totalDays > 0
+        ? (sortedReadings.length / totalDays).toStringAsFixed(1)
+        : '0';
 
     final categoryDistribution = <String, int>{};
     for (final reading in sortedReadings) {
       final category = _getBPCategory(reading.systolic, reading.diastolic);
-      categoryDistribution[category] = (categoryDistribution[category] ?? 0) + 1;
+      categoryDistribution[category] =
+          (categoryDistribution[category] ?? 0) + 1;
     }
 
     final dayFrequency = <String, int>{};
@@ -642,14 +661,22 @@ class StatisticsScreen extends StatelessWidget {
 
   String _getDayName(int day) {
     switch (day) {
-      case 1: return 'Monday';
-      case 2: return 'Tuesday';
-      case 3: return 'Wednesday';
-      case 4: return 'Thursday';
-      case 5: return 'Friday';
-      case 6: return 'Saturday';
-      case 7: return 'Sunday';
-      default: return 'Unknown';
+      case 1:
+        return 'Monday';
+      case 2:
+        return 'Tuesday';
+      case 3:
+        return 'Wednesday';
+      case 4:
+        return 'Thursday';
+      case 5:
+        return 'Friday';
+      case 6:
+        return 'Saturday';
+      case 7:
+        return 'Sunday';
+      default:
+        return 'Unknown';
     }
   }
 

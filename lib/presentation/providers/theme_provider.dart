@@ -27,7 +27,9 @@ class ThemeProvider extends ChangeNotifier {
         return AppTheme.darkTheme;
       case ThemeMode.system:
         final brightness = MediaQuery.of(context).platformBrightness;
-        return brightness == Brightness.dark ? AppTheme.darkTheme : AppTheme.lightTheme;
+        return brightness == Brightness.dark
+            ? AppTheme.darkTheme
+            : AppTheme.lightTheme;
     }
   }
 

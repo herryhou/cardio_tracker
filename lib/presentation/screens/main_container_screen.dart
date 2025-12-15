@@ -5,7 +5,6 @@ import '../providers/dual_chart_provider.dart';
 import 'dashboard_content.dart';
 import 'statistics_screen.dart';
 import 'enhanced_settings_screen.dart';
-import 'csv_editor_screen.dart';
 import '../../widgets/app_actions/sync_status_indicator.dart';
 import '../../widgets/app_actions/app_bar_export_button.dart';
 import '../../widgets/settings/settings_sections.dart';
@@ -98,8 +97,8 @@ class _MainContainerScreenState extends State<MainContainerScreen> {
       floatingActionButton: _currentIndex == 0
           ? FloatingActionButton(
               onPressed: () => SettingsSections.showAddReading(context),
-              child: const Icon(Icons.add),
               elevation: 8,
+              child: const Icon(Icons.add),
             )
           : null,
     );
@@ -150,12 +149,16 @@ class EmbeddedDashboardScreen extends StatelessWidget {
               error,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.7),
+                  ),
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed: () => context.read<BloodPressureProvider>().loadReadings(),
+              onPressed: () =>
+                  context.read<BloodPressureProvider>().loadReadings(),
               icon: const Icon(Icons.refresh),
               label: const Text('Retry'),
             ),

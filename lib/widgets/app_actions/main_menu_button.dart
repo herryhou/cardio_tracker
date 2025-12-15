@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../settings/settings_sections.dart';
 import '../../presentation/screens/data_management_screen.dart';
-import '../../presentation/screens/statistics_screen.dart';
 
 class MainMenuButton extends StatelessWidget {
   const MainMenuButton({super.key});
@@ -14,10 +13,7 @@ class MainMenuButton extends StatelessWidget {
       child: PopupMenuButton<String>(
         icon: Icon(
           Icons.more_vert,
-          color: Theme.of(context)
-              .colorScheme
-              .onSurface
-              .withValues(alpha: 0.7),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
         ),
         tooltip: 'Main Menu',
         onSelected: (value) => _handleMenuAction(context, value),

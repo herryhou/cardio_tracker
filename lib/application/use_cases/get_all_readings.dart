@@ -10,7 +10,8 @@ class GetAllReadings implements UseCase<List<BloodPressureReading>, NoParams> {
   GetAllReadings(this.repository);
 
   @override
-  Future<Either<Failure, List<BloodPressureReading>>> call(NoParams params) async {
+  Future<Either<Failure, List<BloodPressureReading>>> call(
+      NoParams params) async {
     return repository.getAllReadings();
   }
 }

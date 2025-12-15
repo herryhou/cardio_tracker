@@ -7,7 +7,8 @@ import 'package:cardio_tracker/domain/entities/chart_types.dart';
 
 void main() {
   group('FlTimeSeriesChart', () {
-    testWidgets('should display line chart with correct colors and styling', (WidgetTester tester) async {
+    testWidgets('should display line chart with correct colors and styling',
+        (WidgetTester tester) async {
       // Create test data
       final now = DateTime.now();
       final readings = [
@@ -90,24 +91,29 @@ void main() {
       // Verify systolic line color is red (first line should be solid, not dotted)
       final systolicLine = lineChartData.lineBarsData[0];
       expect(systolicLine.color, const Color(0xFFFF0000)); // Red
-      expect(systolicLine.dashArray, isNull, reason: 'Systolic line should be solid');
+      expect(systolicLine.dashArray, isNull,
+          reason: 'Systolic line should be solid');
 
       // Verify diastolic line color is blue (second line should be dashed)
       final diastolicLine = lineChartData.lineBarsData[1];
       expect(diastolicLine.color, const Color(0xFF0000FF)); // Blue
-      expect(diastolicLine.dashArray, isNotNull, reason: 'Diastolic line should be dashed');
+      expect(diastolicLine.dashArray, isNotNull,
+          reason: 'Diastolic line should be dashed');
 
       // Verify average reference lines exist (should be dotted lines without dots)
-      final dashedLines = lineChartData.lineBarsData.where((line) =>
-        line.dashArray != null && line.dashArray!.isNotEmpty
-      ).toList();
+      final dashedLines = lineChartData.lineBarsData
+          .where((line) => line.dashArray != null && line.dashArray!.isNotEmpty)
+          .toList();
 
       // Should have 3 dashed lines total (diastolic + 2 averages)
-      expect(dashedLines.length, 3, reason: 'Should have 3 dashed lines (diastolic + 2 averages)');
+      expect(dashedLines.length, 3,
+          reason: 'Should have 3 dashed lines (diastolic + 2 averages)');
 
       // Find the average lines (those without dots)
-      final averageLines = dashedLines.where((line) => line.dotData.show == false).toList();
-      expect(averageLines.length, 2, reason: 'Should have 2 average lines without dots');
+      final averageLines =
+          dashedLines.where((line) => line.dotData.show == false).toList();
+      expect(averageLines.length, 2,
+          reason: 'Should have 2 average lines without dots');
 
       // Verify X-axis labels are horizontal (0° rotation)
       // Since we can't directly test rotation, we check that labels exist
@@ -117,19 +123,23 @@ void main() {
       // Verify Y-axis values are shown
       final leftTitles = lineChartData.titlesData.leftTitles;
       expect(leftTitles.sideTitles.showTitles, isTrue);
-      expect(leftTitles.sideTitles.interval, 20.0); // Should show values at 20 mmHg intervals
+      expect(leftTitles.sideTitles.interval,
+          20.0); // Should show values at 20 mmHg intervals
     });
 
-    testWidgets('should show every 3rd date on X-axis', (WidgetTester tester) async {
+    testWidgets('should show every 3rd date on X-axis',
+        (WidgetTester tester) async {
       final now = DateTime.now();
-      final readings = List<BloodPressureReading>.generate(10, (index) => BloodPressureReading(
-        id: '$index',
-        systolic: 120 + index,
-        diastolic: 80 + index,
-        heartRate: 70,
-        timestamp: now.subtract(Duration(days: 9 - index)),
-        lastModified: now.subtract(Duration(days: 9 - index)),
-      ));
+      final readings = List<BloodPressureReading>.generate(
+          10,
+          (index) => BloodPressureReading(
+                id: '$index',
+                systolic: 120 + index,
+                diastolic: 80 + index,
+                heartRate: 70,
+                timestamp: now.subtract(Duration(days: 9 - index)),
+                lastModified: now.subtract(Duration(days: 9 - index)),
+              ));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -151,7 +161,7 @@ void main() {
       // Check X-axis interval
       final bottomTitles = lineChartData.titlesData.bottomTitles;
       expect(bottomTitles.sideTitles.interval, 3.0,
-             reason: 'Should show every 3rd date');
+          reason: 'Should show every 3rd date');
     });
   });
 }

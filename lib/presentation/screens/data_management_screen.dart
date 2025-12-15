@@ -4,11 +4,9 @@ import 'package:provider/provider.dart';
 import '../providers/blood_pressure_provider.dart';
 import '../../widgets/neumorphic_container.dart';
 import '../../widgets/neumorphic_tile.dart';
-import '../../widgets/neumorphic_button.dart';
 import '../../infrastructure/services/csv_export_service.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
 import 'cloudflare_settings_screen.dart';
-import '../providers/theme_provider.dart';
 import '../../widgets/settings/settings_sections.dart';
 
 class DataManagementScreen extends StatelessWidget {
@@ -123,7 +121,8 @@ class DataManagementScreen extends StatelessWidget {
                       Text(
                         'Total Readings: ${provider.readings.length}',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onPrimaryContainer.withOpacity(0.8),
+                          color: theme.colorScheme.onPrimaryContainer
+                              .withOpacity(0.8),
                         ),
                       ),
                     ],
@@ -152,7 +151,10 @@ class DataManagementScreen extends StatelessWidget {
             subtitle: const Text('Set up Cloudflare KV for data sync'),
             trailing: Icon(
               Icons.chevron_right,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.5),
             ),
             onTap: () {
               Navigator.of(context).push(
@@ -176,7 +178,10 @@ class DataManagementScreen extends StatelessWidget {
             subtitle: const Text('Update existing Cloudflare credentials'),
             trailing: Icon(
               Icons.chevron_right,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.5),
             ),
             onTap: () {
               Navigator.of(context).push(
@@ -193,7 +198,8 @@ class DataManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildExportOptions(BuildContext context, List<BloodPressureReading> readings) {
+  Widget _buildExportOptions(
+      BuildContext context, List<BloodPressureReading> readings) {
     return NeumorphicContainer(
       borderRadius: 16,
       padding: EdgeInsets.zero,
@@ -257,7 +263,8 @@ class DataManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStorageInfo(BuildContext context, List<BloodPressureReading> readings) {
+  Widget _buildStorageInfo(
+      BuildContext context, List<BloodPressureReading> readings) {
     final theme = Theme.of(context);
     return NeumorphicContainer(
       borderRadius: 16,
@@ -292,7 +299,8 @@ class DataManagementScreen extends StatelessWidget {
                     Text(
                       'Total Readings',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -311,7 +319,8 @@ class DataManagementScreen extends StatelessWidget {
                     Text(
                       'Database Size',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -332,7 +341,8 @@ class DataManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDataOperations(BuildContext context, BloodPressureProvider provider) {
+  Widget _buildDataOperations(
+      BuildContext context, BloodPressureProvider provider) {
     final theme = Theme.of(context);
     return NeumorphicContainer(
       borderRadius: 16,
@@ -393,7 +403,8 @@ class DataManagementScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _exportAll(BuildContext context, List<BloodPressureReading> readings) async {
+  Future<void> _exportAll(
+      BuildContext context, List<BloodPressureReading> readings) async {
     HapticFeedback.lightImpact();
     try {
       await CsvExportService.exportToCsv(readings);
@@ -417,7 +428,8 @@ class DataManagementScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _exportSummary(BuildContext context, List<BloodPressureReading> readings) async {
+  Future<void> _exportSummary(
+      BuildContext context, List<BloodPressureReading> readings) async {
     HapticFeedback.lightImpact();
     try {
       await CsvExportService.exportSummaryStats(readings);
@@ -441,7 +453,8 @@ class DataManagementScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _exportMonth(BuildContext context, List<BloodPressureReading> readings) async {
+  Future<void> _exportMonth(
+      BuildContext context, List<BloodPressureReading> readings) async {
     HapticFeedback.lightImpact();
     try {
       await CsvExportService.exportCurrentMonth(readings);
@@ -465,7 +478,8 @@ class DataManagementScreen extends StatelessWidget {
     }
   }
 
-  void _showClearConfirmDialog(BuildContext context, BloodPressureProvider provider) {
+  void _showClearConfirmDialog(
+      BuildContext context, BloodPressureProvider provider) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -514,7 +528,8 @@ class DataManagementScreen extends StatelessWidget {
     );
   }
 
-  void _showRebuildConfirmDialog(BuildContext context, BloodPressureProvider provider) {
+  void _showRebuildConfirmDialog(
+      BuildContext context, BloodPressureProvider provider) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

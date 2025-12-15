@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/blood_pressure_provider.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
@@ -8,13 +7,9 @@ import '../../theme/app_theme.dart';
 import '../../widgets/recent_reading_item.dart';
 import '../../widgets/reading_card_neu.dart';
 import '../../widgets/neumorphic_container.dart';
-import '../../widgets/neumorphic_button.dart';
-import '../../widgets/export_bottom_sheet.dart';
 import '../../widgets/horizontal_charts_container.dart';
 import '../../widgets/bp_legend.dart';
-import '../providers/dual_chart_provider.dart';
 import 'add_reading_screen.dart';
-import '../../widgets/app_actions/sync_status_indicator.dart';
 
 class DashboardContent extends StatefulWidget {
   const DashboardContent({super.key});
@@ -112,7 +107,10 @@ class _DashboardContentState extends State<DashboardContent> {
               Icon(
                 Icons.favorite_border,
                 size: 80,
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                color: Theme.of(context)
+                    .colorScheme
+                    .primary
+                    .withValues(alpha: 0.7),
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(
@@ -137,8 +135,8 @@ class _DashboardContentState extends State<DashboardContent> {
               ),
               const SizedBox(height: AppSpacing.md),
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(20),
@@ -181,7 +179,8 @@ class _DashboardContentState extends State<DashboardContent> {
               // Show count of filtered readings
               Flexible(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(12),
@@ -189,9 +188,10 @@ class _DashboardContentState extends State<DashboardContent> {
                   child: Text(
                     '${recentReadings.length} reading${recentReadings.length == 1 ? '' : 's'}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.w500,
-                    ),
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.w500,
+                        ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),

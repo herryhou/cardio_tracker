@@ -5,7 +5,6 @@ import '../providers/theme_provider.dart';
 import '../providers/blood_pressure_provider.dart';
 import '../../widgets/neumorphic_container.dart';
 import '../../widgets/neumorphic_tile.dart';
-import '../../widgets/neumorphic_button.dart';
 import '../../widgets/neumorphic_slider_theme_toggle.dart';
 import '../../widgets/settings/settings_sections.dart';
 import 'cloudflare_settings_screen.dart';
@@ -135,7 +134,8 @@ class EnhancedSettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(BuildContext context, String title, List<Widget> children) {
+  Widget _buildSection(
+      BuildContext context, String title, List<Widget> children) {
     final theme = Theme.of(context);
 
     return Column(
@@ -240,8 +240,8 @@ class EnhancedSettingsScreen extends StatelessWidget {
               subtitle: Text(_getThemeSubtitle(themeProvider.themeMode)),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0, vertical: 12.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               child: NeumorphicSliderThemeToggle(
                 value: _getThemeValue(themeProvider.themeMode),
                 onChanged: (value) {

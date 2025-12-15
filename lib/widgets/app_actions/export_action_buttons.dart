@@ -10,7 +10,6 @@ import '../../presentation/screens/csv_editor_screen.dart';
 import '../../domain/repositories/blood_pressure_repository.dart';
 import '../../core/injection/injection.dart';
 import '../../core/validators/reading_validator.dart';
-import '../export_bottom_sheet.dart';
 
 class ExportActionButtons extends StatelessWidget {
   const ExportActionButtons({super.key});
@@ -22,10 +21,7 @@ class ExportActionButtons extends StatelessWidget {
       child: PopupMenuButton<String>(
         icon: Icon(
           Icons.file_download_outlined,
-          color: Theme.of(context)
-              .colorScheme
-              .onSurface
-              .withValues(alpha: 0.7),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
         ),
         tooltip: 'Export Data',
         onSelected: (value) => _handleExportAction(context, value),
@@ -109,8 +105,8 @@ class ExportActionButtons extends StatelessWidget {
     }
   }
 
-  Future<void> _exportCsv(
-      BuildContext context, List<BloodPressureReading> readings, String description) async {
+  Future<void> _exportCsv(BuildContext context,
+      List<BloodPressureReading> readings, String description) async {
     try {
       await CsvExportService.exportToCsv(readings);
       if (context.mounted) {

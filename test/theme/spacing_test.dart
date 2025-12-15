@@ -8,12 +8,12 @@ void main() {
       expect(AppSpacing.gridUnit, 8.0);
 
       // Common spacing multiples
-      expect(AppSpacing.xs, 4.0);    // 0.5 * gridUnit
-      expect(AppSpacing.sm, 8.0);    // 1 * gridUnit
-      expect(AppSpacing.md, 16.0);   // 2 * gridUnit
-      expect(AppSpacing.lg, 24.0);   // 3 * gridUnit
-      expect(AppSpacing.xl, 32.0);   // 4 * gridUnit
-      expect(AppSpacing.xxl, 48.0);  // 6 * gridUnit
+      expect(AppSpacing.xs, 4.0); // 0.5 * gridUnit
+      expect(AppSpacing.sm, 8.0); // 1 * gridUnit
+      expect(AppSpacing.md, 16.0); // 2 * gridUnit
+      expect(AppSpacing.lg, 24.0); // 3 * gridUnit
+      expect(AppSpacing.xl, 32.0); // 4 * gridUnit
+      expect(AppSpacing.xxl, 48.0); // 6 * gridUnit
     });
 
     test('should define specific spacing requirements', () {
@@ -72,7 +72,8 @@ void main() {
       ];
 
       for (final value in spacingValues) {
-        expect(value % 4, 0.0, reason: 'All spacing should be multiples of 4dp (half grid unit)');
+        expect(value % 4, 0.0,
+            reason: 'All spacing should be multiples of 4dp (half grid unit)');
       }
     });
   });

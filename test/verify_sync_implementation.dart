@@ -1,5 +1,6 @@
 /// Quick verification of the sync implementation in the app
 /// This script checks the actual implementation files
+library;
 
 import 'dart:io';
 
@@ -24,7 +25,8 @@ void main() async {
 
   // Check CloudflareKVService implementation
   print('\nChecking CloudflareKVService implementation:');
-  final kvServiceFile = File('lib/infrastructure/services/cloudflare_kv_service.dart');
+  final kvServiceFile =
+      File('lib/infrastructure/services/cloudflare_kv_service.dart');
   if (await kvServiceFile.exists()) {
     final content = await kvServiceFile.readAsString();
 
@@ -48,7 +50,8 @@ void main() async {
 
   // Check ManualSyncService implementation
   print('\nChecking ManualSyncService implementation:');
-  final syncServiceFile = File('lib/infrastructure/services/manual_sync_service.dart');
+  final syncServiceFile =
+      File('lib/infrastructure/services/manual_sync_service.dart');
   if (await syncServiceFile.exists()) {
     final content = await syncServiceFile.readAsString();
 
@@ -60,7 +63,8 @@ void main() async {
       'Error handling': content.contains('try') && content.contains('catch'),
       'Local database integration': content.contains('DatabaseService'),
       'Cloudflare KV integration': content.contains('CloudflareKVService'),
-      'Bidirectional sync': content.contains('pushed') && content.contains('pulled'),
+      'Bidirectional sync':
+          content.contains('pushed') && content.contains('pulled'),
     };
 
     checks.forEach((check, present) {
@@ -75,7 +79,8 @@ void main() async {
     final content = await modelFile.readAsString();
 
     final checks = {
-      'Sync fields': content.contains('lastModified') && content.contains('isDeleted'),
+      'Sync fields':
+          content.contains('lastModified') && content.contains('isDeleted'),
       'JSON serialization': content.contains('toJson()'),
       'JSON deserialization': content.contains('fromJson()'),
       'Default values for sync': content.contains('isDeleted = false'),
@@ -109,7 +114,8 @@ void main() async {
 
   // Check for sync status tracking
   final syncContent = await syncServiceFile.readAsString();
-  if (!syncContent.contains('lastSyncTime') && !syncContent.contains('syncStatus')) {
+  if (!syncContent.contains('lastSyncTime') &&
+      !syncContent.contains('syncStatus')) {
     print('⚠️  No sync status tracking - users won\'t know when last synced');
   }
 

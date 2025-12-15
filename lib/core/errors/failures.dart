@@ -58,7 +58,8 @@ class ServerFailure extends Failure {
   const ServerFailure(this.message, [this.statusCode]);
 
   @override
-  String toString() => 'ServerFailure: $message${statusCode != null ? ' (Status: $statusCode)' : ''}';
+  String toString() =>
+      'ServerFailure: $message${statusCode != null ? ' (Status: $statusCode)' : ''}';
 }
 
 class AuthenticationFailure extends Failure {
@@ -109,5 +110,6 @@ class UnexpectedFailure extends Failure {
   const UnexpectedFailure(this.message, [this.error]);
 
   @override
-  String toString() => 'UnexpectedFailure: $message${error != null ? ' (Error: $error)' : ''}';
+  String toString() =>
+      'UnexpectedFailure: $message${error != null ? ' (Error: $error)' : ''}';
 }

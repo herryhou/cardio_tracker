@@ -4,7 +4,8 @@ import 'package:cardio_tracker/presentation/screens/add_reading_screen.dart';
 
 void main() {
   group('Auto-transition functionality', () {
-    testWidgets('Auto-transition works between fields', (WidgetTester tester) async {
+    testWidgets('Auto-transition works between fields',
+        (WidgetTester tester) async {
       // Create controllers to capture the input
       final systolicController = TextEditingController();
       final diastolicController = TextEditingController();

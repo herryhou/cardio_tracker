@@ -30,8 +30,10 @@ void main() {
     });
 
     test('handles null/empty string inputs', () {
-      expect(() => formatBloodPressureFromString('', '80'), throwsArgumentError);
-      expect(() => formatBloodPressureFromString('120', ''), throwsArgumentError);
+      expect(
+          () => formatBloodPressureFromString('', '80'), throwsArgumentError);
+      expect(
+          () => formatBloodPressureFromString('120', ''), throwsArgumentError);
       expect(() => formatBloodPressureFromString('', ''), throwsArgumentError);
     });
   });

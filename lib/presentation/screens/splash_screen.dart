@@ -227,12 +227,18 @@ class HeartIconPainter extends CustomPainter {
 
     // Heart shape
     path.moveTo(36 * scale, 48 * scale);
-    path.cubicTo(30 * scale, 42 * scale, 24 * scale, 36 * scale, 24 * scale, 28 * scale);
-    path.cubicTo(24 * scale, 24 * scale, 27 * scale, 20 * scale, 32 * scale, 20 * scale);
-    path.cubicTo(34 * scale, 20 * scale, 35 * scale, 21 * scale, 36 * scale, 23 * scale);
-    path.cubicTo(37 * scale, 21 * scale, 38 * scale, 20 * scale, 40 * scale, 20 * scale);
-    path.cubicTo(45 * scale, 20 * scale, 48 * scale, 24 * scale, 48 * scale, 28 * scale);
-    path.cubicTo(48 * scale, 36 * scale, 42 * scale, 42 * scale, 36 * scale, 48 * scale);
+    path.cubicTo(
+        30 * scale, 42 * scale, 24 * scale, 36 * scale, 24 * scale, 28 * scale);
+    path.cubicTo(
+        24 * scale, 24 * scale, 27 * scale, 20 * scale, 32 * scale, 20 * scale);
+    path.cubicTo(
+        34 * scale, 20 * scale, 35 * scale, 21 * scale, 36 * scale, 23 * scale);
+    path.cubicTo(
+        37 * scale, 21 * scale, 38 * scale, 20 * scale, 40 * scale, 20 * scale);
+    path.cubicTo(
+        45 * scale, 20 * scale, 48 * scale, 24 * scale, 48 * scale, 28 * scale);
+    path.cubicTo(
+        48 * scale, 36 * scale, 42 * scale, 42 * scale, 36 * scale, 48 * scale);
     path.close();
 
     // EKG pulse line

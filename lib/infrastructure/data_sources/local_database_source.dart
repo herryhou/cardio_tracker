@@ -13,7 +13,7 @@ class LocalDatabaseSource {
     String dbPath = path ?? await _getDatabasePath();
     _database = await openDatabase(
       dbPath,
-      version: 3,  // Increment version to ensure proper migration
+      version: 3, // Increment version to ensure proper migration
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -74,7 +74,8 @@ class LocalDatabaseSource {
     // Handle migration from version 1 to 2
     if (oldVersion < 2) {
       // Check if columns already exist before adding them
-      final tableInfo = await db.rawQuery("PRAGMA table_info(blood_pressure_readings)");
+      final tableInfo =
+          await db.rawQuery("PRAGMA table_info(blood_pressure_readings)");
       final columns = <String>{};
       for (final column in tableInfo) {
         columns.add(column['name'] as String);
@@ -82,20 +83,24 @@ class LocalDatabaseSource {
 
       // Add heartRate column if it doesn't exist
       if (!columns.contains('heartRate')) {
-        await db.execute('ALTER TABLE blood_pressure_readings ADD COLUMN heartRate INTEGER NOT NULL DEFAULT 0');
+        await db.execute(
+            'ALTER TABLE blood_pressure_readings ADD COLUMN heartRate INTEGER NOT NULL DEFAULT 0');
       }
 
       // Add isDeleted column if it doesn't exist
       if (!columns.contains('isDeleted')) {
-        await db.execute('ALTER TABLE blood_pressure_readings ADD COLUMN isDeleted INTEGER DEFAULT 0');
+        await db.execute(
+            'ALTER TABLE blood_pressure_readings ADD COLUMN isDeleted INTEGER DEFAULT 0');
       }
 
       // Add lastModified column if it doesn't exist
       if (!columns.contains('lastModified')) {
         final now = DateTime.now().toIso8601String();
-        await db.execute('ALTER TABLE blood_pressure_readings ADD COLUMN lastModified TEXT NOT NULL DEFAULT "$now"');
+        await db.execute(
+            'ALTER TABLE blood_pressure_readings ADD COLUMN lastModified TEXT NOT NULL DEFAULT "$now"');
         // Update existing rows to have a valid lastModified timestamp
-        await db.execute('UPDATE blood_pressure_readings SET lastModified = "$now" WHERE lastModified = ""');
+        await db.execute(
+            'UPDATE blood_pressure_readings SET lastModified = "$now" WHERE lastModified = ""');
       }
     }
 

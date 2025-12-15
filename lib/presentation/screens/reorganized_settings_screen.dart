@@ -320,7 +320,8 @@ class ReorganizedSettingsScreen extends StatelessWidget {
     }
   }
 
-  void _showClearReadingsConfirmation(BuildContext context, BloodPressureProvider provider) {
+  void _showClearReadingsConfirmation(
+      BuildContext context, BloodPressureProvider provider) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -352,7 +353,8 @@ class ReorganizedSettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showRebuildDatabaseConfirmation(BuildContext context, BloodPressureProvider provider) {
+  void _showRebuildDatabaseConfirmation(
+      BuildContext context, BloodPressureProvider provider) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -389,7 +391,8 @@ class ReorganizedSettingsScreen extends StatelessWidget {
     );
   }
 
-  void _clearAllReadings(BuildContext context, BloodPressureProvider provider) async {
+  void _clearAllReadings(
+      BuildContext context, BloodPressureProvider provider) async {
     // Show loading indicator
     showDialog(
       context: context,
@@ -429,7 +432,8 @@ class ReorganizedSettingsScreen extends StatelessWidget {
     }
   }
 
-  void _rebuildDatabase(BuildContext context, BloodPressureProvider provider) async {
+  void _rebuildDatabase(
+      BuildContext context, BloodPressureProvider provider) async {
     // Show loading indicator
     showDialog(
       context: context,

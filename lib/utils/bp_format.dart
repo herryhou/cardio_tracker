@@ -47,17 +47,20 @@ String formatBloodPressureFromString(String systolicStr, String diastolicStr) {
 /// [color] - Optional color override (defaults to primary color)
 ///
 /// Returns formatted Text widget
-Text formatBloodPressureText(int systolic, int diastolic, {
+Text formatBloodPressureText(
+  int systolic,
+  int diastolic, {
   TextStyle? style,
   Color? color,
 }) {
   return Text(
     formatBloodPressure(systolic, diastolic),
     style: style?.copyWith(
-      color: color ?? style.color ?? Colors.black,
-    ) ?? TextStyle(
-      color: color ?? Colors.black,
-    ),
+          color: color ?? style.color ?? Colors.black,
+        ) ??
+        TextStyle(
+          color: color ?? Colors.black,
+        ),
   );
 }
 
@@ -69,16 +72,19 @@ Text formatBloodPressureText(int systolic, int diastolic, {
 /// [color] - Optional color override (defaults to primary color)
 ///
 /// Returns formatted Text widget
-Text formatBloodPressureTextFromString(String systolicStr, String diastolicStr, {
+Text formatBloodPressureTextFromString(
+  String systolicStr,
+  String diastolicStr, {
   TextStyle? style,
   Color? color,
 }) {
   return Text(
     formatBloodPressureFromString(systolicStr, diastolicStr),
     style: style?.copyWith(
-      color: color ?? style.color ?? Colors.black,
-    ) ?? TextStyle(
-      color: color ?? Colors.black,
-    ),
+          color: color ?? style.color ?? Colors.black,
+        ) ??
+        TextStyle(
+          color: color ?? Colors.black,
+        ),
   );
 }

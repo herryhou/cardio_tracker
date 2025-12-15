@@ -7,7 +7,8 @@ import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
 
 void main() {
   group('Touch Targets Compliance Test', () {
-    testWidgets('Dashboard screen touch targets meet minimum requirements', (WidgetTester tester) async {
+    testWidgets('Dashboard screen touch targets meet minimum requirements',
+        (WidgetTester tester) async {
       // Build the dashboard screen
       await tester.pumpWidget(
         const MaterialApp(
@@ -61,7 +62,8 @@ void main() {
       }
     });
 
-    testWidgets('Add reading content touch targets meet minimum requirements', (WidgetTester tester) async {
+    testWidgets('Add reading content touch targets meet minimum requirements',
+        (WidgetTester tester) async {
       // Build the add reading content
       await tester.pumpWidget(
         const MaterialApp(
@@ -104,7 +106,8 @@ void main() {
       }
     });
 
-    testWidgets('Reading Summary Card touch targets meet minimum requirements', (WidgetTester tester) async {
+    testWidgets('Reading Summary Card touch targets meet minimum requirements',
+        (WidgetTester tester) async {
       // Create a sample reading
       final sampleReading = BloodPressureReading(
         id: 'test-1',

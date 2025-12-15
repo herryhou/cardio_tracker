@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
 import 'package:cardio_tracker/domain/value_objects/blood_pressure_category.dart';
 import 'package:cardio_tracker/widgets/clinical_scatter_plot.dart';
 
@@ -30,8 +29,8 @@ class BPLegend extends StatelessWidget {
             Text(
               'Blood Pressure Categories',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -103,7 +102,8 @@ class BPLegend extends StatelessWidget {
     );
   }
 
-  Color _getZoneTextColor(BuildContext context, BloodPressureCategory category) {
+  Color _getZoneTextColor(
+      BuildContext context, BloodPressureCategory category) {
     switch (category) {
       case BloodPressureCategory.normal:
         return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.87);
