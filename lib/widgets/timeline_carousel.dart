@@ -47,10 +47,12 @@ class _TimelineCarouselState extends State<TimelineCarousel> {
   Widget build(BuildContext context) {
     // Filter readings based on date range if provided
     var filteredReadings = widget.readings.where((reading) {
-      if (widget.startDate != null && reading.timestamp.isBefore(widget.startDate!)) {
+      if (widget.startDate != null &&
+          reading.timestamp.isBefore(widget.startDate!)) {
         return false;
       }
-      if (widget.endDate != null && reading.timestamp.isAfter(widget.endDate!)) {
+      if (widget.endDate != null &&
+          reading.timestamp.isAfter(widget.endDate!)) {
         return false;
       }
       return true;
@@ -187,7 +189,8 @@ class _TimelineItemState extends State<TimelineItem>
               child: NeumorphicContainer(
                 key: const Key('neumorphic_container'),
                 isPressed: widget.isSelected,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -208,10 +211,13 @@ class _TimelineItemState extends State<TimelineItem>
                     Text(
                       _formatDate(),
                       style: theme.textTheme.bodySmall?.copyWith(
-                        fontWeight: widget.isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: widget.isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                         color: widget.isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                            : theme.colorScheme.onSurface
+                                .withValues(alpha: 0.7),
                       ),
                     ),
                   ],

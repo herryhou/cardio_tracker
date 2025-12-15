@@ -37,8 +37,10 @@ abstract class BloodPressureRepository {
   Future<Either<Failure, void>> rebuildDatabase();
 
   /// Batch inserts multiple blood pressure readings
-  Future<Either<Failure, void>> batchInsertReadings(List<BloodPressureReading> readings);
+  Future<Either<Failure, void>> batchInsertReadings(
+      List<BloodPressureReading> readings);
 
   /// Replaces all readings with a new set in a single atomic operation
-  Future<Either<Failure, void>> replaceAllReadings(List<BloodPressureReading> readings);
+  Future<Either<Failure, void>> replaceAllReadings(
+      List<BloodPressureReading> readings);
 }

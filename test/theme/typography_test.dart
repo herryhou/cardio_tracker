@@ -11,7 +11,8 @@ void main() {
     });
 
     test('should have correct letter spacing for headers', () {
-      expect(AppTheme.headerLetterSpacing, 4.0 / 100); // 4dp converted to letterSpacing value
+      expect(AppTheme.headerLetterSpacing,
+          4.0 / 100); // 4dp converted to letterSpacing value
     });
 
     test('should provide correct text styles', () {
@@ -19,7 +20,8 @@ void main() {
       final displayStyle = AppTheme.displayStyle;
       expect(displayStyle.fontSize, 48.0);
       expect(displayStyle.fontWeight, FontWeight.bold);
-      expect(displayStyle.letterSpacing, null); // No letter spacing for display text
+      expect(displayStyle.letterSpacing,
+          null); // No letter spacing for display text
 
       // Header style - for section headers and metric labels
       final headerStyle = AppTheme.headerStyle;
@@ -37,11 +39,13 @@ void main() {
     test('should not use all-caps for body text', () {
       final bodyStyle = AppTheme.bodyStyle;
       // Ensure we don't set all-caps anywhere in the body style
-      expect(() => bodyStyle.copyWith(
-        height: 1.0,
-        decoration: TextDecoration.none,
-        decorationStyle: TextDecorationStyle.solid,
-      ), returnsNormally);
+      expect(
+          () => bodyStyle.copyWith(
+                height: 1.0,
+                decoration: TextDecoration.none,
+                decorationStyle: TextDecorationStyle.solid,
+              ),
+          returnsNormally);
     });
   });
 }

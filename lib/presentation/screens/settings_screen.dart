@@ -130,7 +130,8 @@ class SettingsScreen extends StatelessWidget {
                         color: Colors.orange[600],
                       ),
                       title: const Text('Clear All Readings'),
-                      subtitle: const Text('Remove all blood pressure readings'),
+                      subtitle:
+                          const Text('Remove all blood pressure readings'),
                       onTap: () {
                         HapticFeedback.mediumImpact();
                         _showClearReadingsConfirmation(context, provider);
@@ -151,7 +152,8 @@ class SettingsScreen extends StatelessWidget {
                         color: Colors.red[600],
                       ),
                       title: const Text('Rebuild Database'),
-                      subtitle: const Text('Delete all data and recreate database'),
+                      subtitle:
+                          const Text('Delete all data and recreate database'),
                       onTap: () {
                         HapticFeedback.heavyImpact();
                         _showRebuildDatabaseConfirmation(context, provider);
@@ -238,7 +240,8 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showClearReadingsConfirmation(BuildContext context, BloodPressureProvider provider) {
+  void _showClearReadingsConfirmation(
+      BuildContext context, BloodPressureProvider provider) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -270,7 +273,8 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showRebuildDatabaseConfirmation(BuildContext context, BloodPressureProvider provider) {
+  void _showRebuildDatabaseConfirmation(
+      BuildContext context, BloodPressureProvider provider) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -307,7 +311,8 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _clearAllReadings(BuildContext context, BloodPressureProvider provider) async {
+  void _clearAllReadings(
+      BuildContext context, BloodPressureProvider provider) async {
     // Show loading indicator
     showDialog(
       context: context,
@@ -347,7 +352,8 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 
-  void _rebuildDatabase(BuildContext context, BloodPressureProvider provider) async {
+  void _rebuildDatabase(
+      BuildContext context, BloodPressureProvider provider) async {
     // Show loading indicator
     showDialog(
       context: context,

@@ -130,7 +130,8 @@ void main() {
 
       test('should handle special characters in notes', () async {
         // Arrange
-        final specialNotes = 'Special chars: àáâãäåæçèéêë ñòóôõö ùúûüý ÿ 中文 العربية русский';
+        const specialNotes =
+            'Special chars: àáâãäåæçèéêë ñòóôõö ùúûüý ÿ 中文 العربية русский';
         final readingWithSpecialChars = TestHelpers.createTestReading(
           id: 'special_chars',
           notes: specialNotes,
@@ -189,9 +190,7 @@ void main() {
 
       test('should handle single item datasets', () async {
         // Test syncing with just one item
-        final singleLocal = [
-          TestHelpers.createTestReading(id: 'single')
-        ];
+        final singleLocal = [TestHelpers.createTestReading(id: 'single')];
         final emptyRemote = <String, int>{};
 
         // Simulate sync
@@ -261,9 +260,11 @@ void main() {
         // Test boundary values
         final extremeReadings = [
           // Minimum values
-          TestHelpers.createTestReading(systolic: 0, diastolic: 0, heartRate: 0),
+          TestHelpers.createTestReading(
+              systolic: 0, diastolic: 0, heartRate: 0),
           // High values
-          TestHelpers.createTestReading(systolic: 300, diastolic: 200, heartRate: 300),
+          TestHelpers.createTestReading(
+              systolic: 300, diastolic: 200, heartRate: 300),
           // Negative values (should be caught by validation)
         ];
 

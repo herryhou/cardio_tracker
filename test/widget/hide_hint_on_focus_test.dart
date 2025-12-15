@@ -4,7 +4,8 @@ import 'package:cardio_tracker/presentation/screens/add_reading_screen.dart';
 
 void main() {
   group('Hide hints on focus', () {
-    testWidgets('Fields can be focused and interacted with', (WidgetTester tester) async {
+    testWidgets('Fields can be focused and interacted with',
+        (WidgetTester tester) async {
       // Build the widget
       await tester.pumpWidget(
         const MaterialApp(
@@ -38,10 +39,12 @@ void main() {
       await tester.pump();
 
       // Enter a value
-      await tester.enterText(find.descendant(
-        of: sysField,
-        matching: find.byType(TextFormField),
-      ), '120');
+      await tester.enterText(
+          find.descendant(
+            of: sysField,
+            matching: find.byType(TextFormField),
+          ),
+          '120');
       await tester.pump();
 
       // Tap on DIA field
@@ -52,10 +55,12 @@ void main() {
       await tester.pump();
 
       // Enter a value
-      await tester.enterText(find.descendant(
-        of: diaField,
-        matching: find.byType(TextFormField),
-      ), '80');
+      await tester.enterText(
+          find.descendant(
+            of: diaField,
+            matching: find.byType(TextFormField),
+          ),
+          '80');
       await tester.pump();
 
       // Tap on Pulse field
@@ -66,10 +71,12 @@ void main() {
       await tester.pump();
 
       // Enter a value
-      await tester.enterText(find.descendant(
-        of: pulseField,
-        matching: find.byType(TextFormField),
-      ), '72');
+      await tester.enterText(
+          find.descendant(
+            of: pulseField,
+            matching: find.byType(TextFormField),
+          ),
+          '72');
       await tester.pump();
 
       // Tap on Notes field

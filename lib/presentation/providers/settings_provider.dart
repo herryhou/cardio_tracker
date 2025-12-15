@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import '../../domain/entities/user_settings.dart';
 import '../../domain/value_objects/blood_pressure_category.dart';
 import '../../domain/repositories/user_settings_repository.dart';
-import '../../core/errors/failures.dart';
 
 class SettingsProvider extends ChangeNotifier {
   final UserSettingsRepository _repository;
@@ -26,8 +25,10 @@ class SettingsProvider extends ChangeNotifier {
   String get userName => _settings?.name ?? 'User';
   int get userAge => _settings?.age ?? 0;
   String get userGender => _settings?.gender ?? 'other';
-  BloodPressureCategory get targetMinCategory => _settings?.targetMinCategory ?? BloodPressureCategory.normal;
-  BloodPressureCategory get targetMaxCategory => _settings?.targetMaxCategory ?? BloodPressureCategory.normal;
+  BloodPressureCategory get targetMinCategory =>
+      _settings?.targetMinCategory ?? BloodPressureCategory.normal;
+  BloodPressureCategory get targetMaxCategory =>
+      _settings?.targetMaxCategory ?? BloodPressureCategory.normal;
   List<String> get medicationTimes => _settings?.medicationTimes ?? [];
   List<String> get reminderTimes => _settings?.reminderTimes ?? [];
   bool get notificationsEnabled => _settings?.notificationsEnabled ?? true;
@@ -380,7 +381,8 @@ class SettingsProvider extends ChangeNotifier {
     final result = await _repository.saveSettings(_settings!);
 
     result.fold(
-      (failure) => _setError('Failed to create default settings: ${failure.message}'),
+      (failure) =>
+          _setError('Failed to create default settings: ${failure.message}'),
       (_) => notifyListeners(),
     );
   }

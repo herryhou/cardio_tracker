@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:dartz/dartz.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
 import '../../domain/value_objects/blood_pressure_category.dart';
 import '../../domain/value_objects/reading_statistics.dart';
@@ -94,10 +93,10 @@ class BloodPressureProvider extends ChangeNotifier {
     bool success = false;
     result.fold(
       (failure) => _setError(_mapFailureToMessage(failure)),
-      (_) {
+      (_) async {
         success = true;
-        _readings.add(reading);
-        _computeStatistics();
+        // Reload readings to get the database-generated ID
+        await loadReadings();
       },
     );
 
@@ -114,14 +113,10 @@ class BloodPressureProvider extends ChangeNotifier {
     bool success = false;
     result.fold(
       (failure) => _setError(_mapFailureToMessage(failure)),
-      (_) {
+      (_) async {
         success = true;
-        final index = _readings.indexWhere((r) => r.id == reading.id);
-        if (index != -1) {
-          _readings[index] = reading;
-          _readings.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-          _computeStatistics();
-        }
+        // Reload readings to ensure consistency
+        await loadReadings();
       },
     );
 
@@ -138,10 +133,10 @@ class BloodPressureProvider extends ChangeNotifier {
     bool success = false;
     result.fold(
       (failure) => _setError(_mapFailureToMessage(failure)),
-      (_) {
+      (_) async {
         success = true;
-        _readings.removeWhere((reading) => reading.id == id);
-        _computeStatistics();
+        // Reload readings to ensure consistency
+        await loadReadings();
       },
     );
 
@@ -171,14 +166,18 @@ class BloodPressureProvider extends ChangeNotifier {
       });
 
       // Compute basic statistics locally for immediate feedback
-      final totalSystolic = _readings.fold<int>(0, (sum, r) => sum + r.systolic);
-      final totalDiastolic = _readings.fold<int>(0, (sum, r) => sum + r.diastolic);
-      final totalHeartRate = _readings.fold<int>(0, (sum, r) => sum + r.heartRate);
+      final totalSystolic =
+          _readings.fold<int>(0, (sum, r) => sum + r.systolic);
+      final totalDiastolic =
+          _readings.fold<int>(0, (sum, r) => sum + r.diastolic);
+      final totalHeartRate =
+          _readings.fold<int>(0, (sum, r) => sum + r.heartRate);
 
       final categoryDistribution = <String, int>{};
       for (final reading in _readings) {
         final category = reading.category.displayName;
-        categoryDistribution[category] = (categoryDistribution[category] ?? 0) + 1;
+        categoryDistribution[category] =
+            (categoryDistribution[category] ?? 0) + 1;
       }
 
       _statistics = ReadingStatistics(
@@ -221,19 +220,20 @@ class BloodPressureProvider extends ChangeNotifier {
   }
 
   // Utility methods
-  List<BloodPressureReading> getReadingsByDateRange(DateTime start, DateTime end) {
+  List<BloodPressureReading> getReadingsByDateRange(
+      DateTime start, DateTime end) {
     return _readings
         .where((reading) =>
-            reading.timestamp.isAfter(start.subtract(const Duration(days: 1))) &&
+            reading.timestamp
+                .isAfter(start.subtract(const Duration(days: 1))) &&
             reading.timestamp.isBefore(end.add(const Duration(days: 1))))
         .toList()
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 
-  List<BloodPressureReading> getReadingsByCategory(BloodPressureCategory category) {
-    return _readings
-        .where((reading) => reading.category == category)
-        .toList()
+  List<BloodPressureReading> getReadingsByCategory(
+      BloodPressureCategory category) {
+    return _readings.where((reading) => reading.category == category).toList()
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }
 
@@ -251,7 +251,7 @@ class BloodPressureProvider extends ChangeNotifier {
     _setLoading(true);
     _clearError();
 
-    final result = await _clearAllReadings(NoParams());
+    final result = await _clearAllReadings(const NoParams());
 
     result.fold(
       (failure) => _setError(_mapFailureToMessage(failure)),
@@ -268,7 +268,7 @@ class BloodPressureProvider extends ChangeNotifier {
     _setLoading(true);
     _clearError();
 
-    final result = await _rebuildDatabase(NoParams());
+    final result = await _rebuildDatabase(const NoParams());
 
     result.fold(
       (failure) => _setError(_mapFailureToMessage(failure)),

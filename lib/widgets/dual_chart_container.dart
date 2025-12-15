@@ -78,9 +78,11 @@ class _DualChartContainerState extends State<DualChartContainer> {
 
                 // Clinical Scatter Plot
                 Container(
-                  height: kClinicalScatterChartHeight * 1.3, // Increase height by 30%
+                  height: kClinicalScatterChartHeight *
+                      1.3, // Increase height by 30%
                   margin: EdgeInsets.zero,
-                  padding: const EdgeInsets.symmetric(horizontal: 8), // Reduced padding
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8), // Reduced padding
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     padding: EdgeInsets.zero,
@@ -104,7 +106,8 @@ class _DualChartContainerState extends State<DualChartContainer> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4, vertical: 4),
                           child: Row(
                             children: [
                               Expanded(
@@ -171,11 +174,11 @@ class _DualChartContainerState extends State<DualChartContainer> {
                         ),
                         const SizedBox(height: 16),
                         Expanded(
-                          child: InteractiveScatterPlot(
+                          child: ClinicalScatterPlot(
                             readings: widget.readings,
                             selectedReading: chartProvider.selectedReading,
                             onReadingSelected: chartProvider.selectReading,
-                            showResetButton: true,
+                            showTrendLine: true,
                           ),
                         ),
                       ],
@@ -211,7 +214,6 @@ class _DualChartContainerState extends State<DualChartContainer> {
     );
   }
 
-  
   Widget _buildSharedTimeRangeSelector(DualChartProvider chartProvider) {
     final isMobile = MediaQuery.of(context).size.width < 400;
     final isSmallMobile = MediaQuery.of(context).size.width < 360;

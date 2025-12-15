@@ -29,21 +29,24 @@ void main() {
       );
     }
 
-    testWidgets('Settings screen should display neumorphic elements', (WidgetTester tester) async {
+    testWidgets('Settings screen should display neumorphic elements',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
 
       // Verify neumorphic containers are present
       expect(find.byType(NeumorphicContainer), findsWidgets);
     });
 
-    testWidgets('Theme toggle should use NeumorphicSliderThemeToggle', (WidgetTester tester) async {
+    testWidgets('Theme toggle should use NeumorphicSliderThemeToggle',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
 
       // Find the neumorphic slider theme toggle for theme selection
       expect(find.byType(NeumorphicSliderThemeToggle), findsOneWidget);
     });
 
-    testWidgets('Settings items should use NeumorphicTile', (WidgetTester tester) async {
+    testWidgets('Settings items should use NeumorphicTile',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
 
       // Find all neumorphic tiles
@@ -53,14 +56,17 @@ void main() {
       expect(tiles, findsAtLeastNWidgets(2));
     });
 
-    testWidgets('Navigation items should use NeumorphicTile', (WidgetTester tester) async {
+    testWidgets('Navigation items should use NeumorphicTile',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
 
       // Find neumorphic tiles
       expect(find.byType(NeumorphicTile), findsAtLeastNWidgets(2));
     });
 
-    testWidgets('Theme switching should work with neumorphic slider theme toggle', (WidgetTester tester) async {
+    testWidgets(
+        'Theme switching should work with neumorphic slider theme toggle',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
 
       // Find the theme toggle
@@ -75,7 +81,8 @@ void main() {
       expect(themeProvider.themeMode, isA<ThemeMode>());
     });
 
-    testWidgets('Neumorphic elements should have proper touch targets', (WidgetTester tester) async {
+    testWidgets('Neumorphic elements should have proper touch targets',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
 
       // Find all touchable elements
@@ -92,7 +99,8 @@ void main() {
       }
     });
 
-    testWidgets('Settings items should have visual feedback on press', (WidgetTester tester) async {
+    testWidgets('Settings items should have visual feedback on press',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
 
       // Find a neumorphic tile
@@ -114,7 +122,8 @@ void main() {
       );
     }
 
-    testWidgets('Cloudflare settings screen should display neumorphic elements', (WidgetTester tester) async {
+    testWidgets('Cloudflare settings screen should display neumorphic elements',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createCloudflareWidgetUnderTest());
 
       // Wait for initialization
@@ -124,7 +133,8 @@ void main() {
       expect(find.byType(NeumorphicContainer), findsAtLeastNWidgets(1));
     });
 
-    testWidgets('Form inputs should be in neumorphic containers', (WidgetTester tester) async {
+    testWidgets('Form inputs should be in neumorphic containers',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createCloudflareWidgetUnderTest());
       await tester.pumpAndSettle();
 
@@ -135,7 +145,8 @@ void main() {
       expect(find.byType(NeumorphicContainer), findsAtLeastNWidgets(1));
     });
 
-    testWidgets('Save/Update button should be NeumorphicButton', (WidgetTester tester) async {
+    testWidgets('Save/Update button should be NeumorphicButton',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createCloudflareWidgetUnderTest());
       await tester.pumpAndSettle();
 
@@ -143,7 +154,8 @@ void main() {
       expect(find.byType(NeumorphicButton), findsAtLeastNWidgets(1));
     });
 
-    testWidgets('Sync button should be NeumorphicButton', (WidgetTester tester) async {
+    testWidgets('Sync button should be NeumorphicButton',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createCloudflareWidgetUnderTest());
       await tester.pumpAndSettle();
 
@@ -159,27 +171,27 @@ void main() {
       expect(syncButton, findsOneWidget);
     });
 
-    testWidgets('Status section should use NeumorphicContainer', (WidgetTester tester) async {
+    testWidgets('Status section should use NeumorphicContainer',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createCloudflareWidgetUnderTest());
       await tester.pumpAndSettle();
 
       // Find the status card
-      final statusContainer = find.byWidgetPredicate((widget) =>
-        widget is NeumorphicContainer
-      );
+      final statusContainer =
+          find.byWidgetPredicate((widget) => widget is NeumorphicContainer);
 
       expect(statusContainer, findsAtLeastNWidgets(1));
     });
 
-    testWidgets('Clear button should be NeumorphicButton when configured', (WidgetTester tester) async {
+    testWidgets('Clear button should be NeumorphicButton when configured',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createCloudflareWidgetUnderTest());
       await tester.pumpAndSettle();
 
       // Initially might not be configured, but clear button should exist
       final clearButton = find.byWidgetPredicate((widget) =>
-        widget is NeumorphicButton &&
-        widget.child.toString().toLowerCase().contains('clear')
-      );
+          widget is NeumorphicButton &&
+          widget.child.toString().toLowerCase().contains('clear'));
 
       // Clear button might not be visible initially
       if (clearButton.evaluate().isNotEmpty) {
@@ -187,7 +199,8 @@ void main() {
       }
     });
 
-    testWidgets('Input fields should have proper touch targets', (WidgetTester tester) async {
+    testWidgets('Input fields should have proper touch targets',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createCloudflareWidgetUnderTest());
       await tester.pumpAndSettle();
 
@@ -203,7 +216,8 @@ void main() {
       }
     });
 
-    testWidgets('Buttons should have visual feedback on press', (WidgetTester tester) async {
+    testWidgets('Buttons should have visual feedback on press',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createCloudflareWidgetUnderTest());
       await tester.pumpAndSettle();
 
@@ -221,7 +235,8 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('Form should have proper neumorphic styling', (WidgetTester tester) async {
+    testWidgets('Form should have proper neumorphic styling',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createCloudflareWidgetUnderTest());
       await tester.pumpAndSettle();
 
@@ -232,7 +247,8 @@ void main() {
       expect(find.byType(NeumorphicContainer), findsAtLeastNWidgets(1));
     });
 
-    testWidgets('All interactive elements should be accessible', (WidgetTester tester) async {
+    testWidgets('All interactive elements should be accessible',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createCloudflareWidgetUnderTest());
       await tester.pumpAndSettle();
 
@@ -241,10 +257,9 @@ void main() {
 
       // Verify important elements have semantic labels
       final saveButton = find.byWidgetPredicate((widget) =>
-        widget is NeumorphicButton &&
-        (widget.child.toString().toLowerCase().contains('save') ||
-         widget.child.toString().toLowerCase().contains('update'))
-      );
+          widget is NeumorphicButton &&
+          (widget.child.toString().toLowerCase().contains('save') ||
+              widget.child.toString().toLowerCase().contains('update')));
 
       if (saveButton.evaluate().isNotEmpty) {
         expect(saveButton, findsOneWidget);
@@ -269,7 +284,8 @@ void main() {
       );
     }
 
-    testWidgets('Neumorphic tiles should animate on press', (WidgetTester tester) async {
+    testWidgets('Neumorphic tiles should animate on press',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createAnimationWidgetUnderTest());
 
       final tile = find.byType(NeumorphicTile).first;
@@ -290,7 +306,8 @@ void main() {
       await tester.pumpAndSettle(); // Complete animation
     });
 
-    testWidgets('Neumorphic containers should animate color changes', (WidgetTester tester) async {
+    testWidgets('Neumorphic containers should animate color changes',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createAnimationWidgetUnderTest());
 
       // Trigger a theme change
@@ -304,7 +321,8 @@ void main() {
       await tester.pumpAndSettle(); // Complete animation
     });
 
-    testWidgets('Theme toggle should animate when tapped', (WidgetTester tester) async {
+    testWidgets('Theme toggle should animate when tapped',
+        (WidgetTester tester) async {
       await tester.pumpWidget(createAnimationWidgetUnderTest());
 
       final themeToggle = find.byType(NeumorphicSliderThemeToggle);

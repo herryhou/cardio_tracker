@@ -8,7 +8,12 @@ import '../../widgets/neumorphic_container.dart';
 import '../../widgets/neumorphic_button.dart';
 
 class CloudflareSettingsScreen extends StatefulWidget {
-  const CloudflareSettingsScreen({super.key});
+  final bool updateMode;
+
+  const CloudflareSettingsScreen({
+    super.key,
+    this.updateMode = false,
+  });
 
   @override
   State<CloudflareSettingsScreen> createState() =>
@@ -196,8 +201,7 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
           SnackBar(
             content: Text(result.error != null
                 ? _lastSyncStatus ?? 'Sync failed'
-                : 'Sync complete and data refreshed'
-            ),
+                : 'Sync complete and data refreshed'),
             backgroundColor: result.error != null ? null : Colors.green,
           ),
         );
@@ -253,7 +257,8 @@ class _CloudflareSettingsScreenState extends State<CloudflareSettingsScreen> {
       return Scaffold(
         backgroundColor: theme.colorScheme.surface,
         appBar: AppBar(
-          title: const Text('Cloudflare Sync'),
+          title: Text(
+              widget.updateMode ? 'Update Credentials' : 'Cloudflare Sync'),
           backgroundColor: theme.colorScheme.surface,
           elevation: 0,
         ),

@@ -29,7 +29,8 @@ void main() {
       ];
     });
 
-    testWidgets('displays export options with neumorphic design', (tester) async {
+    testWidgets('displays export options with neumorphic design',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -85,7 +86,8 @@ void main() {
       expect(hapticTriggered, isTrue);
     });
 
-    testWidgets('calls appropriate export service for each option', (tester) async {
+    testWidgets('calls appropriate export service for each option',
+        (tester) async {
       bool exportAllCalled = false;
       bool exportSummaryCalled = false;
       bool exportMonthCalled = false;

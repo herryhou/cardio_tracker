@@ -43,7 +43,8 @@ void main() {
       verifyNoMoreInteractions(mockRepository);
     });
 
-    test('should return validation failure for invalid systolic (too low)', () async {
+    test('should return validation failure for invalid systolic (too low)',
+        () async {
       // Arrange
       final reading = BloodPressureReading(
         id: '1',
@@ -61,12 +62,13 @@ void main() {
       expect(result, isA<Left>());
       final failure = result.fold((l) => l, (r) => null);
       expect(failure, isA<ValidationFailure>());
-      expect(failure.toString(),
-             contains('Systolic must be between 50 and 300'));
+      expect(
+          failure.toString(), contains('Systolic must be between 50 and 300'));
       verifyNever(mockRepository.addReading(any));
     });
 
-    test('should return validation failure for invalid systolic (too high)', () async {
+    test('should return validation failure for invalid systolic (too high)',
+        () async {
       // Arrange
       final reading = BloodPressureReading(
         id: '1',
@@ -84,12 +86,13 @@ void main() {
       expect(result, isA<Left>());
       final failure = result.fold((l) => l, (r) => null);
       expect(failure, isA<ValidationFailure>());
-      expect(failure.toString(),
-             contains('Systolic must be between 50 and 300'));
+      expect(
+          failure.toString(), contains('Systolic must be between 50 and 300'));
       verifyNever(mockRepository.addReading(any));
     });
 
-    test('should return validation failure for invalid diastolic (too low)', () async {
+    test('should return validation failure for invalid diastolic (too low)',
+        () async {
       // Arrange
       final reading = BloodPressureReading(
         id: '1',
@@ -107,12 +110,13 @@ void main() {
       expect(result, isA<Left>());
       final failure = result.fold((l) => l, (r) => null);
       expect(failure, isA<ValidationFailure>());
-      expect(failure.toString(),
-             contains('Diastolic must be between 30 and 200'));
+      expect(
+          failure.toString(), contains('Diastolic must be between 30 and 200'));
       verifyNever(mockRepository.addReading(any));
     });
 
-    test('should return validation failure for invalid diastolic (too high)', () async {
+    test('should return validation failure for invalid diastolic (too high)',
+        () async {
       // Arrange
       final reading = BloodPressureReading(
         id: '1',
@@ -130,12 +134,13 @@ void main() {
       expect(result, isA<Left>());
       final failure = result.fold((l) => l, (r) => null);
       expect(failure, isA<ValidationFailure>());
-      expect(failure.toString(),
-             contains('Diastolic must be between 30 and 200'));
+      expect(
+          failure.toString(), contains('Diastolic must be between 30 and 200'));
       verifyNever(mockRepository.addReading(any));
     });
 
-    test('should return validation failure for invalid heart rate (too high)', () async {
+    test('should return validation failure for invalid heart rate (too high)',
+        () async {
       // Arrange
       final reading = BloodPressureReading(
         id: '1',
@@ -153,8 +158,8 @@ void main() {
       expect(result, isA<Left>());
       final failure = result.fold((l) => l, (r) => null);
       expect(failure, isA<ValidationFailure>());
-      expect(failure.toString(),
-             contains('Heart rate must be between 0 and 300'));
+      expect(
+          failure.toString(), contains('Heart rate must be between 0 and 300'));
       verifyNever(mockRepository.addReading(any));
     });
 
@@ -176,8 +181,8 @@ void main() {
       expect(result, isA<Left>());
       final failure = result.fold((l) => l, (r) => null);
       expect(failure, isA<ValidationFailure>());
-      expect(failure.toString(),
-             contains('Heart rate must be between 0 and 300'));
+      expect(
+          failure.toString(), contains('Heart rate must be between 0 and 300'));
       verifyNever(mockRepository.addReading(any));
     });
 

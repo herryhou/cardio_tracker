@@ -5,11 +5,7 @@ import '../providers/blood_pressure_provider.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
 import '../../domain/entities/chart_types.dart';
 import '../../theme/app_theme.dart';
-import '../../infrastructure/services/csv_export_service.dart';
-import '../../infrastructure/services/manual_sync_service.dart';
 import 'add_reading_screen.dart';
-import 'settings_screen.dart';
-import 'cloudflare_settings_screen.dart';
 import '../../widgets/recent_reading_item.dart';
 import '../../widgets/reading_card_neu.dart';
 import '../../widgets/neumorphic_container.dart';
@@ -18,6 +14,9 @@ import '../../widgets/export_bottom_sheet.dart';
 import '../../widgets/horizontal_charts_container.dart';
 import '../../widgets/bp_legend.dart';
 import '../providers/dual_chart_provider.dart';
+import '../../widgets/app_actions/sync_status_indicator.dart';
+import '../../widgets/app_actions/export_action_buttons.dart';
+import '../../widgets/app_actions/main_menu_button.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -27,7 +26,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  final ManualSyncService _syncService = ManualSyncService();
   ExtendedTimeRange _currentTimeRange = ExtendedTimeRange.month;
 
   @override
@@ -107,8 +105,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       // Recent Readings Section with neumorphic styling
                       Padding(
                         padding: AppSpacing.screenMargins,
-                        child: _buildRecentReadingsSection(
-                            context, _filterReadingsByTimeRange(provider.readings)),
+                        child: _buildRecentReadingsSection(context,
+                            _filterReadingsByTimeRange(provider.readings)),
                       ),
 
                       // Extra bottom spacing for minimalist feel
@@ -140,136 +138,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       backgroundColor: Colors.transparent,
       foregroundColor: Theme.of(context).colorScheme.primary,
       centerTitle: false,
-      actions: [
-        // Cloudflare sync status indicator
-        FutureBuilder<bool>(
-          future: _syncService.isSyncAvailable(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SizedBox(
-                width: 24,
-                height: 24,
-                child: Padding(
-                  padding: EdgeInsets.all(AppSpacing.sm),
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-              );
-            }
-
-            if (snapshot.hasError) {
-              return const SizedBox.shrink();
-            }
-
-            if (snapshot.hasData && snapshot.data == true) {
-              return Container(
-                constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.cloud_sync_outlined,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.7),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const CloudflareSettingsScreen(),
-                      ),
-                    );
-                  },
-                  tooltip: 'Cloudflare Sync',
-                  padding: EdgeInsets.zero,
-                ),
-              );
-            }
-            return const SizedBox.shrink();
-          },
-        ),
-        Container(
-          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-          child: IconButton(
-            icon: Icon(
-              Icons.file_download_outlined,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.7),
-            ),
-            onPressed: () async {
-              try {
-                final provider = context.read<BloodPressureProvider>();
-                await CsvExportService.exportToCsv(provider.readings);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('CSV exported successfully')),
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to export CSV: $e')),
-                );
-              }
-            },
-            padding: EdgeInsets.zero,
-          ),
-        ),
-        Container(
-          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-          child: PopupMenuButton<String>(
-            icon: Icon(
-              Icons.more_vert,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.7),
-            ),
-            onSelected: (value) {
-              _handleMenuAction(context, value);
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem<String>(
-                value: 'settings',
-                child: Row(
-                  children: [
-                    Icon(Icons.settings, size: 18),
-                    SizedBox(width: AppSpacing.cardsGap),
-                    Text('Settings'),
-                  ],
-                ),
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem<String>(
-                value: 'export_csv',
-                child: Row(
-                  children: [
-                    Icon(Icons.file_download, size: 18),
-                    SizedBox(width: AppSpacing.cardsGap),
-                    Text('Export All Data'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem<String>(
-                value: 'export_summary',
-                child: Row(
-                  children: [
-                    Icon(Icons.assessment, size: 18),
-                    SizedBox(width: AppSpacing.cardsGap),
-                    Text('Export Summary'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem<String>(
-                value: 'export_month',
-                child: Row(
-                  children: [
-                    Icon(Icons.today, size: 18),
-                    SizedBox(width: AppSpacing.cardsGap),
-                    Text('Export This Month'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+      actions: const [
+        // Sync Status Indicator with dropdown menu
+        SyncStatusIndicator(),
+        // Export Actions
+        ExportActionButtons(),
+        // Main Menu
+        MainMenuButton(),
       ],
     );
   }
@@ -353,9 +228,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Text(
                   '${recentReadings.length} reading${recentReadings.length == 1 ? '' : 's'}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.w500,
-                  ),
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
               ),
             ],
@@ -535,71 +410,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
     );
-  }
-
-  void _handleMenuAction(BuildContext context, String action) async {
-    final provider = context.read<BloodPressureProvider>();
-
-    switch (action) {
-      case 'settings':
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const SettingsScreen(),
-          ),
-        );
-        break;
-      case 'export_csv':
-        await _exportCsv(context, provider.readings);
-        break;
-      case 'export_summary':
-        await _exportSummary(context, provider.readings);
-        break;
-      case 'export_month':
-        await _exportMonth(context, provider.readings);
-        break;
-    }
-  }
-
-  Future<void> _exportCsv(
-      BuildContext context, List<BloodPressureReading> readings) async {
-    try {
-      await CsvExportService.exportToCsv(readings);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('CSV exported successfully')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to export CSV: $e')),
-      );
-    }
-  }
-
-  Future<void> _exportSummary(
-      BuildContext context, List<BloodPressureReading> readings) async {
-    try {
-      await CsvExportService.exportSummaryStats(readings);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Summary exported successfully')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to export summary: $e')),
-      );
-    }
-  }
-
-  Future<void> _exportMonth(
-      BuildContext context, List<BloodPressureReading> readings) async {
-    try {
-      await CsvExportService.exportCurrentMonth(readings);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Monthly data exported successfully')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to export monthly data: $e')),
-      );
-    }
   }
 
   void _showAddReadingModal(BuildContext context) {

@@ -11,11 +11,16 @@ import 'package:cardio_tracker/application/use_cases/get_reading_statistics.dart
 import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
 import 'package:cardio_tracker/domain/value_objects/reading_statistics.dart';
 import 'package:cardio_tracker/core/errors/failures.dart';
-import 'package:cardio_tracker/core/usecases/usecase.dart';
 
 import 'blood_pressure_provider_test.mocks.dart';
 
-@GenerateMocks([GetAllReadings, AddReading, UpdateReading, DeleteReading, GetReadingStatistics])
+@GenerateMocks([
+  GetAllReadings,
+  AddReading,
+  UpdateReading,
+  DeleteReading,
+  GetReadingStatistics
+])
 void main() {
   group('BloodPressureProvider', () {
     late MockGetAllReadings mockGetAllReadings;
@@ -34,13 +39,13 @@ void main() {
 
       // Provide default behavior for getStatistics
       when(mockGetStatistics(any))
-          .thenAnswer((_) async => Right(const ReadingStatistics(
-            averageSystolic: 0,
-            averageDiastolic: 0,
-            averageHeartRate: 0,
-            totalReadings: 0,
-            categoryDistribution: {},
-          )));
+          .thenAnswer((_) async => const Right(ReadingStatistics(
+                averageSystolic: 0,
+                averageDiastolic: 0,
+                averageHeartRate: 0,
+                totalReadings: 0,
+                categoryDistribution: {},
+              )));
 
       provider = BloodPressureProvider(
         getAllReadings: mockGetAllReadings,
@@ -64,16 +69,15 @@ void main() {
         )
       ];
 
-      when(mockGetAllReadings(any))
-          .thenAnswer((_) async => Right(readings));
+      when(mockGetAllReadings(any)).thenAnswer((_) async => Right(readings));
       when(mockGetStatistics(any))
-          .thenAnswer((_) async => Right(const ReadingStatistics(
-            averageSystolic: 120,
-            averageDiastolic: 80,
-            averageHeartRate: 72,
-            totalReadings: 1,
-            categoryDistribution: {'Normal': 1},
-          )));
+          .thenAnswer((_) async => const Right(ReadingStatistics(
+                averageSystolic: 120,
+                averageDiastolic: 80,
+                averageHeartRate: 72,
+                totalReadings: 1,
+                categoryDistribution: {'Normal': 1},
+              )));
 
       // Act
       await provider.loadReadings();
@@ -90,8 +94,8 @@ void main() {
 
     test('should handle error when loading readings fails', () async {
       // Arrange
-      when(mockGetAllReadings(any))
-          .thenAnswer((_) async => Left(DatabaseFailure('Failed to load')));
+      when(mockGetAllReadings(any)).thenAnswer(
+          (_) async => const Left(DatabaseFailure('Failed to load')));
 
       // Act
       await provider.loadReadings();
@@ -113,16 +117,15 @@ void main() {
         lastModified: DateTime.now(),
       );
 
-      when(mockAddReading(reading))
-          .thenAnswer((_) async => Right(null));
+      when(mockAddReading(reading)).thenAnswer((_) async => const Right(null));
       when(mockGetStatistics(any))
-          .thenAnswer((_) async => Right(const ReadingStatistics(
-            averageSystolic: 120,
-            averageDiastolic: 80,
-            averageHeartRate: 72,
-            totalReadings: 1,
-            categoryDistribution: {'Normal': 1},
-          )));
+          .thenAnswer((_) async => const Right(ReadingStatistics(
+                averageSystolic: 120,
+                averageDiastolic: 80,
+                averageHeartRate: 72,
+                totalReadings: 1,
+                categoryDistribution: {'Normal': 1},
+              )));
 
       // Act
       final result = await provider.addReading(reading);
@@ -149,8 +152,8 @@ void main() {
         lastModified: DateTime.now(),
       );
 
-      when(mockAddReading(reading))
-          .thenAnswer((_) async => Left(ValidationFailure('Invalid reading')));
+      when(mockAddReading(reading)).thenAnswer(
+          (_) async => const Left(ValidationFailure('Invalid reading')));
 
       // Act
       final result = await provider.addReading(reading);
@@ -183,16 +186,15 @@ void main() {
         ),
       ];
 
-      when(mockGetAllReadings(any))
-          .thenAnswer((_) async => Right(readings));
+      when(mockGetAllReadings(any)).thenAnswer((_) async => Right(readings));
       when(mockGetStatistics(any))
-          .thenAnswer((_) async => Right(const ReadingStatistics(
-            averageSystolic: 125,
-            averageDiastolic: 82.5,
-            averageHeartRate: 73.5,
-            totalReadings: 2,
-            categoryDistribution: {'Normal': 2},
-          )));
+          .thenAnswer((_) async => const Right(ReadingStatistics(
+                averageSystolic: 125,
+                averageDiastolic: 82.5,
+                averageHeartRate: 73.5,
+                totalReadings: 2,
+                categoryDistribution: {'Normal': 2},
+              )));
 
       // Act
       await provider.loadReadings();
@@ -230,8 +232,7 @@ void main() {
         ),
       ];
 
-      when(mockGetAllReadings(any))
-          .thenAnswer((_) async => Right(readings));
+      when(mockGetAllReadings(any)).thenAnswer((_) async => Right(readings));
 
       // Act
       await provider.loadReadings();
@@ -241,18 +242,18 @@ void main() {
       expect(provider.latestReading?.systolic, 130);
     });
 
-    test('should return empty list for recent readings when no readings exist', () async {
+    test('should return empty list for recent readings when no readings exist',
+        () async {
       // Arrange
-      when(mockGetAllReadings(any))
-          .thenAnswer((_) async => Right([]));
+      when(mockGetAllReadings(any)).thenAnswer((_) async => const Right([]));
       when(mockGetStatistics(any))
-          .thenAnswer((_) async => Right(const ReadingStatistics(
-            averageSystolic: 0,
-            averageDiastolic: 0,
-            averageHeartRate: 0,
-            totalReadings: 0,
-            categoryDistribution: {},
-          )));
+          .thenAnswer((_) async => const Right(ReadingStatistics(
+                averageSystolic: 0,
+                averageDiastolic: 0,
+                averageHeartRate: 0,
+                totalReadings: 0,
+                categoryDistribution: {},
+              )));
 
       // Act
       await provider.loadReadings();
@@ -287,15 +288,15 @@ void main() {
       await provider.loadReadings();
 
       when(mockUpdateReading(updatedReading))
-          .thenAnswer((_) async => Right(null));
+          .thenAnswer((_) async => const Right(null));
       when(mockGetStatistics(any))
-          .thenAnswer((_) async => Right(const ReadingStatistics(
-            averageSystolic: 125,
-            averageDiastolic: 85,
-            averageHeartRate: 75,
-            totalReadings: 1,
-            categoryDistribution: {'Normal': 1},
-          )));
+          .thenAnswer((_) async => const Right(ReadingStatistics(
+                averageSystolic: 125,
+                averageDiastolic: 85,
+                averageHeartRate: 75,
+                totalReadings: 1,
+                categoryDistribution: {'Normal': 1},
+              )));
 
       // Act
       final result = await provider.updateReading(updatedReading);
@@ -322,8 +323,8 @@ void main() {
         lastModified: DateTime.now(),
       );
 
-      when(mockUpdateReading(reading))
-          .thenAnswer((_) async => Left(ValidationFailure('Invalid reading')));
+      when(mockUpdateReading(reading)).thenAnswer(
+          (_) async => const Left(ValidationFailure('Invalid reading')));
 
       // Act
       final result = await provider.updateReading(reading);
@@ -346,20 +347,18 @@ void main() {
       );
 
       // Load initial reading
-      when(mockGetAllReadings(any))
-          .thenAnswer((_) async => Right([reading]));
+      when(mockGetAllReadings(any)).thenAnswer((_) async => Right([reading]));
       await provider.loadReadings();
 
-      when(mockDeleteReading(any))
-          .thenAnswer((_) async => Right(null));
+      when(mockDeleteReading(any)).thenAnswer((_) async => const Right(null));
       when(mockGetStatistics(any))
-          .thenAnswer((_) async => Right(const ReadingStatistics(
-            averageSystolic: 0,
-            averageDiastolic: 0,
-            averageHeartRate: 0,
-            totalReadings: 0,
-            categoryDistribution: {},
-          )));
+          .thenAnswer((_) async => const Right(ReadingStatistics(
+                averageSystolic: 0,
+                averageDiastolic: 0,
+                averageHeartRate: 0,
+                totalReadings: 0,
+                categoryDistribution: {},
+              )));
 
       // Act
       final result = await provider.deleteReading('1');
@@ -376,8 +375,8 @@ void main() {
 
     test('should handle error when deleting reading fails', () async {
       // Arrange
-      when(mockDeleteReading(any))
-          .thenAnswer((_) async => Left(DatabaseFailure('Failed to delete')));
+      when(mockDeleteReading(any)).thenAnswer(
+          (_) async => const Left(DatabaseFailure('Failed to delete')));
 
       // Act
       final result = await provider.deleteReading('1');
@@ -421,8 +420,7 @@ void main() {
         ),
       ];
 
-      when(mockGetAllReadings(any))
-          .thenAnswer((_) async => Right(readings));
+      when(mockGetAllReadings(any)).thenAnswer((_) async => Right(readings));
 
       // Act
       await provider.loadReadings();
@@ -440,8 +438,8 @@ void main() {
 
     test('should clear error correctly', () async {
       // Arrange
-      when(mockGetAllReadings(any))
-          .thenAnswer((_) async => Left(DatabaseFailure('Error occurred')));
+      when(mockGetAllReadings(any)).thenAnswer(
+          (_) async => const Left(DatabaseFailure('Error occurred')));
 
       await provider.loadReadings();
       expect(provider.error, 'Error occurred');

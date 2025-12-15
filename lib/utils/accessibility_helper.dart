@@ -13,7 +13,8 @@ class AccessibilityHelper {
     required DateTime timestamp,
   }) {
     return Semantics(
-      label: 'Blood pressure reading: $systolic over $diastolic millimeters of mercury, '
+      label:
+          'Blood pressure reading: $systolic over $diastolic millimeters of mercury, '
           'pulse $pulse beats per minute, category: $category, '
           'recorded on ${_formatDate(timestamp)}',
       child: child,
@@ -121,8 +122,18 @@ class AccessibilityHelper {
   /// Formats date for accessibility
   static String _formatDate(DateTime date) {
     final months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
     ];
 
     return '${months[date.month - 1]} ${date.day}, ${date.year}';

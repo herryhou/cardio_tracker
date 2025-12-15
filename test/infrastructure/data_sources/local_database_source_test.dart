@@ -91,7 +91,8 @@ void main() {
       // Act
       final startDate = now.subtract(const Duration(days: 1, hours: 1));
       final endDate = now.add(const Duration(hours: 1));
-      final result = await dataSource.getReadingsByDateRange(startDate, endDate);
+      final result =
+          await dataSource.getReadingsByDateRange(startDate, endDate);
 
       // Assert
       expect(result.length, 2);

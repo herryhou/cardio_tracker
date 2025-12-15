@@ -37,7 +37,8 @@ void main() {
       ];
     });
 
-    testWidgets('Chart should render with CustomPaint and ClinicalScatterPainter',
+    testWidgets(
+        'Chart should render with CustomPaint and ClinicalScatterPainter',
         (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(

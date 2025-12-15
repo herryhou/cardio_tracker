@@ -4,10 +4,11 @@ import 'package:cardio_tracker/presentation/screens/csv_editor_screen.dart';
 
 void main() {
   group('CSV Editor Layout Tests', () {
-    testWidgets('should render without infinite size errors', (WidgetTester tester) async {
+    testWidgets('should render without infinite size errors',
+        (WidgetTester tester) async {
       // Build the CSV editor screen
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: CsvEditorScreen(),
         ),
       );
@@ -20,15 +21,17 @@ void main() {
       expect(find.byType(FormTextField), findsOneWidget);
 
       // Verify the editor has proper constraints
-      final textField = tester.widget<FormTextField>(find.byType(FormTextField));
+      final textField =
+          tester.widget<FormTextField>(find.byType(FormTextField));
       expect(textField.expands, isTrue);
       expect(textField.maxLines, isNull);
     });
 
-    testWidgets('should handle keyboard without overflow', (WidgetTester tester) async {
+    testWidgets('should handle keyboard without overflow',
+        (WidgetTester tester) async {
       // Build the CSV editor screen
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: CsvEditorScreen(),
         ),
       );
@@ -48,7 +51,7 @@ void main() {
 
 // Helper widget to test FormTextField
 class FormTextField extends StatelessWidget {
-  const FormTextField({Key? key}) : super(key: key);
+  const FormTextField({super.key});
 
   @override
   Widget build(BuildContext context) {

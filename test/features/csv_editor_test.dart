@@ -4,7 +4,6 @@ import 'package:mockito/annotations.dart';
 import 'package:dartz/dartz.dart';
 
 import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
-import 'package:cardio_tracker/core/errors/failures.dart';
 import 'package:cardio_tracker/domain/repositories/blood_pressure_repository.dart';
 import 'package:cardio_tracker/infrastructure/services/csv_export_service.dart';
 import 'package:cardio_tracker/infrastructure/services/csv_import_service.dart';
@@ -52,7 +51,8 @@ void main() {
           isDeleted: false,
         ),
       ];
-      final csvContent = 'Date,Time,Systolic,Diastolic,Heart Rate,Category,Notes\n'
+      const csvContent =
+          'Date,Time,Systolic,Diastolic,Heart Rate,Category,Notes\n'
           '2024-01-15,14:30,120,80,72,Normal,';
 
       when(mockRepository.getAllReadings())
@@ -72,7 +72,8 @@ void main() {
 
     test('should validate CSV content correctly', () async {
       // Arrange
-      const csvContent = 'Date,Time,Systolic,Diastolic,Heart Rate,Category,Notes\n'
+      const csvContent =
+          'Date,Time,Systolic,Diastolic,Heart Rate,Category,Notes\n'
           '2024-01-15,14:30,120,80,72,Normal,';
       final readings = [
         BloodPressureReading(
@@ -106,7 +107,8 @@ void main() {
 
     test('should save validated changes', () async {
       // Arrange
-      const csvContent = 'Date,Time,Systolic,Diastolic,Heart Rate,Category,Notes\n'
+      const csvContent =
+          'Date,Time,Systolic,Diastolic,Heart Rate,Category,Notes\n'
           '2024-01-15,14:30,120,80,72,Normal,';
       final readings = [
         BloodPressureReading(
@@ -148,7 +150,8 @@ void main() {
         isValid: false,
         readings: [],
         errors: [
-          LineValidationError(1, CsvImportError.invalidFormat, 'Invalid CSV format'),
+          LineValidationError(
+              1, CsvImportError.invalidFormat, 'Invalid CSV format'),
         ],
       );
 

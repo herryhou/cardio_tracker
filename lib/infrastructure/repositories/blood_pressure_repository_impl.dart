@@ -32,7 +32,8 @@ class BloodPressureRepositoryImpl implements BloodPressureRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateReading(BloodPressureReading reading) async {
+  Future<Either<Failure, void>> updateReading(
+      BloodPressureReading reading) async {
     try {
       final readingMap = _mapFromReading(reading);
       await dataSource.updateReading(readingMap);
@@ -58,11 +59,13 @@ class BloodPressureRepositoryImpl implements BloodPressureRepository {
     DateTime endDate,
   ) async {
     try {
-      final readingsMap = await dataSource.getReadingsByDateRange(startDate, endDate);
+      final readingsMap =
+          await dataSource.getReadingsByDateRange(startDate, endDate);
       final readings = readingsMap.map(_mapToReading).toList();
       return Right(readings);
     } catch (e) {
-      return Left(DatabaseFailure('Failed to get readings by date range: ${e.toString()}'));
+      return Left(DatabaseFailure(
+          'Failed to get readings by date range: ${e.toString()}'));
     }
   }
 
@@ -73,7 +76,8 @@ class BloodPressureRepositoryImpl implements BloodPressureRepository {
       if (readingMap == null) return const Right(null);
       return Right(_mapToReading(readingMap));
     } catch (e) {
-      return Left(DatabaseFailure('Failed to get latest reading: ${e.toString()}'));
+      return Left(
+          DatabaseFailure('Failed to get latest reading: ${e.toString()}'));
     }
   }
 
@@ -141,7 +145,8 @@ class BloodPressureRepositoryImpl implements BloodPressureRepository {
       await dataSource.clearAllReadings();
       return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure('Failed to clear all readings: ${e.toString()}'));
+      return Left(
+          DatabaseFailure('Failed to clear all readings: ${e.toString()}'));
     }
   }
 
@@ -151,29 +156,34 @@ class BloodPressureRepositoryImpl implements BloodPressureRepository {
       await dataSource.rebuildDatabase();
       return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure('Failed to rebuild database: ${e.toString()}'));
+      return Left(
+          DatabaseFailure('Failed to rebuild database: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Either<Failure, void>> batchInsertReadings(List<BloodPressureReading> readings) async {
+  Future<Either<Failure, void>> batchInsertReadings(
+      List<BloodPressureReading> readings) async {
     try {
       final readingsMap = readings.map(_mapFromReading).toList();
       await dataSource.batchInsertReadings(readingsMap);
       return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure('Failed to batch insert readings: ${e.toString()}'));
+      return Left(
+          DatabaseFailure('Failed to batch insert readings: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Either<Failure, void>> replaceAllReadings(List<BloodPressureReading> readings) async {
+  Future<Either<Failure, void>> replaceAllReadings(
+      List<BloodPressureReading> readings) async {
     try {
       final readingsMap = readings.map(_mapFromReading).toList();
       await dataSource.replaceAllReadings(readingsMap);
       return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure('Failed to replace all readings: ${e.toString()}'));
+      return Left(
+          DatabaseFailure('Failed to replace all readings: ${e.toString()}'));
     }
   }
 }

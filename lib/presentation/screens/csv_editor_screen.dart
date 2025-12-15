@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/csv_editor_provider.dart';
 
 class CsvEditorScreen extends StatefulWidget {
-  const CsvEditorScreen({Key? key}) : super(key: key);
+  const CsvEditorScreen({super.key});
 
   @override
   State<CsvEditorScreen> createState() => _CsvEditorScreenState();
@@ -40,7 +40,8 @@ class _CsvEditorScreenState extends State<CsvEditorScreen> {
           if (_controller.text != provider.csvContent) {
             _controller.value = TextEditingValue(
               text: provider.csvContent,
-              selection: TextSelection.collapsed(offset: provider.csvContent.length),
+              selection:
+                  TextSelection.collapsed(offset: provider.csvContent.length),
             );
           }
 
@@ -71,7 +72,8 @@ class _CsvEditorScreenState extends State<CsvEditorScreen> {
               children: [
                 _buildStatusBar(context, provider, colorScheme, textTheme),
                 Expanded(
-                  child: _buildEditor(context, provider, colorScheme, textTheme),
+                  child:
+                      _buildEditor(context, provider, colorScheme, textTheme),
                 ),
                 _buildActionButtons(context, provider, colorScheme, textTheme),
               ],
@@ -136,7 +138,8 @@ class _CsvEditorScreenState extends State<CsvEditorScreen> {
               provider.statusMessage,
               style: textTheme.bodySmall?.copyWith(
                 color: statusColor,
-                fontWeight: provider.hasValidationErrors ? FontWeight.w500 : null,
+                fontWeight:
+                    provider.hasValidationErrors ? FontWeight.w500 : null,
               ),
             ),
           ),
@@ -271,12 +274,17 @@ class _CsvEditorScreenState extends State<CsvEditorScreen> {
           const SizedBox(width: 16),
           Expanded(
             child: ElevatedButton(
-              onPressed: provider.canSave && provider.status == CsvEditorStatus.idle
-                  ? () => _saveChanges(context, provider)
-                  : null,
+              onPressed:
+                  provider.canSave && provider.status == CsvEditorStatus.idle
+                      ? () => _saveChanges(context, provider)
+                      : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: provider.canSave ? colorScheme.primary : colorScheme.surface,
-                foregroundColor: provider.canSave ? Colors.white : colorScheme.onSurface.withOpacity(0.6),
+                backgroundColor: provider.canSave
+                    ? colorScheme.primary
+                    : colorScheme.surface,
+                foregroundColor: provider.canSave
+                    ? Colors.white
+                    : colorScheme.onSurface.withOpacity(0.6),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -306,7 +314,8 @@ class _CsvEditorScreenState extends State<CsvEditorScreen> {
     );
   }
 
-  Future<void> _saveChanges(BuildContext context, CsvEditorProvider provider) async {
+  Future<void> _saveChanges(
+      BuildContext context, CsvEditorProvider provider) async {
     HapticFeedback.lightImpact();
     final success = await provider.save();
 
@@ -339,7 +348,8 @@ class _CsvEditorScreenState extends State<CsvEditorScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Discard Changes?'),
-        content: const Text('Are you sure you want to discard all unsaved changes?'),
+        content:
+            const Text('Are you sure you want to discard all unsaved changes?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -427,7 +437,8 @@ class _CsvEditorScreenState extends State<CsvEditorScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Unsaved Changes'),
-        content: const Text('You have unsaved changes. Are you sure you want to leave?'),
+        content: const Text(
+            'You have unsaved changes. Are you sure you want to leave?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),

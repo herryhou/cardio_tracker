@@ -46,8 +46,8 @@ void main() {
 
     test('should return failure when getAll fails', () async {
       // Arrange
-      when(mockRepository.getAllReadings())
-          .thenAnswer((_) async => Left(DatabaseFailure('Database error')));
+      when(mockRepository.getAllReadings()).thenAnswer(
+          (_) async => const Left(DatabaseFailure('Database error')));
 
       // Act
       final result = await mockRepository.getAllReadings();
@@ -92,8 +92,8 @@ void main() {
         lastModified: DateTime.now(),
       );
 
-      when(mockRepository.addReading(reading))
-          .thenAnswer((_) async => Left(DatabaseFailure('Insert failed')));
+      when(mockRepository.addReading(reading)).thenAnswer(
+          (_) async => const Left(DatabaseFailure('Insert failed')));
 
       // Act
       final result = await mockRepository.addReading(reading);
@@ -158,7 +158,8 @@ void main() {
           .thenAnswer((_) async => Right(readings));
 
       // Act
-      final result = await mockRepository.getReadingsByDateRange(startDate, endDate);
+      final result =
+          await mockRepository.getReadingsByDateRange(startDate, endDate);
 
       // Assert
       expect(result.isRight(), true);

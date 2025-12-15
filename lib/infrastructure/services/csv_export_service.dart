@@ -10,7 +10,15 @@ class CsvExportService {
   String exportAllReadings(List<BloodPressureReading> readings) {
     // Create CSV data
     List<List<dynamic>> csvData = [
-      ['Date', 'Time', 'Systolic (mmHg)', 'Diastolic (mmHg)', 'Heart Rate (bpm)', 'Category', 'Notes']
+      [
+        'Date',
+        'Time',
+        'Systolic (mmHg)',
+        'Diastolic (mmHg)',
+        'Heart Rate (bpm)',
+        'Category',
+        'Notes'
+      ]
     ];
 
     // Sort readings by date (oldest first for editor)
@@ -53,7 +61,15 @@ class CsvExportService {
     try {
       // Create CSV data
       List<List<dynamic>> csvData = [
-        ['Date', 'Time', 'Systolic (mmHg)', 'Diastolic (mmHg)', 'Heart Rate (bpm)', 'Category', 'Notes']
+        [
+          'Date',
+          'Time',
+          'Systolic (mmHg)',
+          'Diastolic (mmHg)',
+          'Heart Rate (bpm)',
+          'Category',
+          'Notes'
+        ]
       ];
 
       // Sort readings by date (newest first)
@@ -77,7 +93,8 @@ class CsvExportService {
 
       // Create file
       final directory = Directory.systemTemp;
-      final fileName = 'blood_pressure_readings_${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
+      final fileName =
+          'blood_pressure_readings_${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
       final file = File('${directory.path}/$fileName');
 
       // Write CSV to file
@@ -87,9 +104,9 @@ class CsvExportService {
       await Share.shareXFiles(
         [XFile(file.path, name: fileName)],
         subject: 'Blood Pressure Readings',
-        text: 'Exported ${readings.length} blood pressure readings from Cardio Tracker',
+        text:
+            'Exported ${readings.length} blood pressure readings from Cardio Tracker',
       );
-
     } catch (e) {
       throw Exception('Failed to export CSV: $e');
     }
@@ -102,15 +119,17 @@ class CsvExportService {
     DateTime endDate,
   ) async {
     final filteredReadings = readings.where((reading) {
-      return reading.timestamp.isAfter(startDate.subtract(const Duration(days: 1))) &&
-             reading.timestamp.isBefore(endDate.add(const Duration(days: 1)));
+      return reading.timestamp
+              .isAfter(startDate.subtract(const Duration(days: 1))) &&
+          reading.timestamp.isBefore(endDate.add(const Duration(days: 1)));
     }).toList();
 
     await exportToCsv(filteredReadings);
   }
 
   /// Export readings for last N days
-  static Future<void> exportLastNDays(List<BloodPressureReading> readings, int days) async {
+  static Future<void> exportLastNDays(
+      List<BloodPressureReading> readings, int days) async {
     final endDate = DateTime.now();
     final startDate = endDate.subtract(Duration(days: days));
 
@@ -118,7 +137,8 @@ class CsvExportService {
   }
 
   /// Export readings for current month
-  static Future<void> exportCurrentMonth(List<BloodPressureReading> readings) async {
+  static Future<void> exportCurrentMonth(
+      List<BloodPressureReading> readings) async {
     final now = DateTime.now();
     final startDate = DateTime(now.year, now.month, 1);
     final endDate = DateTime(now.year, now.month + 1, 0);
@@ -150,9 +170,15 @@ class CsvExportService {
       return 'No data available';
     }
 
-    final avgSystolic = readings.map((r) => r.systolic).reduce((a, b) => a + b) / readings.length;
-    final avgDiastolic = readings.map((r) => r.diastolic).reduce((a, b) => a + b) / readings.length;
-    final avgHeartRate = readings.map((r) => r.heartRate).reduce((a, b) => a + b) / readings.length;
+    final avgSystolic =
+        readings.map((r) => r.systolic).reduce((a, b) => a + b) /
+            readings.length;
+    final avgDiastolic =
+        readings.map((r) => r.diastolic).reduce((a, b) => a + b) /
+            readings.length;
+    final avgHeartRate =
+        readings.map((r) => r.heartRate).reduce((a, b) => a + b) /
+            readings.length;
 
     final categoryCounts = <String, int>{};
     for (final reading in readings) {
@@ -163,7 +189,8 @@ class CsvExportService {
     final sortedReadings = List<BloodPressureReading>.from(readings)
       ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
-    final dateRange = '${DateFormat('MMM dd, yyyy').format(sortedReadings.first.timestamp)} - ${DateFormat('MMM dd, yyyy').format(sortedReadings.last.timestamp)}';
+    final dateRange =
+        '${DateFormat('MMM dd, yyyy').format(sortedReadings.first.timestamp)} - ${DateFormat('MMM dd, yyyy').format(sortedReadings.last.timestamp)}';
 
     return '''
 Blood Pressure Summary Report
@@ -182,12 +209,14 @@ ${categoryCounts.entries.map((entry) => '- ${entry.key}: ${entry.value} readings
   }
 
   /// Export summary statistics to a text file
-  static Future<void> exportSummaryStats(List<BloodPressureReading> readings) async {
+  static Future<void> exportSummaryStats(
+      List<BloodPressureReading> readings) async {
     try {
       final summary = generateSummaryStats(readings);
 
       final directory = Directory.systemTemp;
-      final fileName = 'bp_summary_${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.txt';
+      final fileName =
+          'bp_summary_${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.txt';
       final file = File('${directory.path}/$fileName');
 
       await file.writeAsString(summary);
@@ -197,7 +226,6 @@ ${categoryCounts.entries.map((entry) => '- ${entry.key}: ${entry.value} readings
         subject: 'Blood Pressure Summary Report',
         text: 'Blood pressure summary report generated from Cardio Tracker',
       );
-
     } catch (e) {
       throw Exception('Failed to export summary: $e');
     }

@@ -145,7 +145,7 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
 
         // Horizontal scrollable charts
         SizedBox(
-          height: 320,
+          height: 340,
           child: Consumer2<BloodPressureProvider, DualChartProvider>(
             builder: (context, bpProvider, chartProvider, child) {
               // Filter readings for current time range
@@ -210,13 +210,13 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
                                       showTimeRangeSelector: false,
                                       currentTimeRange: _currentTimeRange,
                                     )
-                                  : InteractiveScatterPlot(
+                                  : ClinicalScatterPlot(
                                       readings: filteredReadings,
                                       selectedReading:
                                           chartProvider.selectedReading,
                                       onReadingSelected:
                                           chartProvider.selectReading,
-                                      showResetButton: false,
+                                      showTrendLine: true,
                                     ),
                             ),
                           ],
@@ -231,7 +231,7 @@ class _HorizontalChartsContainerState extends State<HorizontalChartsContainer> {
         ),
 
         // Page indicator
-        const SizedBox(height: 16),
+        const SizedBox(height: 6),
         SmoothPageIndicator(
           controller: _pageController,
           count: 2,

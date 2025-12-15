@@ -35,7 +35,8 @@ void main() {
       print('\nReadings:');
       for (int i = 0; i < result.readings.length; i++) {
         final reading = result.readings[i];
-        print('  ${i + 1}. ${reading.timestamp} - ${reading.systolic}/${reading.diastolic}');
+        print(
+            '  ${i + 1}. ${reading.timestamp} - ${reading.systolic}/${reading.diastolic}');
       }
     }
   });

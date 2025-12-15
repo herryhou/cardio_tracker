@@ -49,8 +49,8 @@ void main() {
 
     test('should return failure when getSettings fails', () async {
       // Arrange
-      when(mockRepository.getSettings())
-          .thenAnswer((_) async => Left(DatabaseFailure('Settings not found')));
+      when(mockRepository.getSettings()).thenAnswer(
+          (_) async => const Left(DatabaseFailure('Settings not found')));
 
       // Act
       final result = await mockRepository.getSettings();
@@ -104,7 +104,7 @@ void main() {
       );
 
       when(mockRepository.saveSettings(settings))
-          .thenAnswer((_) async => Left(DatabaseFailure('Save failed')));
+          .thenAnswer((_) async => const Left(DatabaseFailure('Save failed')));
 
       // Act
       final result = await mockRepository.saveSettings(settings);
@@ -117,7 +117,8 @@ void main() {
       );
     });
 
-    test('should return void when updateNotificationSettings succeeds', () async {
+    test('should return void when updateNotificationSettings succeeds',
+        () async {
       // Arrange
       when(mockRepository.updateNotificationSettings(true))
           .thenAnswer((_) async => const Right(null));
@@ -129,7 +130,8 @@ void main() {
       expect(result.isRight(), true);
     });
 
-    test('should return void when updateDataSharingSettings succeeds', () async {
+    test('should return void when updateDataSharingSettings succeeds',
+        () async {
       // Arrange
       when(mockRepository.updateDataSharingSettings(false))
           .thenAnswer((_) async => const Right(null));
@@ -149,7 +151,8 @@ void main() {
           .thenAnswer((_) async => const Right(null));
 
       // Act
-      final result = await mockRepository.updateMedicationTimes(medicationTimes);
+      final result =
+          await mockRepository.updateMedicationTimes(medicationTimes);
 
       // Assert
       expect(result.isRight(), true);
@@ -198,7 +201,8 @@ void main() {
       expect(result.isRight(), true);
     });
 
-    test('should return true when hasSettings with existing settings', () async {
+    test('should return true when hasSettings with existing settings',
+        () async {
       // Arrange
       when(mockRepository.hasSettings())
           .thenAnswer((_) async => const Right(true));

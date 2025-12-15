@@ -20,7 +20,7 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
       final List<Map<String, dynamic>> maps = await db.query('user_settings');
 
       if (maps.isEmpty) {
-        return Left(NotFoundFailure('Settings not found'));
+        return const Left(NotFoundFailure('Settings not found'));
       }
 
       final map = maps.first;
@@ -30,11 +30,15 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
         age: map['age'] as int,
         gender: map['gender'] as String,
         targetMinCategory: BloodPressureCategory.values.firstWhere(
-          (e) => e.toString() == 'BloodPressureCategory.${map['target_min_category']}',
+          (e) =>
+              e.toString() ==
+              'BloodPressureCategory.${map['target_min_category']}',
           orElse: () => BloodPressureCategory.normal,
         ),
         targetMaxCategory: BloodPressureCategory.values.firstWhere(
-          (e) => e.toString() == 'BloodPressureCategory.${map['target_max_category']}',
+          (e) =>
+              e.toString() ==
+              'BloodPressureCategory.${map['target_max_category']}',
           orElse: () => BloodPressureCategory.normal,
         ),
         medicationTimes: map['medication_times'] != null
@@ -45,8 +49,10 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
             : [],
         notificationsEnabled: (map['notifications_enabled'] as int? ?? 1) == 1,
         dataSharingEnabled: (map['data_sharing_enabled'] as int? ?? 0) == 1,
-        createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
-        updatedAt: DateTime.fromMillisecondsSinceEpoch(map['updated_at'] as int),
+        createdAt:
+            DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
+        updatedAt:
+            DateTime.fromMillisecondsSinceEpoch(map['updated_at'] as int),
       );
 
       return Right(settings);
@@ -70,8 +76,10 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
           'name': settings.name,
           'age': settings.age,
           'gender': settings.gender,
-          'target_min_category': settings.targetMinCategory.toString().split('.').last,
-          'target_max_category': settings.targetMaxCategory.toString().split('.').last,
+          'target_min_category':
+              settings.targetMinCategory.toString().split('.').last,
+          'target_max_category':
+              settings.targetMaxCategory.toString().split('.').last,
           'medication_times': jsonEncode(settings.medicationTimes),
           'reminder_times': jsonEncode(settings.reminderTimes),
           'notifications_enabled': settings.notificationsEnabled ? 1 : 0,
@@ -82,7 +90,7 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
 
-      return Right(null);
+      return const Right(null);
     } catch (e) {
       return Left(DatabaseFailure('Failed to save settings: ${e.toString()}'));
     }
@@ -103,9 +111,10 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
         whereArgs: ['settings-1'],
       );
 
-      return Right(null);
+      return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure('Failed to update notification settings: ${e.toString()}'));
+      return Left(DatabaseFailure(
+          'Failed to update notification settings: ${e.toString()}'));
     }
   }
 
@@ -124,14 +133,16 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
         whereArgs: ['settings-1'],
       );
 
-      return Right(null);
+      return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure('Failed to update data sharing settings: ${e.toString()}'));
+      return Left(DatabaseFailure(
+          'Failed to update data sharing settings: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Either<Failure, void>> updateMedicationTimes(List<String> times) async {
+  Future<Either<Failure, void>> updateMedicationTimes(
+      List<String> times) async {
     try {
       final db = await _dataSource.database;
 
@@ -145,9 +156,10 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
         whereArgs: ['settings-1'],
       );
 
-      return Right(null);
+      return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure('Failed to update medication times: ${e.toString()}'));
+      return Left(DatabaseFailure(
+          'Failed to update medication times: ${e.toString()}'));
     }
   }
 
@@ -166,9 +178,10 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
         whereArgs: ['settings-1'],
       );
 
-      return Right(null);
+      return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure('Failed to update reminder times: ${e.toString()}'));
+      return Left(
+          DatabaseFailure('Failed to update reminder times: ${e.toString()}'));
     }
   }
 
@@ -191,9 +204,10 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
         whereArgs: ['settings-1'],
       );
 
-      return Right(null);
+      return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure('Failed to update target categories: ${e.toString()}'));
+      return Left(DatabaseFailure(
+          'Failed to update target categories: ${e.toString()}'));
     }
   }
 
@@ -223,7 +237,7 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
         whereArgs: ['settings-1'],
       );
 
-      return Right(null);
+      return const Right(null);
     } catch (e) {
       return Left(DatabaseFailure('Failed to reset settings: ${e.toString()}'));
     }
@@ -250,7 +264,8 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
       await _dataSource.clearAllSettings();
       return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure('Failed to clear all settings: ${e.toString()}'));
+      return Left(
+          DatabaseFailure('Failed to clear all settings: ${e.toString()}'));
     }
   }
 }

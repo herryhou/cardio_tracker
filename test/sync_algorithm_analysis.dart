@@ -1,8 +1,6 @@
 /// Analysis of the Cloudflare sync algorithm
 /// This script analyzes the sync logic without requiring Flutter test framework
-
-import 'dart:io';
-import 'dart:convert';
+library;
 
 // Mock the BloodPressureReading model for analysis
 class BloodPressureReading {
@@ -87,12 +85,15 @@ void main() {
   );
 
   // Apply last-write-wins logic
-  BloodPressureReading winner = localReading.lastModified.isAfter(remoteReading.lastModified)
-      ? localReading
-      : remoteReading;
+  BloodPressureReading winner =
+      localReading.lastModified.isAfter(remoteReading.lastModified)
+          ? localReading
+          : remoteReading;
 
-  print('Local reading: ${localReading.systolic}/${localReading.diastolic} at ${localReading.lastModified}');
-  print('Remote reading: ${remoteReading.systolic}/${remoteReading.diastolic} at ${remoteReading.lastModified}');
+  print(
+      'Local reading: ${localReading.systolic}/${localReading.diastolic} at ${localReading.lastModified}');
+  print(
+      'Remote reading: ${remoteReading.systolic}/${remoteReading.diastolic} at ${remoteReading.lastModified}');
   print('Winner: ${winner.systolic}/${winner.diastolic} (${winner.notes})');
   print('Status: ✅ Correct - Local wins (newer timestamp)\n');
 
@@ -135,14 +136,20 @@ void main() {
   // Deserialize back
   final restored = BloodPressureReading.fromJson(json);
 
-  print('Original: ${original.systolic}/${original.diastolic}, notes: "${original.notes}"');
-  print('Restored: ${restored.systolic}/${restored.diastolic}, notes: "${restored.notes}"');
+  print(
+      'Original: ${original.systolic}/${original.diastolic}, notes: "${original.notes}"');
+  print(
+      'Restored: ${restored.systolic}/${restored.diastolic}, notes: "${restored.notes}"');
   print('Data integrity check:');
-  print('- Systolic matches: ${original.systolic == restored.systolic ? "✅" : "❌"}');
-  print('- Diastolic matches: ${original.diastolic == restored.diastolic ? "✅" : "❌"}');
+  print(
+      '- Systolic matches: ${original.systolic == restored.systolic ? "✅" : "❌"}');
+  print(
+      '- Diastolic matches: ${original.diastolic == restored.diastolic ? "✅" : "❌"}');
   print('- Notes match: ${original.notes == restored.notes ? "✅" : "❌"}');
-  print('- Timestamps match: ${original.timestamp == restored.timestamp ? "✅" : "❌"}');
-  print('- Sync fields preserved: ${original.lastModified == restored.lastModified ? "✅" : "❌"}\n');
+  print(
+      '- Timestamps match: ${original.timestamp == restored.timestamp ? "✅" : "❌"}');
+  print(
+      '- Sync fields preserved: ${original.lastModified == restored.lastModified ? "✅" : "❌"}\n');
 
   // Test 4: Edge Cases
   print('4. Testing Edge Cases:');
@@ -169,8 +176,10 @@ void main() {
   print('Same timestamp scenario:');
   print('- Reading 1: ${reading1.systolic}/${reading1.diastolic}');
   print('- Reading 2: ${reading2.systolic}/${reading2.diastolic}');
-  print('- Timestamps equal: ${reading1.lastModified.isAtSameMomentAs(reading2.lastModified)}');
-  print('⚠️  Note: Current implementation may have non-deterministic behavior with identical timestamps\n');
+  print(
+      '- Timestamps equal: ${reading1.lastModified.isAtSameMomentAs(reading2.lastModified)}');
+  print(
+      '⚠️  Note: Current implementation may have non-deterministic behavior with identical timestamps\n');
 
   // Backward compatibility test
   final oldFormatJson = {
@@ -187,9 +196,11 @@ void main() {
     final backwardCompatible = BloodPressureReading.fromJson(oldFormatJson);
     print('Backward compatibility:');
     print('- ID: ${backwardCompatible.id}');
-    print('- Values: ${backwardCompatible.systolic}/${backwardCompatible.diastolic}');
-    print('- Default lastModified: ${backwardCompatible.lastModified != null ? "✅" : "❌"}');
-    print('- Default isDeleted: ${backwardCompatible.isDeleted == false ? "✅" : "❌"}');
+    print(
+        '- Values: ${backwardCompatible.systolic}/${backwardCompatible.diastolic}');
+    print('- Default lastModified: ${"✅"}');
+    print(
+        '- Default isDeleted: ${backwardCompatible.isDeleted == false ? "✅" : "❌"}');
   } catch (e) {
     print('❌ Backward compatibility failed: $e');
   }
@@ -224,7 +235,8 @@ void main() {
 
   // Test deserialization performance
   final deserializeStart = DateTime.now();
-  final restoredList = jsonList.map((j) => BloodPressureReading.fromJson(j)).toList();
+  final restoredList =
+      jsonList.map((j) => BloodPressureReading.fromJson(j)).toList();
   final deserializeTime = DateTime.now().difference(deserializeStart);
   print('Deserialized from JSON in ${deserializeTime.inMilliseconds}ms\n');
 
@@ -238,7 +250,8 @@ void main() {
   print('5. Performs well with large datasets');
 
   print('\n⚠️  Potential Issues:');
-  print('1. Identical timestamps may lead to non-deterministic conflict resolution');
+  print(
+      '1. Identical timestamps may lead to non-deterministic conflict resolution');
   print('2. No built-in retry mechanism for failed operations');
   print('3. Sync is all-or-nothing (no partial sync progress tracking)');
   print('4. No version field to detect modification without timestamp changes');

@@ -11,7 +11,7 @@ import '../theme/app_theme.dart';
 // ============================================================================
 
 // Bar styling
-const double _barWidth = 9.0;
+const double _barWidth = 7.0;
 // const double _barSpacing = 20.0;
 
 // Y-axis bounds
@@ -29,12 +29,12 @@ const double _yAxisReservedSize = 20.0; // Increased from 40.0
 // Grid styling
 const double _gridAlpha = 0.3;
 const double _gridLineWidth = 0.5;
-const double _borderAlpha = 0.3;
+const double _borderAlpha = 0.8;
 const double _borderLineWidth = 2.0;
 
 // Shadow styling
-const double _shadowAlpha = 0.1;
-const double _shadowBlurRadius = 8.0;
+// const double _shadowAlpha = 0.1;
+// const double _shadowBlurRadius = 8.0;
 
 // Padding
 const EdgeInsets _chartPadding = EdgeInsets.all(AppSpacing.md);
@@ -421,12 +421,28 @@ class _BPRangeBarChartState extends State<BPRangeBarChart> {
   FlBorderData _buildBorderData() {
     return FlBorderData(
       show: true,
-      border: Border.all(
-        color: Theme.of(context)
-            .colorScheme
-            .outline
-            .withValues(alpha: _borderAlpha),
-        width: _borderLineWidth,
+      // draw border left and bottom only
+      border: Border(
+        left: BorderSide(
+          color: Theme.of(context)
+              .colorScheme
+              .outline
+              .withValues(alpha: _borderAlpha),
+          width: _borderLineWidth,
+        ),
+        bottom: BorderSide(
+          color: Theme.of(context)
+              .colorScheme
+              .outline
+              .withValues(alpha: _borderAlpha),
+          width: _borderLineWidth,
+        ),
+        // border: Border.all(
+        //   color: Theme.of(context)
+        //       .colorScheme
+        //       .outline
+        //       .withValues(alpha: _borderAlpha),
+        //   width: _borderLineWidth,
       ),
     );
   }

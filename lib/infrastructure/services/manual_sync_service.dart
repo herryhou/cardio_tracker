@@ -21,6 +21,9 @@ class ManualSyncService {
   final LocalDatabaseSource _dataSource = LocalDatabaseSource();
   final CloudflareKVService _kvService = CloudflareKVService();
 
+  // Expose kvService for external access
+  CloudflareKVService get kvService => _kvService;
+
   Future<SyncResult> performSync() async {
     try {
       debugPrint('SyncService: Starting sync...');
@@ -66,20 +69,24 @@ class ManualSyncService {
           } else {
             // Check if local is newer
             try {
-              final remoteReading = await _kvService.retrieveReading(localReading.id);
+              final remoteReading =
+                  await _kvService.retrieveReading(localReading.id);
               if (remoteReading != null &&
-                  localReading.lastModified.isAfter(remoteReading.lastModified)) {
+                  localReading.lastModified
+                      .isAfter(remoteReading.lastModified)) {
                 await _kvService.storeReading(localReading);
                 pushed++;
               }
             } catch (e) {
-              print('SyncService: Error checking remote reading ${localReading.id}: $e');
+              print(
+                  'SyncService: Error checking remote reading ${localReading.id}: $e');
               // If we can't retrieve the remote version, we'll skip this reading
               continue;
             }
           }
         } catch (e) {
-          print('SyncService: Error processing local reading ${localReading.id}: $e');
+          print(
+              'SyncService: Error processing local reading ${localReading.id}: $e');
           // Continue with next reading
           continue;
         }
@@ -114,7 +121,6 @@ class ManualSyncService {
         pulled: pulled,
         deleted: deleted,
       );
-
     } catch (e) {
       return SyncResult(error: e.toString());
     }
