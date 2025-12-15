@@ -1,6 +1,7 @@
 import 'package:csv/csv.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
 import '../../core/validators/reading_validator.dart';
+import '../utils/reading_id_generator.dart';
 
 /// Error type for CSV import operations
 enum CsvImportError {
@@ -295,7 +296,13 @@ class CsvImportService {
 
     // Create reading
     return BloodPressureReading(
-      id: DateTime.now().millisecondsSinceEpoch.toString() + lineNum.toString(),
+      id: ReadingIdGenerator.generateId(
+        systolic: systolic,
+        diastolic: diastolic,
+        heartRate: heartRate,
+        timestamp: timestamp,
+        notes: notes,
+      ),
       systolic: systolic,
       diastolic: diastolic,
       heartRate: heartRate,

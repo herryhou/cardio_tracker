@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/blood_pressure_reading.dart';
 import '../../theme/app_theme.dart';
+import '../../infrastructure/utils/reading_id_generator.dart';
 
 /// Reusable content widget for adding readings (used in modal)
 class AddReadingContent extends StatefulWidget {
@@ -606,7 +607,13 @@ class _AddReadingContentState extends State<AddReadingContent> {
     if (systolic == null || diastolic == null) return null;
 
     return BloodPressureReading(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: ReadingIdGenerator.generateId(
+        systolic: systolic,
+        diastolic: diastolic,
+        heartRate: heartRate,
+        timestamp: _selectedDateTime,
+        notes: _notesController.text.trim(),
+      ),
       systolic: systolic,
       diastolic: diastolic,
       heartRate: heartRate,

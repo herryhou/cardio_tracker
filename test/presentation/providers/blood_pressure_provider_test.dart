@@ -8,6 +8,8 @@ import 'package:cardio_tracker/application/use_cases/add_reading.dart';
 import 'package:cardio_tracker/application/use_cases/update_reading.dart';
 import 'package:cardio_tracker/application/use_cases/delete_reading.dart';
 import 'package:cardio_tracker/application/use_cases/get_reading_statistics.dart';
+import 'package:cardio_tracker/application/use_cases/clear_all_readings.dart';
+import 'package:cardio_tracker/application/use_cases/rebuild_database.dart';
 import 'package:cardio_tracker/domain/entities/blood_pressure_reading.dart';
 import 'package:cardio_tracker/domain/value_objects/reading_statistics.dart';
 import 'package:cardio_tracker/core/errors/failures.dart';
@@ -19,7 +21,9 @@ import 'blood_pressure_provider_test.mocks.dart';
   AddReading,
   UpdateReading,
   DeleteReading,
-  GetReadingStatistics
+  GetReadingStatistics,
+  ClearAllReadings,
+  RebuildDatabase
 ])
 void main() {
   group('BloodPressureProvider', () {
@@ -28,6 +32,8 @@ void main() {
     late MockUpdateReading mockUpdateReading;
     late MockDeleteReading mockDeleteReading;
     late MockGetReadingStatistics mockGetStatistics;
+    late MockClearAllReadings mockClearAllReadings;
+    late MockRebuildDatabase mockRebuildDatabase;
     late BloodPressureProvider provider;
 
     setUp(() {
@@ -36,6 +42,8 @@ void main() {
       mockUpdateReading = MockUpdateReading();
       mockDeleteReading = MockDeleteReading();
       mockGetStatistics = MockGetReadingStatistics();
+      mockClearAllReadings = MockClearAllReadings();
+      mockRebuildDatabase = MockRebuildDatabase();
 
       // Provide default behavior for getStatistics
       when(mockGetStatistics(any))
@@ -53,6 +61,8 @@ void main() {
         updateReading: mockUpdateReading,
         deleteReading: mockDeleteReading,
         getReadingStatistics: mockGetStatistics,
+        clearAllReadings: mockClearAllReadings,
+        rebuildDatabase: mockRebuildDatabase,
       );
     });
 

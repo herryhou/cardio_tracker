@@ -17,6 +17,7 @@ import '../providers/dual_chart_provider.dart';
 import '../../widgets/app_actions/sync_status_indicator.dart';
 import '../../widgets/app_actions/export_action_buttons.dart';
 import '../../widgets/app_actions/main_menu_button.dart';
+import '../../infrastructure/utils/reading_id_generator.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -676,7 +677,13 @@ class _AddReadingModalSheetState extends State<AddReadingModalSheet> {
 
     // Create the reading
     final reading = BloodPressureReading(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: ReadingIdGenerator.generateId(
+        systolic: systolic,
+        diastolic: diastolic,
+        heartRate: heartRate,
+        timestamp: _selectedDateTime,
+        notes: _notesController.text.trim(),
+      ),
       systolic: systolic,
       diastolic: diastolic,
       heartRate: heartRate,
