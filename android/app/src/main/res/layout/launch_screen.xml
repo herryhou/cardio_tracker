@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Heart icon -->
+    <ImageView
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/app_title"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/ic_splash_icon"
+        android:contentDescription="Cardio Tracker Logo"
+        android:id="@+id/heart_icon" />
+
+    <!-- App title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Cardio Tracker"
+        android:textColor="#1F2937"
+        android:textSize="28sp"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.02"
+        android:id="@+id/app_title" />
+
+    <!-- Tagline -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/app_title"
+        android:layout_marginTop="8dp"
+        android:text="Your Heart Health Companion"
+        android:textColor="#6B7280"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif"
+        android:letterSpacing="0.025"
+        android:id="@+id/app_tagline" />
+
+</RelativeLayout>
